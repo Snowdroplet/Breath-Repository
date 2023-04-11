@@ -1,0 +1,11 @@
+
+*.log
+*.cbp
+*.depend
+*.layout
+*.o
+*.exe
+*.pdn
+*.png
+*.jpg
+*.dll
