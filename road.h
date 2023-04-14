@@ -25,7 +25,7 @@ public:
     Road(int id);
     ~Road();
 
-    void DrawRoad();
+    void DrawOnOverworld();
     void SetWaypoint(unsigned index, int x, int y);
 };
 

@@ -9,6 +9,7 @@
 #include <allegro5/allegro_image.h>
 
 #include "beingconsts.h"
+#include "overworld.h"
 
 #include "gamestate.h"
 #include "resource.h"
@@ -22,23 +23,29 @@ const std::string skillNames[NUM_SKILLS] =
 
 class Being
 {
+public:
+/// State
     bool active;
+    int activity;
 
-    int skillProfile; // Read skills from file.
-
+/// Biography
     std::string name;
     int race;
-    //int portraitRow, portraitCol;
-    int spriteBase;
-
-
     int hometown;
 
-    // Expertise from 1 to 5.
-    std::map <int, int>skills;
+    int skillProfile; // Read skills from file.
+    std::map <int, int> skills;// Expertise from 1 to 5.
 
+    float travelSpeed;
 
-public:
+/// Drawing
+    bool facingLeft;
+    int spriteWidth, spriteHeight;
+    int currentFrame, maxFrame;
+    int frameDelayCount;     // Meant to iterate from zero.
+    int frameDelayThreshold; // Higher value increases time between frame update
+
+    //int portraitRow, portraitCol;
 
     Inventory inventory;
 
@@ -46,6 +53,7 @@ public:
     ~Being();
 
     void SetActive(bool a);
+    void SetActivity(int act);
 
     void SetName(std::string n);
     void SetRace(int r);
@@ -62,7 +70,8 @@ public:
     //void DrawSkills(float x, float y);
     //void DrawSkillsDetailed(float x, float y);
 
-    void DrawOverworldActivity();
+    void DrawOverworldActivity(float x, float y);
+    void ProgressAnimation();
 
 };
 

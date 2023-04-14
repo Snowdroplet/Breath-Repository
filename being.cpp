@@ -4,6 +4,12 @@ Being::Being()
 {
     SetActive(true);
 
+    SetActivity(ACT_WALKING);
+    spriteWidth = TILE_W;
+    spriteHeight = TILE_H;
+
+    travelSpeed = 30;
+
     std::cout << "Being created." << std::endl;
 }
 
@@ -16,6 +22,22 @@ void Being::SetActive(bool a)
 {
     active = a;
 }
+
+void Being::SetActivity(int act)
+{
+    activity = act;
+    currentFrame = 0;
+    frameDelayCount = 0;
+    frameDelayThreshold = 5;
+
+    switch(activity)
+    {
+    case ACT_WALKING:
+        maxFrame = 1;
+        break;
+    }
+}
+
 void Being::SetName(std::string n)
 {
     name = n;
@@ -131,12 +153,37 @@ void Being::DrawSkillsDetailed(float x, float y)
 }
 */
 
-void Being::DrawOverworldActivity()
+void Being::DrawOverworldActivity(float x, float y)
 {
-    /*
-    al_draw_bitmap(
+    int f = 0;
+    if(facingLeft)
+        f = ALLEGRO_FLIP_HORIZONTAL;
 
-                   );
-                   */
+    al_draw_bitmap_region(beingPng[race],
+                          spriteWidth*currentFrame,
+                          spriteHeight*activity,
+                          spriteWidth,
+                          spriteHeight,
+                          x-overworldCameraXPosition - (spriteWidth/2),
+                          y-overworldCameraYPosition - (spriteHeight/2),
+                          f);
+
+    ProgressAnimation();
+}
+
+void Being::ProgressAnimation()
+{
+    if(maxFrame > 0)
+    {
+        frameDelayCount++;
+        if(frameDelayCount >= frameDelayThreshold)
+        {
+            frameDelayCount = 0;
+            currentFrame++;
+            if(currentFrame > maxFrame)
+                currentFrame = 0;
+        }
+
+    }
 }
 

@@ -53,4 +53,9 @@ enum enumSkillKeys
 
 };
 
+enum enumActivities
+{
+    ACT_WALKING = 0
+};
+
 #endif // BEINGCONSTS_H_INCLUDED

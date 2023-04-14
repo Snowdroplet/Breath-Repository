@@ -44,12 +44,12 @@ std::map<int,Place*>places;
 std::map<int,Road*>roads;
 
 void InterpretInput();
+void ProgressWorld();
 void ChangeUI(int whichUI, int whichSubUI, int whichTab);
 //void ChangePlayerLocation(int whichLocation);
 
 void DrawUI();
 
-void UpdateObjects();
 void InitObjects();
 void CleanupObjects();
 
@@ -129,6 +129,9 @@ int main(int argc, char *argv[])
             redraw = true;
 
             InterpretInput();
+
+            ProgressWorld();
+
         }
 
         if(redraw && al_is_event_queue_empty(eventQueue))
@@ -348,6 +351,33 @@ void InterpretInput()
         UIChangeDelay = false;
 }
 
+void ProgressWorld()
+{
+    if(activeUI == UI_OVERWORLD)
+    {
+        for(std::map<int,Place*>::iterator it = places.begin(); it != places.end(); it++)
+        {
+
+        }
+
+        for(std::map<int,Road*>::iterator it = roads.begin(); it != roads.end(); it++)
+        {
+
+        }
+
+        for(std::vector<Being*>::iterator it = people.begin(); it != people.end(); it++)
+        {
+
+        }
+
+        for(std::vector<Caravan*>::iterator it = caravans.begin(); it != caravans.end(); it++)
+        {
+
+        }
+    }
+
+}
+
 
 void ChangeUI(int whichUI, int whichSubUI, int whichTab)
 {
@@ -400,7 +430,10 @@ void DrawUI()
             places[i]->DrawOnOverworld();
 
         for(unsigned i = 0; i < roads.size(); i++)
-            roads[i]->DrawRoad();
+            roads[i]->DrawOnOverworld();
+
+        for(unsigned i = 0; i < caravans.size(); i++)
+            caravans[i]->DrawOnOverworld();
     }
     /*
     else if(activeUI == UI_PLACE)
@@ -531,37 +564,6 @@ void DrawUI()
     */
 }
 
-void UpdateObjects()
-{
-    for(std::vector<Being*>::iterator it = people.begin(); it != people.end();)
-    {
-        if(gameExit)
-            (*it)->SetActive(false);
-
-        if(!(*it)->IsActive())
-        {
-            delete *it;
-            people.erase(it);
-        }
-        else
-            ++it;
-    }
-
-    for(std::vector<Caravan*>::iterator it = caravans.begin(); it != caravans.end();)
-    {
-        if(gameExit)
-            (*it)->SetActive(false);
-
-        if(!(*it)->IsActive())
-        {
-            delete *it;
-            caravans.erase(it);
-        }
-        else
-            ++it;
-    }
-}
-
 void InitObjects()
 {
     for(unsigned i = PL_MARKER_FIRST; i <= PL_MARKER_LAST; i++)
@@ -651,14 +653,19 @@ void InitObjects()
     testCrew1->AddMember(crewZynes);
     testCrew1->AddMember(crewRukhra);
     testCrew1->AddMember(crewPurp);
+    caravans.push_back(testCrew1);
 
     testCrew2->AddMember(crewYubi);
     testCrew2->AddMember(crewBel);
+    caravans.push_back(testCrew2);
 
     testCrew3->AddMember(crewWindow);
     testCrew3->AddMember(crewPaul);
     testCrew3->AddMember(crewEmily);
     testCrew3->AddMember(crewLala);
+    caravans.push_back(testCrew3);
+
+    testCrew1->MoveToRoad(roads[ROAD_ERICENNES_CHORAS],true);
 
     //ericennes->AddAvailableCrew(crewLala);
 

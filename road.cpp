@@ -78,7 +78,7 @@ Road::~Road()
     yWaypoints.clear();
 }
 
-void Road::DrawRoad()
+void Road::DrawOnOverworld()
 {
     al_draw_filled_circle(xWaypoints[0] - overworldCameraXPosition,
                           yWaypoints[0] - overworldCameraYPosition,

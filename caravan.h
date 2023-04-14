@@ -12,45 +12,56 @@
 
 class Caravan
 {
+public:
+/// State
     bool active;
 
-    bool atPlace;
-    int whichPlace;
-
-    bool onRoad; // As opposed to at a city or other landmark, for overworld drawing purposes.
-    int whichRoad;
-    bool reverseRoad;
-    unsigned currentWaypoint;
-    unsigned nextWaypoint;
-    float distanceToWaypoint;
-
-    //std::vector<float>xPosition;
-    //std::vector<float>yPosition;
-
-    float weight, maxWeight;
-
-    int overworldXPosition;
-    int overworldYPosition;
-
-public:
-    Caravan();
-    ~Caravan();
-
-    Inventory inventory;
-
+/// Roster
     std::vector<Being*>members;
     Being*caravanLeader;
 
+/// Location
+    bool atPlace;
+    //int whichPlace;
+    Place *whichPlace;
+
+    bool onRoad; // As opposed to at a city or other landmark, for overworld drawing purposes.
+    //int whichRoad;
+    Road *whichRoad;
+    bool reverseRoad;
+    bool atRoadsEnd;
+    unsigned currentWaypoint;
+    unsigned nextWaypoint;
+    unsigned finalWaypoint;
+    float distanceFromNextWaypoint; // How much travel remains to reach next waypoint.
+
+    float overworldXPosition;
+    float overworldYPosition;
+
+    float travelSpeed;
+
+    Caravan();
+    ~Caravan();
+
+    void UpdateOverworldPosition();
+
+/// Inventory
+    Inventory inventory;
+    float weight, maxWeight;
 
     void SetActive(bool a);
     void MoveToPlace(Place *p);
     void MoveToRoad(Road *r, bool isEndpointA);
-    void DrawToOverworld();
+
+/// Manipulate roster
+    void AddMember(Being *b);
+    //void SwapLeader(Being *b);
+    void UpdateTravelSpeed();
+
+/// Drawing
+    void DrawOnOverworld();
 
     bool IsActive();
-
-    void AddMember(Being *b);
-    //void SetLeader(Being *b);
 
 };
 
