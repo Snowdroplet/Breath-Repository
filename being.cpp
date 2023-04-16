@@ -8,7 +8,7 @@ Being::Being()
     spriteWidth = TILE_W;
     spriteHeight = TILE_H;
 
-    travelSpeed = 30;
+    travelSpeed = 0.3;
 
     std::cout << "Being created." << std::endl;
 }

@@ -372,7 +372,8 @@ void ProgressWorld()
 
         for(std::vector<Caravan*>::iterator it = caravans.begin(); it != caravans.end(); it++)
         {
-
+            (*it)->Travel();
+            /// Here: If caravan is atRoadsEnd, move it to the Place corresponding to its Road's endpointA or B
         }
     }
 
@@ -655,6 +656,8 @@ void InitObjects()
     testCrew1->AddMember(crewPurp);
     caravans.push_back(testCrew1);
 
+
+    /*
     testCrew2->AddMember(crewYubi);
     testCrew2->AddMember(crewBel);
     caravans.push_back(testCrew2);
@@ -664,8 +667,9 @@ void InitObjects()
     testCrew3->AddMember(crewEmily);
     testCrew3->AddMember(crewLala);
     caravans.push_back(testCrew3);
+    */
 
-    testCrew1->MoveToRoad(roads[ROAD_ERICENNES_CHORAS],true);
+    testCrew1->MoveToRoad(roads[ROAD_ERICENNES_CHORAS],false);
 
     //ericennes->AddAvailableCrew(crewLala);
 

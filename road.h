@@ -14,19 +14,22 @@ class Road
 {
 public:
     int identity;
-    int length;
+    float length;
 
     int endpointA; // Use the identity of a place.
     int endpointB;
 
     std::map<int,int>xWaypoints;
     std::map<int,int>yWaypoints;
+    int lastWaypoint; // When not reversed.
 
     Road(int id);
     ~Road();
 
     void DrawOnOverworld();
     void SetWaypoint(unsigned index, int x, int y);
+
+    float ReturnSegmentLength(int a, int b);
 };
 
 #endif // ROAD_H_INCLUDED

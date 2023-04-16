@@ -115,4 +115,16 @@ void Road::SetWaypoint(unsigned index, int x, int y)
 {
     xWaypoints[index] = x;
     yWaypoints[index] = y;
+
+    lastWaypoint = xWaypoints.size()-1;
+}
+
+float Road::ReturnSegmentLength(int a, int b)
+{
+    float x1 = xWaypoints[a];
+    float y1 = yWaypoints[a];
+    float x2 = xWaypoints[b];
+    float y2 = yWaypoints[b];
+
+    return std::hypot(y2-y1,x2-x1);
 }

@@ -15,54 +15,55 @@ class Caravan
 public:
 /// State
     bool active;
-
 /// Roster
     std::vector<Being*>members;
     Being*caravanLeader;
-
 /// Location
     bool atPlace;
-    //int whichPlace;
     Place *whichPlace;
-
     bool onRoad; // As opposed to at a city or other landmark, for overworld drawing purposes.
-    //int whichRoad;
     Road *whichRoad;
     bool reverseRoad;
     bool atRoadsEnd;
-    unsigned currentWaypoint;
-    unsigned nextWaypoint;
-    unsigned finalWaypoint;
+    int currentWaypoint;
+    int nextWaypoint;
+    int finalWaypoint;
     float distanceFromNextWaypoint; // How much travel remains to reach next waypoint.
-
+    float distanceFromRoadsEnd;
+    float roadSegmentLength;
     float overworldXPosition;
     float overworldYPosition;
+    float overworldXDestination;
+    float overworldYDestination;
 
     float travelSpeed;
-
-    Caravan();
-    ~Caravan();
-
-    void UpdateOverworldPosition();
-
 /// Inventory
     Inventory inventory;
     float weight, maxWeight;
 
-    void SetActive(bool a);
-    void MoveToPlace(Place *p);
-    void MoveToRoad(Road *r, bool isEndpointA);
-
-/// Manipulate roster
+/// Constructor
+    Caravan();
+    ~Caravan();
+/// State functions
+    bool IsActive();
+/// Roster functions
     void AddMember(Being *b);
     //void SwapLeader(Being *b);
+/// State functions
+    void SetActive(bool a);
+/// Location functions
     void UpdateTravelSpeed();
+    void MoveToPlace(Place *p);
+    void MoveToRoad(Road *r, bool isReverseRoad);
+    void MoveToRoadSegment(int a, bool isReverseRoad); // Must first have index of waypoints set in MoveToRoad();
 
-/// Drawing
+    void UpdateOverworldPosition();
+
+    void Travel();
+/// Inventory functions
+
+/// Drawing functions
     void DrawOnOverworld();
-
-    bool IsActive();
-
 };
 
 #endif // CARAVAN_H_INCLUDED
