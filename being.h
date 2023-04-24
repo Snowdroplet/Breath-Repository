@@ -70,7 +70,7 @@ public:
     //void DrawSkills(float x, float y);
     //void DrawSkillsDetailed(float x, float y);
 
-    void DrawOverworldActivity(float x, float y);
+    void DrawActivity(float x, float y);
     void ProgressAnimation();
 
 };

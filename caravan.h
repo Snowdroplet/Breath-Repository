@@ -10,6 +10,9 @@
 #include "road.h"
 #include "place.h"
 
+/// Dependencies
+class Place; // Circular
+
 class Caravan
 {
 public:
@@ -28,15 +31,20 @@ public:
     int currentWaypoint;
     int nextWaypoint;
     int finalWaypoint;
+    int roadDestination;
     float distanceFromNextWaypoint; // How much travel remains to reach next waypoint.
+    float timeToNextWaypoint; // How much travel time remains to reach next waypoint.
     float distanceFromRoadsEnd;
     float roadSegmentLength;
-    float overworldXPosition;
-    float overworldYPosition;
-    float overworldXDestination;
-    float overworldYDestination;
+    float overworldXPosition, overworldYPosition;
+    float overworldXDestination, overworldYDestination;
 
     float travelSpeed;
+
+/// Place activities
+    int timeIdleAtPlace;
+
+
 /// Inventory
     Inventory inventory;
     float weight, maxWeight;
@@ -59,11 +67,12 @@ public:
 
     void UpdateOverworldPosition();
 
-    void Travel();
+    void OverworldLogic();
 /// Inventory functions
 
 /// Drawing functions
-    void DrawOnOverworld();
+    void DrawSpriteOnOverworld();
+    void DrawActivity(float x, float y);
 };
 
 #endif // CARAVAN_H_INCLUDED

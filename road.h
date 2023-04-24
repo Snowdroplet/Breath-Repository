@@ -26,10 +26,11 @@ public:
     Road(int id);
     ~Road();
 
-    void DrawOnOverworld();
     void SetWaypoint(unsigned index, int x, int y);
 
     float ReturnSegmentLength(int a, int b);
+
+    void DrawSegmentsOnOverworld();
 };
 
 #endif // ROAD_H_INCLUDED

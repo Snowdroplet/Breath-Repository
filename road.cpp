@@ -23,7 +23,7 @@ Road::Road(int id)
 
     case ROAD_ERICENNES_KETH_ENTWEIR:
         endpointA = PL_ERICENNES;
-        endpointB = PL_KETH_KETHER;
+        endpointB = PL_KETH_ENTWEIR;
         SetWaypoint(0, TILE_W*18, TILE_H*20);
         SetWaypoint(1, TILE_W*16, TILE_H*18);
         SetWaypoint(2, TILE_W*13, TILE_H*18);
@@ -78,15 +78,15 @@ Road::~Road()
     yWaypoints.clear();
 }
 
-void Road::DrawOnOverworld()
+void Road::DrawSegmentsOnOverworld()
 {
     al_draw_filled_circle(xWaypoints[0] - overworldCameraXPosition,
                           yWaypoints[0] - overworldCameraYPosition,
-                          6, COL_BLUE);
+                          6, COL_DARK_BROWN);
 
     al_draw_filled_circle(xWaypoints[xWaypoints.rbegin()->first] - overworldCameraXPosition,
                           yWaypoints[yWaypoints.rbegin()->first] - overworldCameraYPosition,
-                          6, COL_BLUE);
+                          6, COL_DARK_BROWN);
 
     for(unsigned i = 0; i < xWaypoints.size()-1; i++)
     {
@@ -94,21 +94,21 @@ void Road::DrawOnOverworld()
                      yWaypoints[i] - overworldCameraYPosition,
                      xWaypoints[i+1] - overworldCameraXPosition,
                      yWaypoints[i+1] - overworldCameraYPosition,
-                     COL_BLUE, 6);
+                     COL_DARK_BROWN, 6);
         al_draw_line(xWaypoints[i] - overworldCameraXPosition,
                      yWaypoints[i] - overworldCameraYPosition,
                      xWaypoints[i+1] - overworldCameraXPosition,
                      yWaypoints[i+1] - overworldCameraYPosition,
-                     COL_INDIGO, 2);
+                     COL_BROWN, 2);
     }
 
     al_draw_filled_circle(xWaypoints[0] - overworldCameraXPosition,
                           yWaypoints[0] - overworldCameraYPosition,
-                          3, COL_INDIGO);
+                          3, COL_BROWN);
 
     al_draw_filled_circle(xWaypoints[xWaypoints.rbegin()->first] - overworldCameraXPosition,
                           yWaypoints[yWaypoints.rbegin()->first] - overworldCameraYPosition,
-                          3, COL_INDIGO);
+                          3, COL_BROWN);
 }
 
 void Road::SetWaypoint(unsigned index, int x, int y)

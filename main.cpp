@@ -372,8 +372,16 @@ void ProgressWorld()
 
         for(std::vector<Caravan*>::iterator it = caravans.begin(); it != caravans.end(); it++)
         {
-            (*it)->Travel();
-            /// Here: If caravan is atRoadsEnd, move it to the Place corresponding to its Road's endpointA or B
+            (*it)->OverworldLogic();
+
+            if((*it)->atRoadsEnd)
+            {
+                Place*destinationPlace = places[(*it)->roadDestination];
+
+                (*it)->MoveToPlace(destinationPlace);
+                destinationPlace->AddVisitorCaravan(*it);
+
+            }
         }
     }
 
@@ -428,13 +436,16 @@ void DrawUI()
         DrawOverworldDebugOverlay();
 
         for(unsigned i = 0; i < places.size(); i++)
-            places[i]->DrawOnOverworld();
+            places[i]->DrawSpriteOnOverworld();
 
         for(unsigned i = 0; i < roads.size(); i++)
-            roads[i]->DrawOnOverworld();
+            roads[i]->DrawSegmentsOnOverworld();
 
         for(unsigned i = 0; i < caravans.size(); i++)
-            caravans[i]->DrawOnOverworld();
+            caravans[i]->DrawSpriteOnOverworld();
+
+        for(unsigned i = 0; i < places.size(); i++)
+           places[i]->DrawBubbleOnOverworld();
     }
     /*
     else if(activeUI == UI_PLACE)
@@ -657,7 +668,6 @@ void InitObjects()
     caravans.push_back(testCrew1);
 
 
-    /*
     testCrew2->AddMember(crewYubi);
     testCrew2->AddMember(crewBel);
     caravans.push_back(testCrew2);
@@ -667,9 +677,10 @@ void InitObjects()
     testCrew3->AddMember(crewEmily);
     testCrew3->AddMember(crewLala);
     caravans.push_back(testCrew3);
-    */
 
-    testCrew1->MoveToRoad(roads[ROAD_ERICENNES_CHORAS],false);
+    testCrew1->MoveToRoad(roads[ROAD_ERICENNES_KETH_ENTWEIR],false);
+    testCrew2->MoveToRoad(roads[ROAD_KETH_KETHER_KETH_ENTWEIR],false);
+    testCrew3->MoveToRoad(roads[ROAD_KETH_KETHER_VIELLEICHT], true);
 
     //ericennes->AddAvailableCrew(crewLala);
 

@@ -8,14 +8,14 @@ Being::Being()
     spriteWidth = TILE_W;
     spriteHeight = TILE_H;
 
-    travelSpeed = 0.3;
+    travelSpeed = 1.0;
 
-    std::cout << "Being created." << std::endl;
+    //std::cout << "Being created." << std::endl;
 }
 
 Being::~Being()
 {
-    std::cout << "Being deleted." << std::endl;
+    //std::cout << "Being deleted." << std::endl;
 }
 
 void Being::SetActive(bool a)
@@ -153,7 +153,7 @@ void Being::DrawSkillsDetailed(float x, float y)
 }
 */
 
-void Being::DrawOverworldActivity(float x, float y)
+void Being::DrawActivity(float x, float y)
 {
     int f = 0;
     if(facingLeft)
@@ -164,8 +164,8 @@ void Being::DrawOverworldActivity(float x, float y)
                           spriteHeight*activity,
                           spriteWidth,
                           spriteHeight,
-                          x-overworldCameraXPosition - (spriteWidth/2),
-                          y-overworldCameraYPosition - (spriteHeight/2),
+                          x - (spriteWidth/2),
+                          y - (spriteHeight/2),
                           f);
 
     ProgressAnimation();
