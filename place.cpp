@@ -1,8 +1,11 @@
 #include "place.h"
 
+std::map<int, Place*> Place::places;
+
 Place::Place(int id)
 {
     identity = id;
+    selfPointer = this;
     //std::cout << "Place created with ID " << id << std::endl;
 
     /// Replace with read from external file later
@@ -29,8 +32,8 @@ Place::Place(int id)
 
     case PL_KETH_ENTWEIR:
         name = "Keth Entweir";
-        overworldXPosition = TILE_W*11;
-        overworldYPosition = TILE_H*18;
+        overworldXPosition = TILE_W*9;
+        overworldYPosition = TILE_H*17;
         break;
 
     case PL_VIELLEICHT:
@@ -49,6 +52,18 @@ Place::Place(int id)
         name = "Ambleforth";
         overworldXPosition = TILE_W*4;
         overworldYPosition = TILE_H*14;
+        break;
+
+    case PL_ROSKANEL:
+        name = "Roskanel";
+        overworldXPosition = TILE_W*26;
+        overworldYPosition = TILE_H*24;
+        break;
+
+    case PL_ROSELLA:
+        name = "Rosella";
+        overworldXPosition = TILE_W*28;
+        overworldYPosition = TILE_H*30;
         break;
     }
 
@@ -80,9 +95,29 @@ void Place::AddCitizen(Being *b)
     citizens.push_back(b);
 }
 
+void Place::RemoveCitizen(Being *b)
+{
+
+}
+
 void Place::AddVisitorCaravan(Caravan *c)
 {
     visitors.push_back(c);
+    AdjustBubbleDimensions();
+}
+
+void Place::RemoveVisitorCaravan(Caravan *c)
+{
+    for(std::vector<Caravan*>::iterator it = visitors.begin(); it != visitors.end(); ++it)
+    {
+        if(*it == c)
+        {
+            visitors.erase(it);
+            break;
+        }
+
+    }
+
     AdjustBubbleDimensions();
 }
 
@@ -97,7 +132,7 @@ void Place::AdjustBubbleDimensions()
     else
         bubbleActive = false;
 
-    std::cout << "bubbleWidth adjusted to: " << bubbleWidth << std::endl;
+    //std::cout << "bubbleWidth adjusted to: " << bubbleWidth << std::endl;
 }
 
 void Place::DrawSpriteOnOverworld()

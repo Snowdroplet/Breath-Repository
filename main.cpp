@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_image.h>
@@ -38,11 +36,6 @@ Being *crewWindow = nullptr;
 Being *crewEmily = nullptr;
 Being *crewLala = nullptr;
 
-std::vector<Being*>people;
-std::vector<Caravan*>caravans;
-std::map<int,Place*>places;
-std::map<int,Road*>roads;
-
 void InterpretInput();
 void ProgressWorld();
 void ChangeUI(int whichUI, int whichSubUI, int whichTab);
@@ -55,8 +48,6 @@ void CleanupObjects();
 
 int main(int argc, char *argv[])
 {
-    srand(time(nullptr));
-
     al_install_system(ALLEGRO_VERSION_INT,NULL);
     al_init_native_dialog_addon();
 
@@ -355,28 +346,28 @@ void ProgressWorld()
 {
     if(activeUI == UI_OVERWORLD)
     {
-        for(std::map<int,Place*>::iterator it = places.begin(); it != places.end(); it++)
+        for(std::map<int,Place*>::iterator it = Place::places.begin(); it != Place::places.end(); it++)
         {
 
         }
 
-        for(std::map<int,Road*>::iterator it = roads.begin(); it != roads.end(); it++)
+        for(std::map<int,Road*>::iterator it = Road::roads.begin(); it != Road::roads.end(); it++)
         {
 
         }
 
-        for(std::vector<Being*>::iterator it = people.begin(); it != people.end(); it++)
+        for(std::vector<Being*>::iterator it = Being::people.begin(); it != Being::people.end(); it++)
         {
 
         }
 
-        for(std::vector<Caravan*>::iterator it = caravans.begin(); it != caravans.end(); it++)
+        for(std::vector<Caravan*>::iterator it = Caravan::caravans.begin(); it != Caravan::caravans.end(); it++)
         {
             (*it)->OverworldLogic();
 
             if((*it)->atRoadsEnd)
             {
-                Place*destinationPlace = places[(*it)->roadDestination];
+                Place*destinationPlace = Place::places[(*it)->roadDestination];
 
                 (*it)->MoveToPlace(destinationPlace);
                 destinationPlace->AddVisitorCaravan(*it);
@@ -425,7 +416,7 @@ void ChangePlayerLocation(int whichLocation)
         playerAtPlace = true;
 
     playerLocation = whichLocation;
-    playerLocationPtr = places[whichLocation];
+    playerLocationPtr = Place::places[whichLocation];
 }
 */
 
@@ -435,17 +426,17 @@ void DrawUI()
     {
         DrawOverworldDebugOverlay();
 
-        for(unsigned i = 0; i < places.size(); i++)
-            places[i]->DrawSpriteOnOverworld();
+        for(unsigned i = 0; i < Place::places.size(); i++)
+            Place::places[i]->DrawSpriteOnOverworld();
 
-        for(unsigned i = 0; i < roads.size(); i++)
-            roads[i]->DrawSegmentsOnOverworld();
+        for(unsigned i = 0; i < Road::roads.size(); i++)
+            Road::roads[i]->DrawSegmentsOnOverworld();
 
-        for(unsigned i = 0; i < caravans.size(); i++)
-            caravans[i]->DrawSpriteOnOverworld();
+        for(unsigned i = 0; i < Caravan::caravans.size(); i++)
+            Caravan::caravans[i]->DrawSpriteOnOverworld();
 
-        for(unsigned i = 0; i < places.size(); i++)
-           places[i]->DrawBubbleOnOverworld();
+        for(unsigned i = 0; i < Place::places.size(); i++)
+           Place::places[i]->DrawBubbleOnOverworld();
     }
     /*
     else if(activeUI == UI_PLACE)
@@ -579,15 +570,25 @@ void DrawUI()
 void InitObjects()
 {
     for(unsigned i = PL_MARKER_FIRST; i <= PL_MARKER_LAST; i++)
-        places[i] = new Place(i);
+    {
+        Place::places[i] = new Place(i);
+    }
 
     for(unsigned i = ROAD_MARKER_FIRST; i <= ROAD_MARKER_LAST; i++)
-        roads[i] = new Road(i);
+    {
+        Road::roads[i] = new Road(i);
+
+        WorldGraph::AddRoadToBaseGraph(Road::roads[i]->endpointA,
+                                        Road::roads[i]->endpointB,
+                                        Road::roads[i]->length);
+
+
+    }
 
 
     /*
     playerCrew = new Caravan;
-    caravans.push_back(playerCrew);
+    Caravan::caravans.push_back(playerCrew);
     */
 
     testCrew1 = new Caravan;
@@ -599,32 +600,32 @@ void InitObjects()
     player->SetName("Player");
     player->SetRace(RACE_VERIT);
     player->SetPortrait(RACE_VERIT,1);
-    people.push_back(player);
+    Being::people.push_back(player);
     */
 
     crewZynes = new Being;
     crewZynes->SetName("Test Verit Zynes");
     crewZynes->SetRace(RACE_VERIT);
     //crewZynes->SetPortrait(RACE_VERIT,0);
-    people.push_back(crewZynes);
+    Being::people.push_back(crewZynes);
 
     crewRukhra = new Being;
     crewRukhra->SetName("Test Haphae Rukhra");
     crewRukhra->SetRace(RACE_HAPHAE);
     //crewRukhra->SetPortrait(RACE_HAPHAE,0);
-    people.push_back(crewRukhra);
+    Being::people.push_back(crewRukhra);
 
     crewPurp = new Being;
     crewPurp->SetName("Test Verit Purp");
     crewPurp->SetRace(RACE_VERIT);
     //crewPurp->SetPortrait(RACE_VERIT,2);
-    people.push_back(crewPurp);
+    Being::people.push_back(crewPurp);
 
     crewYubi = new Being;
     crewYubi->SetName("Test Beyu Yubi");
     crewYubi->SetRace(RACE_BEYU);
     //crewYubi->SetPortrait(RACE_BEYU,2);
-    people.push_back(crewYubi);
+    Being::people.push_back(crewYubi);
 
 ///
 
@@ -632,32 +633,32 @@ void InitObjects()
     crewBel->SetName ("Test Ordon Bel");
     crewBel->SetRace (RACE_ORDON);
     //crewBel->SetPortrait(RACE_ORDON,2);
-    people.push_back(crewBel);
+    Being::people.push_back(crewBel);
 
     crewWindow = new Being;
     crewWindow->SetName ("Test Makhi Window");
     crewWindow->SetRace (RACE_MAKHI);
     //crewWindow->SetPortrait(RACE_MAKHI,0);
     //crewWindow->SetSkill(SK_MECHANIC, 1);
-    people.push_back(crewWindow);
+    Being::people.push_back(crewWindow);
 
     crewPaul = new Being;
     crewPaul->SetName("Test Makhi Paul");
     crewPaul->SetRace(RACE_MAKHI);
     //crewPaul->SetPortrait(RACE_MAKHI,2);
-    people.push_back(crewPaul);
+    Being::people.push_back(crewPaul);
 
     crewEmily = new Being;
     crewEmily->SetName("Test Yeti Emily");
     crewEmily->SetRace(RACE_YETI);
     //crewEmily->SetPortrait(RACE_YETI,1);
-    people.push_back(crewEmily);
+    Being::people.push_back(crewEmily);
 
     crewLala = new Being;
     crewLala->SetName("Test Beyu Lala");
     crewLala->SetRace(RACE_BEYU);
     //crewLala->SetPortrait(RACE_BEYU,1);
-    people.push_back(crewLala);
+    Being::people.push_back(crewLala);
 
 
     //playerCrew->AddMember(player);
@@ -665,22 +666,21 @@ void InitObjects()
     testCrew1->AddMember(crewZynes);
     testCrew1->AddMember(crewRukhra);
     testCrew1->AddMember(crewPurp);
-    caravans.push_back(testCrew1);
-
+    Caravan::caravans.push_back(testCrew1);
 
     testCrew2->AddMember(crewYubi);
     testCrew2->AddMember(crewBel);
-    caravans.push_back(testCrew2);
+    Caravan::caravans.push_back(testCrew2);
 
     testCrew3->AddMember(crewWindow);
     testCrew3->AddMember(crewPaul);
     testCrew3->AddMember(crewEmily);
     testCrew3->AddMember(crewLala);
-    caravans.push_back(testCrew3);
+    Caravan::caravans.push_back(testCrew3);
 
-    testCrew1->MoveToRoad(roads[ROAD_ERICENNES_KETH_ENTWEIR],false);
-    testCrew2->MoveToRoad(roads[ROAD_KETH_KETHER_KETH_ENTWEIR],false);
-    testCrew3->MoveToRoad(roads[ROAD_KETH_KETHER_VIELLEICHT], true);
+    testCrew1->MoveToRoad(Road::roads[ROAD_ERICENNES_KETH_ENTWEIR],false);
+    testCrew2->MoveToRoad(Road::roads[ROAD_KETH_KETHER_KETH_ENTWEIR],false);
+    testCrew3->MoveToRoad(Road::roads[ROAD_KETH_KETHER_VIELLEICHT], true);
 
     //ericennes->AddAvailableCrew(crewLala);
 
@@ -697,23 +697,23 @@ void InitObjects()
 void CleanupObjects()
 {
 
-    for(std::vector<Being*>::iterator it = people.begin(); it != people.end();)
+    for(std::vector<Being*>::iterator it = Being::people.begin(); it != Being::people.end();)
     {
         delete *it;
-        people.erase(it);
+        Being::people.erase(it);
     }
 
-    for(std::vector<Caravan*>::iterator it = caravans.begin(); it != caravans.end();)
+    for(std::vector<Caravan*>::iterator it = Caravan::caravans.begin(); it != Caravan::caravans.end();)
     {
         delete *it;
-        caravans.erase(it);
+        Caravan::caravans.erase(it);
     }
 
-    for(std::map<int,Place*>::iterator it = places.begin(); it != places.end(); ++it)
+    for(std::map<int,Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
         delete it->second;
-    places.clear();
+    Place::places.clear();
 
-    for(std::map<int, Road*>::iterator it = roads.begin(); it != roads.end(); ++it)
+    for(std::map<int, Road*>::iterator it = Road::roads.begin(); it != Road::roads.end(); ++it)
         delete it->second;
-    roads.clear();
+    Road::roads.clear();
 }

@@ -3,12 +3,14 @@
 
 #include <iostream>
 #include <vector>
+#include <random>
 
 #include "being.h"
 #include "inventory.h"
-#include "placeconsts.h"
+#include "placeindex.h"
 #include "road.h"
 #include "place.h"
+#include "worldgraph.h"
 
 /// Dependencies
 class Place; // Circular
@@ -16,11 +18,18 @@ class Place; // Circular
 class Caravan
 {
 public:
+    static std::vector<Caravan*>caravans;
+
 /// State
     bool active;
 /// Roster
     std::vector<Being*>members;
     Being*caravanLeader;
+/// Pathfinding
+    WorldGraph worldGraph;
+    int pathfindingDestination; /// Later modify to support multiple objectives in a priority queue.
+
+
 /// Location
     bool atPlace;
     Place *whichPlace;
@@ -42,7 +51,9 @@ public:
     float travelSpeed;
 
 /// Place activities
-    int timeIdleAtPlace;
+    int currentTimeAtPlace, thresholdTimeAtPlace;
+    const int MIN_TIME_AT_PLACE = 100;
+    const int MAX_TIME_AT_PLACE = 500;
 
 
 /// Inventory

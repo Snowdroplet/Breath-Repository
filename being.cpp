@@ -1,5 +1,7 @@
 #include "being.h"
 
+std::vector<Being*> Being::people;
+
 Being::Being()
 {
     SetActive(true);

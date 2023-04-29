@@ -1,8 +1,13 @@
 #include "caravan.h"
 
+std::vector<Caravan*> Caravan::caravans;
+
 Caravan::Caravan()
 {
     SetActive(true);
+
+    worldGraph.SetToBaseGraph();
+
     atPlace = false;
     onRoad = false;
     whichPlace = nullptr;
@@ -61,7 +66,23 @@ void Caravan::OverworldLogic()
     }
     else if(atPlace)
     {
+        currentTimeAtPlace++;
+        if(currentTimeAtPlace >= thresholdTimeAtPlace)
+        {
+            if(worldGraph.path.empty())
+            {
+                worldGraph.Dijkstra(whichPlace->identity,pathfindingDestination);
+            }
+            else
+            {
+                //for()
 
+                //MoveToRoad(whichPlace->roadConnections[worldGraph.path[0]]->second->first,
+                  //         whichPlace->roadConnections[worldGraph.path[0]]->second->second);
+
+                worldGraph.path.erase(worldGraph.path.begin());
+            }
+        }
     }
 }
 
@@ -72,6 +93,15 @@ void Caravan::MoveToPlace(Place *p)
 
     onRoad = false;
     atRoadsEnd = false;
+
+    currentTimeAtPlace = 0;
+
+    std::random_device device;
+    std::mt19937 generator(device());
+    std::uniform_int_distribution<> distribution(MIN_TIME_AT_PLACE, MAX_TIME_AT_PLACE);
+    thresholdTimeAtPlace = distribution(generator);
+
+
 }
 
 void Caravan::MoveToRoad(Road *r, bool isReverseRoad)

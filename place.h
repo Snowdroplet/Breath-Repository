@@ -6,7 +6,7 @@
 
 #include "allegrocustom.h"
 
-#include "placeconsts.h"
+#include "placeindex.h"
 
 #include "overworld.h"
 
@@ -26,9 +26,11 @@ class Place
     const int OVERWORLD_SPRITE_H = 64;
 
 public:
-/// State
-    int identity;
+    static std::map <int, Place*>places;
 
+/// Identity
+    int identity;
+    Place *selfPointer;
 
     std::string name; // Just the simple name for identification on the overworld map.
     std::string epithet; // e.g. ", City of Dreaming Spires"
@@ -49,7 +51,7 @@ public:
 /// Location
     int overworldXPosition, overworldYPosition; // Absolute position on the overworld.
 
-    std::vector<Place*>connections;
+    std::map<Place*, std::map<Road*, bool>>roadConnections; // <Which place? , < Which road? , is reverse road? > >
 
 /// Bubble
     bool bubbleActive;

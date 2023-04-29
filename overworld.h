@@ -10,8 +10,8 @@
 #include "gamestate.h"
 #include "resource.h"
 
-#include "placeconsts.h"
-#include "roadconsts.h"
+#include "placeindex.h"
+#include "roadindex.h"
 
 extern int overworldCameraXPosition;
 extern int overworldCameraYPosition;

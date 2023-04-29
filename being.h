@@ -4,11 +4,12 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <vector>
 #include <iterator>
 
 #include <allegro5/allegro_image.h>
 
-#include "beingconsts.h"
+#include "beingindex.h"
 #include "overworld.h"
 
 #include "gamestate.h"
@@ -24,6 +25,8 @@ const std::string skillNames[NUM_SKILLS] =
 class Being
 {
 public:
+    static std::vector<Being*>people;
+
 /// State
     bool active;
     int activity;

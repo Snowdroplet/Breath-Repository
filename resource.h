@@ -5,7 +5,7 @@
 #include <allegro5/allegro_font.h>
 
 #include "UI.h"
-#include "beingconsts.h"
+#include "beingindex.h"
 
 /*
 const int PNG_INACTIVE = 0;

@@ -1,5 +1,5 @@
-#ifndef PLACECONSTS_H_INCLUDED
-#define PLACECONSTS_H_INCLUDED
+#ifndef PLACEINDEX_H_INCLUDED
+#define PLACEINDEX_H_INCLUDED
 
 enum enumPlaces
 {
@@ -26,6 +26,6 @@ enum enumPlaces
     PL_ETRURI = 32
 };
 const unsigned PL_MARKER_FIRST = PL_ERICENNES;
-const unsigned PL_MARKER_LAST = PL_AMBLEFORTH;
+const unsigned PL_MARKER_LAST = PL_ROSELLA;
 
-#endif // PLACECONSTS_H_INCLUDED
+#endif // PLACEINDEX_H_INCLUDED

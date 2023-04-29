@@ -1,5 +1,5 @@
-#ifndef BEINGCONSTS_H_INCLUDED
-#define BEINGCONSTS_H_INCLUDED
+#ifndef BEINGINDEX_H_INCLUDED
+#define BEINGINDEX_H_INCLUDED
 
 const int NUM_RACES = 7;
 enum enumRace
@@ -58,4 +58,4 @@ enum enumActivities
     ACT_WALKING = 0
 };
 
-#endif // BEINGCONSTS_H_INCLUDED
+#endif // BEINGINDEX_H_INCLUDED
