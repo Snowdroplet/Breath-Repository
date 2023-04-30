@@ -48,6 +48,8 @@ void CleanupObjects();
 
 int main(int argc, char *argv[])
 {
+    srand(time(NULL));
+
     al_install_system(ALLEGRO_VERSION_INT,NULL);
     al_init_native_dialog_addon();
 
@@ -364,15 +366,6 @@ void ProgressWorld()
         for(std::vector<Caravan*>::iterator it = Caravan::caravans.begin(); it != Caravan::caravans.end(); it++)
         {
             (*it)->OverworldLogic();
-
-            if((*it)->atRoadsEnd)
-            {
-                Place*destinationPlace = Place::places[(*it)->roadDestination];
-
-                (*it)->MoveToPlace(destinationPlace);
-                destinationPlace->AddVisitorCaravan(*it);
-
-            }
         }
     }
 
@@ -578,11 +571,15 @@ void InitObjects()
     {
         Road::roads[i] = new Road(i);
 
-        WorldGraph::AddRoadToBaseGraph(Road::roads[i]->endpointA,
-                                        Road::roads[i]->endpointB,
-                                        Road::roads[i]->length);
+        Road* r = Road::roads[i];
+
+        WorldGraph::AddRoadToBaseGraph(r->endpointA, r->endpointB, r->length);
+
+        Place::places[r->endpointA]->connections.push_back(r);
+        Place::places[r->endpointB]->connections.push_back(r);
 
 
+        //std::cout << "Testing road length for negatives: " << Road::roads[i]->length << std::endl;
     }
 
 
@@ -668,6 +665,7 @@ void InitObjects()
     testCrew1->AddMember(crewPurp);
     Caravan::caravans.push_back(testCrew1);
 
+
     testCrew2->AddMember(crewYubi);
     testCrew2->AddMember(crewBel);
     Caravan::caravans.push_back(testCrew2);
@@ -678,7 +676,7 @@ void InitObjects()
     testCrew3->AddMember(crewLala);
     Caravan::caravans.push_back(testCrew3);
 
-    testCrew1->MoveToRoad(Road::roads[ROAD_ERICENNES_KETH_ENTWEIR],false);
+    testCrew1->MoveToRoad(Road::roads[ROAD_ROSKANEL_ROSELLA],false);
     testCrew2->MoveToRoad(Road::roads[ROAD_KETH_KETHER_KETH_ENTWEIR],false);
     testCrew3->MoveToRoad(Road::roads[ROAD_KETH_KETHER_VIELLEICHT], true);
 

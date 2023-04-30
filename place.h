@@ -51,7 +51,7 @@ public:
 /// Location
     int overworldXPosition, overworldYPosition; // Absolute position on the overworld.
 
-    std::map<Place*, std::map<Road*, bool>>roadConnections; // <Which place? , < Which road? , is reverse road? > >
+    std::vector<Road*>connections;
 
 /// Bubble
     bool bubbleActive;

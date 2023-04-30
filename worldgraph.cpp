@@ -7,7 +7,9 @@ void WorldGraph::AddPlaceToBaseGraph(int vertex)
     if (s_baseGraph.find(vertex) == s_baseGraph.end()) // vertex not already listed
     {
         s_baseGraph[vertex] = {}; // Creates an empty map at index "vertex"
-        //std::cout << "Vertex " << vertex << " added to graph." << std::endl;
+#ifdef debug_output_worldgraph_dijkstra
+        std::cout << "Vertex " << vertex << " added to base graph." << std::endl;
+#endif
     }
 
 }
@@ -20,12 +22,17 @@ void WorldGraph::AddRoadToBaseGraph(int endA, int endB, float weight)
     AddPlaceToBaseGraph(endB);
 
     s_baseGraph[endA][endB] = weight; // <endA , <endB , weight>>
+    s_baseGraph[endB][endA] = weight;
 
+#ifdef debug_output_worldgraph_dijkstra
+    std::cout << "Road " << placeNames.at(endA) << " -- " << placeNames.at(endB) << " Weight:" << weight << " added to graph" << std::endl;
+#endif
 }
 
 WorldGraph::WorldGraph()
 {
     SetToBaseGraph();
+    //std::cout << "Caravan graph set to base graph here" << std::endl;
 }
 
 WorldGraph::~WorldGraph()
@@ -36,59 +43,85 @@ WorldGraph::~WorldGraph()
 
 void WorldGraph::Dijkstra(int source, int destination)
 {
-    // Create a priority queue to store the vertices in increasing order of their distances.
-    std::priority_queue<std::pair<int,int>, std::vector<std::pair<int,int>>, std::greater<>> priorityQueue;
+    path.clear();
 
-    // Create a map to store the distances from the source vertex to each vertex.
-    std::map<int,int> distances;
+    std::priority_queue<std::pair<int,float>, std::vector<std::pair<int,float>>, std::greater<>> priorityQueue;
+    std::map<int,float> distances;
+    std::map<int,int> previous;
+    std::set<int> visitedVertices;
+
     for (const auto& vertex : graph)
     {
         distances[vertex.first] = INT_MAX;
     }
     distances[source] = 0;
 
-    // Create a map to store the previous vertex in the shortest path.
-    std::map<int,int> previous;
-
-    // Add the source vertex to the priority queue.
     priorityQueue.push({0, source});
+
     while (!priorityQueue.empty())
     {
-        // Pop the vertex with the smallest distance from the priority queue.
         int currentVertex = priorityQueue.top().second;
         priorityQueue.pop();
-        // Stop the algorithm once the destination vertex has been visited.
+
+        if (visitedVertices.find(currentVertex) != visitedVertices.end())
+        {
+            continue;
+        }
+
+        visitedVertices.insert(currentVertex);
+/*
         if (currentVertex == destination)
         {
             break;
         }
-        // Update the distances of the neighbors if necessary.
+*/
         for (const auto& neighbor : graph.at(currentVertex))
         {
             int neighborVertex = neighbor.first;
-            int neighborWeight = neighbor.second;
-            int newDistance = distances[currentVertex] + neighborWeight;
+            float neighborWeight = neighbor.second;
+            float newDistance = distances[currentVertex] + neighborWeight;
             if (newDistance < distances[neighborVertex])
             {
                 distances[neighborVertex] = newDistance;
+#ifdef debug_output_worldgraph_dijkstra
+                std::cout << "distance of vertex " << placeNames.at(neighborVertex) << " (from source " << placeNames.at(source) << ") becomes " << newDistance << std::endl; // Error check
+#endif
                 previous[neighborVertex] = currentVertex;
                 priorityQueue.push({newDistance, neighborVertex});
             }
         }
     }
 
+    if (distances[destination] == INT_MAX)
+    {
+        path.clear();
+        std::cout << "Destination vertex is unreachable" << std::endl;
+        return;
+    }
 
-    // Reconstruct the shortest path from the source to the destination.
-    path.clear();
     int currentVertex = destination;
     while (currentVertex != source)
     {
         path.push_back(currentVertex);
+        visitedVertices.insert(currentVertex);
         currentVertex = previous[currentVertex];
     }
+
     path.push_back(source);
+
     std::reverse(path.begin(), path.end());
+
+#ifdef debug_output_worldgraph_dijkstra
+    std::cout << "Path prepared: ";
+    for (const auto& vertex : path)
+    {
+        std::cout << placeNames.at(vertex) << "  ";
+    }
+    std::cout << std::endl;
+#endif
+
 }
+
 
 
 void WorldGraph::SetToBaseGraph()

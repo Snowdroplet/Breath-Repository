@@ -59,10 +59,17 @@ void Caravan::UpdateOverworldPosition()
 
 void Caravan::OverworldLogic()
 {
-    if(onRoad && !atRoadsEnd)
+    if(onRoad)
     {
-        distanceFromNextWaypoint -= travelSpeed;
-        UpdateOverworldPosition();
+        if(atRoadsEnd)
+        {
+            MoveToPlace(Place::places[roadDestination]);
+        }
+        else
+        {
+            distanceFromNextWaypoint -= travelSpeed;
+            UpdateOverworldPosition();
+        }
     }
     else if(atPlace)
     {
@@ -71,16 +78,46 @@ void Caravan::OverworldLogic()
         {
             if(worldGraph.path.empty())
             {
-                worldGraph.Dijkstra(whichPlace->identity,pathfindingDestination);
+#ifdef debug_output_worldgraph_dijkstra
+                std::cout << "Worldgraph path empty. " << std::endl;
+#endif
+                pathfindingDestination = rand()%(PL_MARKER_LAST-PL_MARKER_FIRST) + PL_MARKER_FIRST;
+#ifdef debug_output_worldgraph_dijkstra
+                std::cout << "Random destination set to " << placeNames.at(pathfindingDestination) << std::endl;
+#endif
+                if(pathfindingDestination != whichPlace->identity)
+                {
+                    worldGraph.Dijkstra(whichPlace->identity,pathfindingDestination);
+                    std::cout << std::endl;
+                }
+                else
+                {
+#ifdef debug_output_worldgraph_dijkstra
+                    std::cout << "No need to pathfind." << std::endl;
+#endif
+                }
             }
             else
             {
-                //for()
-
-                //MoveToRoad(whichPlace->roadConnections[worldGraph.path[0]]->second->first,
-                  //         whichPlace->roadConnections[worldGraph.path[0]]->second->second);
-
                 worldGraph.path.erase(worldGraph.path.begin());
+
+                int nextPlaceOnPath = worldGraph.path[0];
+#ifdef debug_output_worldgraph_dijkstra
+                std::cout << "NextPlaceOnPath is " << placeNames.at(worldGraph.path[0]) << std::endl;
+#endif
+
+                for(std::vector<Road*>::iterator it = whichPlace->connections.begin(); it != whichPlace->connections.end(); ++it)
+                {
+                    if((*it)->endpointA == nextPlaceOnPath)
+                        MoveToRoad((*it),true);
+
+                    else if((*it)->endpointB == nextPlaceOnPath)
+                        MoveToRoad((*it),false);
+
+                }
+
+                if(worldGraph.path.size() == 1)
+                    worldGraph.path.clear();
             }
         }
     }
@@ -90,26 +127,31 @@ void Caravan::MoveToPlace(Place *p)
 {
     atPlace = true;
     whichPlace = p;
+    p->AddVisitorCaravan(this);
 
     onRoad = false;
     atRoadsEnd = false;
 
     currentTimeAtPlace = 0;
 
-    std::random_device device;
-    std::mt19937 generator(device());
-    std::uniform_int_distribution<> distribution(MIN_TIME_AT_PLACE, MAX_TIME_AT_PLACE);
-    thresholdTimeAtPlace = distribution(generator);
+    thresholdTimeAtPlace = rand()%(MAX_TIME_AT_PLACE-MIN_TIME_AT_PLACE) + MIN_TIME_AT_PLACE;
 
 
 }
 
 void Caravan::MoveToRoad(Road *r, bool isReverseRoad)
 {
+    if(atPlace)
+    {
+        whichPlace->RemoveVisitorCaravan(this);
+    }
+
     atPlace = false;
+
     onRoad = true;
-    atRoadsEnd = false;
     whichRoad = r;
+    atRoadsEnd = false;
+
     reverseRoad = isReverseRoad;
 
     if(!reverseRoad)

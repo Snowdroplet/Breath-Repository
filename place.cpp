@@ -8,60 +8,53 @@ Place::Place(int id)
     selfPointer = this;
     //std::cout << "Place created with ID " << id << std::endl;
 
+    name = placeNames.at(identity);
+
     /// Replace with read from external file later
     switch(identity)
     {
     case PL_ERICENNES:
-        name = "Ericennes";
         epithet = ", Capital of Verus";
         overworldXPosition = TILE_W*20;
         overworldYPosition = TILE_H*20;
         break;
 
     case PL_CHORAS:
-        name = "Choras";
         overworldXPosition = TILE_W*24;
         overworldYPosition = TILE_H*12;
         break;
 
     case PL_KETH_KETHER:
-        name = "Keth Kether";
         overworldXPosition = TILE_W*12;
         overworldYPosition = TILE_H*24;
         break;
 
     case PL_KETH_ENTWEIR:
-        name = "Keth Entweir";
         overworldXPosition = TILE_W*9;
         overworldYPosition = TILE_H*17;
         break;
 
     case PL_VIELLEICHT:
-        name = "Vielleicht";
         overworldXPosition = TILE_W*1;
         overworldYPosition = TILE_H*28;
         break;
 
     case PL_QUELLUDE:
-        name = "Quellude";
         overworldXPosition = TILE_W*6;
         overworldYPosition = TILE_H*32;
         break;
 
     case PL_AMBLEFORTH:
-        name = "Ambleforth";
         overworldXPosition = TILE_W*4;
         overworldYPosition = TILE_H*14;
         break;
 
     case PL_ROSKANEL:
-        name = "Roskanel";
         overworldXPosition = TILE_W*26;
         overworldYPosition = TILE_H*24;
         break;
 
     case PL_ROSELLA:
-        name = "Rosella";
         overworldXPosition = TILE_W*28;
         overworldYPosition = TILE_H*30;
         break;

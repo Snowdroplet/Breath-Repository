@@ -1,13 +1,16 @@
 #ifndef WORLDGRAPH_H_INCLUDED
 #define WORLDGRAPH_H_INCLUDED
 
+//#define debug_output_worldgraph_dijkstra
+
 #include <iostream>
 #include <map>
 #include <vector>
 #include <queue>
+#include <set>
 #include <algorithm>
 
-
+#include "placeindex.h"
 
 /// Dependencies
 class Place;
@@ -22,7 +25,7 @@ public:
 
 
 /// Current graph
-    std::map<int, std::map<int,float>>graph; // A caravan's personal pathfinding graph. <place, <connected places, edge weight>
+    std::map<int, std::map<int,float>> graph; // A caravan's personal pathfinding graph. <place, <connected places, edge weight>
     std::vector<int>path; /// Later modify to support multiple paths; at least one for each objective.
 
 /// Constructor

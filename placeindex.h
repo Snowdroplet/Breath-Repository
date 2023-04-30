@@ -1,6 +1,8 @@
 #ifndef PLACEINDEX_H_INCLUDED
 #define PLACEINDEX_H_INCLUDED
 
+#include <map>
+
 enum enumPlaces
 {
     PL_NONE = -1,
@@ -27,5 +29,19 @@ enum enumPlaces
 };
 const unsigned PL_MARKER_FIRST = PL_ERICENNES;
 const unsigned PL_MARKER_LAST = PL_ROSELLA;
+
+const std::map<int, std::string>placeNames =
+{
+  {PL_ERICENNES,"Ericennes"},
+  {PL_CHORAS,"Choras"},
+  {PL_KETH_KETHER,"Keth Kether"},
+  {PL_KETH_ENTWEIR,"Keth Entweir"},
+  {PL_VIELLEICHT,"Vielleicht"},
+  {PL_QUELLUDE,"Quellude"},
+  {PL_AMBLEFORTH,"Ambleforth"},
+  {PL_ROSKANEL,"Roskanel"},
+  {PL_ROSELLA,"Rosella"}
+
+};
 
 #endif // PLACEINDEX_H_INCLUDED

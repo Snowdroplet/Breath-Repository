@@ -52,8 +52,8 @@ public:
 
 /// Place activities
     int currentTimeAtPlace, thresholdTimeAtPlace;
-    const int MIN_TIME_AT_PLACE = 100;
-    const int MAX_TIME_AT_PLACE = 500;
+    const int MIN_TIME_AT_PLACE = 50;
+    const int MAX_TIME_AT_PLACE = 300;
 
 
 /// Inventory

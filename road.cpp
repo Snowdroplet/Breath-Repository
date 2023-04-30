@@ -7,10 +7,11 @@ Road::Road(int id)
     identity = id;
     selfPointer = this;
 
+    name = roadNames.at(identity);
+
     switch(identity)
     {
     case ROAD_ERICENNES_CHORAS:
-        name = "Ericennes-Choras Road";
         endpointA = PL_ERICENNES;
         endpointB = PL_CHORAS;
         SetWaypoint(0, TILE_W*21 + TILE_W/2, TILE_H*19 + TILE_H/2);
@@ -19,7 +20,6 @@ Road::Road(int id)
         break;
 
     case ROAD_ERICENNES_KETH_KETHER:
-        name = "Ericennes-Keth Kether Road";
         endpointA = PL_ERICENNES;
         endpointB = PL_KETH_KETHER;
         SetWaypoint(0, TILE_W*18 + TILE_W/2, TILE_H*20 + TILE_H/2);
@@ -28,7 +28,6 @@ Road::Road(int id)
         break;
 
     case ROAD_ERICENNES_KETH_ENTWEIR:
-        name = "Ericennes-Keth Entweir Road";
         endpointA = PL_ERICENNES;
         endpointB = PL_KETH_ENTWEIR;
         SetWaypoint(0, TILE_W*18 + TILE_W/2, TILE_H*19 + TILE_H/2);
@@ -37,7 +36,6 @@ Road::Road(int id)
         break;
 
     case ROAD_ERICENNES_ROSKANEL:
-        name = "Ericennes-Roskanel Road";
         endpointA = PL_ERICENNES;
         endpointB = PL_ROSKANEL;
         SetWaypoint(0, TILE_W*21 + TILE_W/2, TILE_H*20 + TILE_H/2);
@@ -46,7 +44,6 @@ Road::Road(int id)
         break;
 
     case ROAD_KETH_KETHER_KETH_ENTWEIR:
-        name = "Keth Kether-Keth Entweir Road";
         endpointA = PL_KETH_KETHER;
         endpointB = PL_KETH_ENTWEIR;
         SetWaypoint(0, TILE_W*12, TILE_H*22 + TILE_H/2);
@@ -55,7 +52,6 @@ Road::Road(int id)
         break;
 
     case ROAD_KETH_KETHER_VIELLEICHT:
-        name = "Keth Kether-Vielleicht Road";
         endpointA = PL_KETH_KETHER;
         endpointB = PL_VIELLEICHT;
         SetWaypoint(0, TILE_W*10 + TILE_W/2, TILE_H*24);
@@ -64,7 +60,6 @@ Road::Road(int id)
         break;
 
     case ROAD_KETH_KETHER_QUELLUDE:
-        name = "Keth Kether-Quellude Road";
         endpointA = PL_KETH_KETHER;
         endpointB = PL_QUELLUDE;
         SetWaypoint(0, TILE_W*12, TILE_H*25 + TILE_W/2);
@@ -73,7 +68,6 @@ Road::Road(int id)
         break;
 
     case ROAD_KETH_ENTWEIR_AMBLEFORTH:
-        name = "Keth Entweir-Ambleforth Road";
         endpointA = PL_KETH_ENTWEIR;
         endpointB = PL_AMBLEFORTH;
         SetWaypoint(0, TILE_W*7 + TILE_W/2, TILE_H*17);
@@ -82,7 +76,6 @@ Road::Road(int id)
         break;
 
     case ROAD_VIELLEICHT_QUELLUDE:
-        name = "Vielleicht-Quellude Road";
         endpointA = PL_VIELLEICHT;
         endpointB = PL_QUELLUDE;
         SetWaypoint(0, TILE_W*2 + TILE_W/2, TILE_H*28 + TILE_H/2);
@@ -91,7 +84,6 @@ Road::Road(int id)
         break;
 
     case ROAD_ROSKANEL_ROSELLA:
-        name = "Roskanel-Rosella Road";
         endpointA = PL_ROSKANEL;
         endpointB = PL_ROSELLA;
         SetWaypoint(0, TILE_W*26, TILE_H*25 + TILE_H/2);
