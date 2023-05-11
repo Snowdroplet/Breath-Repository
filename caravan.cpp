@@ -81,7 +81,7 @@ void Caravan::OverworldLogic()
 #ifdef debug_output_worldgraph_dijkstra
                 std::cout << "Worldgraph path empty. " << std::endl;
 #endif
-                pathfindingDestination = rand()%(PL_MARKER_LAST-PL_MARKER_FIRST) + PL_MARKER_FIRST;
+                pathfindingDestination = rand()%(PL_MARKER_LAST-PL_MARKER_FIRST +1) + PL_MARKER_FIRST;
 #ifdef debug_output_worldgraph_dijkstra
                 std::cout << "Random destination set to " << placeNames.at(pathfindingDestination) << std::endl;
 #endif
@@ -229,6 +229,7 @@ void Caravan::AddMember(Being *b)
         caravanLeader = members[0];
 
     UpdateTravelSpeed();
+    std::cout << travelSpeed << std::endl;
 }
 
 void Caravan::UpdateTravelSpeed()
@@ -236,10 +237,10 @@ void Caravan::UpdateTravelSpeed()
     if(members.size() > 0)
     {
         float lowestTravelSpeed = 99;
-        for(unsigned i = 0; i < members.size()-1; i++)
+        for(std::vector<Being*>::iterator it = members.begin(); it != members.end(); ++it)
         {
-            if(members[i]->travelSpeed < lowestTravelSpeed)
-                lowestTravelSpeed = members[i]->travelSpeed;
+            if((*it)->travelSpeed < lowestTravelSpeed)
+                lowestTravelSpeed = (*it)->travelSpeed;
         }
         travelSpeed = lowestTravelSpeed;
     }

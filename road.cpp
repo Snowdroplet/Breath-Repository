@@ -43,6 +43,31 @@ Road::Road(int id)
         SetWaypoint(2, TILE_W*24 + TILE_W/2, TILE_H*24);
         break;
 
+    case ROAD_CHORAS_COLDLAKE:
+        endpointA = PL_CHORAS;
+        endpointB = PL_COLDLAKE;
+        SetWaypoint(0, TILE_W*22 + TILE_W/2, TILE_H*11 + TILE_H/2);
+        SetWaypoint(1, TILE_W*20 + TILE_W/2, TILE_H*10);
+        SetWaypoint(2, TILE_W*17 + TILE_W/2, TILE_H*10);
+        break;
+
+    case ROAD_CHORAS_RAMSHORN:
+        endpointA = PL_CHORAS;
+        endpointB = PL_RAMSHORN;
+        SetWaypoint(0, TILE_W*25 + TILE_W/2, TILE_H*12);
+        SetWaypoint(1, TILE_W*29 + TILE_W/2, TILE_H*12);
+        SetWaypoint(2, TILE_W*31, TILE_H*10 + TILE_H/2);
+        break;
+
+    case ROAD_CHORAS_HOLLYHEAD:
+        endpointA = PL_CHORAS;
+        endpointB = PL_HOLLYHEAD;
+        SetWaypoint(0, TILE_W*24, TILE_H*10 + TILE_H/2);
+        SetWaypoint(1, TILE_W*24, TILE_H*9);
+        SetWaypoint(2, TILE_W*25, TILE_H*8);
+        SetWaypoint(3, TILE_W*25, TILE_H*6 + TILE_H/2);
+        break;
+
     case ROAD_KETH_KETHER_KETH_ENTWEIR:
         endpointA = PL_KETH_KETHER;
         endpointB = PL_KETH_ENTWEIR;
@@ -89,6 +114,32 @@ Road::Road(int id)
         SetWaypoint(0, TILE_W*26, TILE_H*25 + TILE_H/2);
         SetWaypoint(1, TILE_W*26, TILE_H*28 + TILE_H/2);
         SetWaypoint(2, TILE_W*27 + TILE_W/2, TILE_H*28 + TILE_H/2);
+        break;
+
+    case ROAD_OBSERVIA_COLDLAKE:
+        endpointA = PL_OBSERVIA;
+        endpointB = PL_COLDLAKE;
+        SetWaypoint(0, TILE_W*11, TILE_H*6 + TILE_H/2);
+        SetWaypoint(1, TILE_W*11, TILE_H*10);
+        SetWaypoint(2, TILE_W*14 + TILE_W/2, TILE_H*10);
+        break;
+
+    case ROAD_OBSERVIA_UMBERDELL:
+        endpointA = PL_OBSERVIA;
+        endpointB = PL_UMBERDELL;
+        SetWaypoint(0, TILE_W*9 + TILE_W/2, TILE_H*5);
+        SetWaypoint(1, TILE_W*7, TILE_H*5);
+        SetWaypoint(2, TILE_W*7, TILE_H*3);
+        SetWaypoint(3, TILE_W*15 + TILE_W/2, TILE_H*3);
+        break;
+
+    case ROAD_RAMSHORN_JASPER:
+        endpointA = PL_RAMSHORN;
+        endpointB = PL_JASPER;
+        SetWaypoint(0, TILE_W*31, TILE_H*7 + TILE_H/2);
+        SetWaypoint(1, TILE_W*31, TILE_H*4);
+        SetWaypoint(2, TILE_W*33, TILE_H*2);
+        SetWaypoint(3, TILE_W*34 + TILE_W/2, TILE_H*2);
         break;
     }
 

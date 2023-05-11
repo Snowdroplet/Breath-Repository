@@ -58,6 +58,36 @@ Place::Place(int id)
         overworldXPosition = TILE_W*28;
         overworldYPosition = TILE_H*30;
         break;
+
+    case PL_OBSERVIA:
+        overworldXPosition = TILE_W*11;
+        overworldYPosition = TILE_H*5;
+        break;
+
+    case PL_COLDLAKE:
+        overworldXPosition = TILE_W*16;
+        overworldYPosition = TILE_H*10;
+        break;
+
+    case PL_UMBERDELL:
+        overworldXPosition = TILE_W*17;
+        overworldYPosition = TILE_H*3;
+        break;
+
+    case PL_RAMSHORN:
+        overworldXPosition = TILE_W*31;
+        overworldYPosition = TILE_H*9;
+        break;
+
+    case PL_HOLLYHEAD:
+        overworldXPosition = TILE_W*25;
+        overworldYPosition = TILE_H*5;
+        break;
+
+    case PL_JASPER:
+        overworldXPosition = TILE_W*36;
+        overworldYPosition = TILE_H*2;
+        break;
     }
 
     bubbleActive = false;

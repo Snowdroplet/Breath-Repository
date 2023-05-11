@@ -23,6 +23,8 @@
 Caravan *testCrew1 = nullptr;
 Caravan *testCrew2 = nullptr;
 Caravan *testCrew3 = nullptr;
+Caravan *testCrew4 = nullptr;
+Caravan *testCrew5 = nullptr;
 
 Being *crewDetailPtr = nullptr;
 Being *player = nullptr;
@@ -591,6 +593,8 @@ void InitObjects()
     testCrew1 = new Caravan;
     testCrew2 = new Caravan;
     testCrew3 = new Caravan;
+    testCrew4 = new Caravan;
+    testCrew5 = new Caravan;
 
     /*
     player = new Being;
@@ -623,8 +627,6 @@ void InitObjects()
     crewYubi->SetRace(RACE_BEYU);
     //crewYubi->SetPortrait(RACE_BEYU,2);
     Being::people.push_back(crewYubi);
-
-///
 
     crewBel = new Being;
     crewBel->SetName ("Test Ordon Bel");
@@ -662,23 +664,29 @@ void InitObjects()
 
     testCrew1->AddMember(crewZynes);
     testCrew1->AddMember(crewRukhra);
-    testCrew1->AddMember(crewPurp);
     Caravan::caravans.push_back(testCrew1);
 
 
     testCrew2->AddMember(crewYubi);
-    testCrew2->AddMember(crewBel);
+    testCrew2->AddMember(crewPurp);
     Caravan::caravans.push_back(testCrew2);
 
     testCrew3->AddMember(crewWindow);
     testCrew3->AddMember(crewPaul);
-    testCrew3->AddMember(crewEmily);
-    testCrew3->AddMember(crewLala);
     Caravan::caravans.push_back(testCrew3);
 
-    testCrew1->MoveToRoad(Road::roads[ROAD_ROSKANEL_ROSELLA],false);
-    testCrew2->MoveToRoad(Road::roads[ROAD_KETH_KETHER_KETH_ENTWEIR],false);
+    testCrew4->AddMember(crewBel);
+    Caravan::caravans.push_back(testCrew4);
+
+    testCrew5->AddMember(crewEmily);
+    testCrew5->AddMember(crewLala);
+    Caravan::caravans.push_back(testCrew5);
+
+    testCrew1->MoveToRoad(Road::roads[ROAD_ROSKANEL_ROSELLA],true);
+    testCrew2->MoveToRoad(Road::roads[ROAD_OBSERVIA_COLDLAKE],false);
     testCrew3->MoveToRoad(Road::roads[ROAD_KETH_KETHER_VIELLEICHT], true);
+    testCrew4->MoveToPlace(Place::places[PL_ERICENNES]);
+    testCrew5->MoveToPlace(Place::places[PL_CHORAS]);
 
     //ericennes->AddAvailableCrew(crewLala);
 

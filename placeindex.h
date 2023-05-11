@@ -28,7 +28,7 @@ enum enumPlaces
     PL_ETRURI = 32
 };
 const unsigned PL_MARKER_FIRST = PL_ERICENNES;
-const unsigned PL_MARKER_LAST = PL_ROSELLA;
+const unsigned PL_MARKER_LAST = PL_JASPER;
 
 const std::map<int, std::string>placeNames =
 {
@@ -40,7 +40,13 @@ const std::map<int, std::string>placeNames =
   {PL_QUELLUDE,"Quellude"},
   {PL_AMBLEFORTH,"Ambleforth"},
   {PL_ROSKANEL,"Roskanel"},
-  {PL_ROSELLA,"Rosella"}
+  {PL_ROSELLA,"Rosella"},
+  {PL_OBSERVIA,"Observia"},
+  {PL_COLDLAKE,"Coldlake"},
+  {PL_UMBERDELL,"Umberdell"},
+  {PL_RAMSHORN,"Ramshorn"},
+  {PL_HOLLYHEAD,"Hollyhead"},
+  {PL_JASPER,"Jasper"}
 
 };
 

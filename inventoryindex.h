@@ -2,6 +2,34 @@
 #define INVENTORYINDEX_H_INCLUDED
 
 const int IT_NONE = -1;
+
+enum enumItems
+{
+    IT_MEAT,
+    IT_MUSHROOMS,
+    IT_SPICE,
+    IT_RICE, IT_ALCOHOL,
+    IT_HERBS, IT_MEDICINE,
+    IT_CLAY, IT_POTTERY,
+    IT_SILVER, IT_JEWELRY,
+    IT_LEYSTONE, IT_CLOCKWORK, IT_AUTOMATON,
+    IT_COLD_BLOOD, IT_CONTRACT, IT_SPELLBOOK
+};
+
+const std::map<int,float>baseValue =
+{
+    {IT_MEAT, 4},
+    {IT_MUSHROOMS, 1},
+    {IT_SPICE, 5},
+    {IT_RICE, 1}, {IT_ALCOHOL, 4},
+    {IT_HERBS, 2}, {IT_MEDICINE, 7},
+    {IT_CLAY, 1}, {IT_POTTERY, 1},
+    {IT_SILVER, 10}, {IT_JEWELRY, 20},
+    {IT_LEYSTONE, 2}, {IT_CLOCKWORK, 8}, {IT_AUTOMATON, 80},
+    {IT_COLD_BLOOD, 6}, {IT_CONTRACT, 20}, {IT_SPELLBOOK, 100}
+};
+
+/*
 enum enumItems
 {
     // Plant Materials
@@ -52,5 +80,6 @@ enum enumItems
     IT_BLUE_TORCH, IT_FIRECRACKERS,
     IT_CURE_BLIGHT, IT_CURE_CORRUPTION
 };
+*/
 
 #endif // INVENTORYINDEX_H_INCLUDED

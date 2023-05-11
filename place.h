@@ -11,9 +11,8 @@
 #include "overworld.h"
 
 #include "caravan.h"
-#include "being.h"
 
-#include "inventory.h"
+#include "economy.h"
 
 #include "resource.h"
 
@@ -41,12 +40,9 @@ public:
     std::vector<Caravan*>visitors;
 
 /// Economy
-    //std::vector<float>demand;
-    //std::vector<float>consumption; // per day
-    //std::vector<float>production;  // per day
+    Inventory inventory;
 
 /// Inventory
-    Inventory inventory;
 
 /// Location
     int overworldXPosition, overworldYPosition; // Absolute position on the overworld.
