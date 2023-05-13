@@ -22,6 +22,7 @@ Place::Place(int id)
     case PL_CHORAS:
         overworldXPosition = TILE_W*24;
         overworldYPosition = TILE_H*12;
+        AddIndustry(IND_FARM_MUSHROOMS , 30);
         break;
 
     case PL_KETH_KETHER:
@@ -101,6 +102,12 @@ Place::~Place()
     {
         availableCrew.erase(it);
     }
+
+    for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end();)
+    {
+        delete *it;
+        industries.erase(it);
+    }
 }
 
 void Place::AddAvailableCrew(Being *b)
@@ -142,6 +149,83 @@ void Place::RemoveVisitorCaravan(Caravan *c)
     }
 
     AdjustBubbleDimensions();
+}
+
+void Place::AddIndustry(int whichIndustry, float baseProdPerTick)
+{
+    industries.push_back(new Industry(whichIndustry, baseProdPerTick));
+}
+
+bool Place::ActivateJob(Industry *whichIndustry)
+{
+    bool materialsSufficient = true;
+    std::map<int, float>materialsRequested;
+    for(std::map<int,float>::iterator jt = whichIndustry->inputs.begin(); jt != whichIndustry->inputs.end(); ++jt)
+    {
+        materialsRequested[(*jt).first] = (*jt).second;
+
+        if(inventory.cargo.count((*jt).first) > 0)
+        {
+            if(inventory.cargo[(*jt).first] < materialsRequested[(*jt).first])
+            {
+                materialsSufficient = false;
+                insufficiencies[(*jt).first] += (materialsRequested[(*jt).first] - inventory.cargo[(*jt).first]);
+            }
+        }
+        else
+        {
+            materialsSufficient = false;
+            insufficiencies[(*jt).first] += materialsRequested[(*jt).first];
+        }
+    }
+
+    if(materialsSufficient)
+    {
+        for(std::map<int,float>::iterator jt = materialsRequested.begin(); jt != materialsRequested.end(); ++jt)
+            inventory.cargo[(*jt).first] -= (*jt).first;
+
+        whichIndustry->jobActive = true;
+        return true; // Materials sufficient
+    }
+    else
+    {
+
+        return false; // Materials insufficient
+    }
+}
+
+void Place::ProgressEconomy()
+{
+    for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
+    {
+        // Activate job if materials are sufficient.
+        if(!(*it)->jobActive)
+        {
+            if((*it)->jobActivationPaused)
+            {
+                (*it)->CountdownPausedJobActivation(1);
+            }
+            else
+            {
+                if(!ActivateJob(*it)) // Materials were insufficient
+                {
+                    (*it)->PauseJobActivation(24); //hours, hopefully
+                    // Adjust industrial demand for insufficient materials here.
+                }
+            }
+        }
+
+        if((*it)->jobActive)
+            (*it)->ProgressJob();
+
+        if((*it)->jobComplete)
+        {
+            for(std::map<int,float>::iterator jt = (*it)->outputs.begin(); jt != (*it)->outputs.end(); ++jt)
+            {
+                inventory.AddStock((*jt).first, (*jt).second);
+            }
+        }
+    }
 }
 
 void Place::AdjustBubbleDimensions()

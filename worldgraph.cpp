@@ -95,7 +95,9 @@ void WorldGraph::Dijkstra(int source, int destination)
     if (distances[destination] == INT_MAX)
     {
         path.clear();
+#ifdef debug_output_worldgraph_dijkstra
         std::cout << "Destination vertex is unreachable" << std::endl;
+#endif
         return;
     }
 

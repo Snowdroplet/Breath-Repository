@@ -29,7 +29,6 @@ public:
     WorldGraph worldGraph;
     int pathfindingDestination; /// Later modify to support multiple objectives in a priority queue.
 
-
 /// Location
     bool atPlace;
     Place *whichPlace;
@@ -54,7 +53,6 @@ public:
     int currentTimeAtPlace, thresholdTimeAtPlace;
     const int MIN_TIME_AT_PLACE = 50;
     const int MAX_TIME_AT_PLACE = 300;
-
 
 /// Inventory
     Inventory inventory;

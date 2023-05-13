@@ -12,7 +12,7 @@
 
 #include "caravan.h"
 
-#include "economy.h"
+#include "industry.h"
 
 #include "resource.h"
 
@@ -21,10 +21,10 @@ class Caravan; // Circular
 
 class Place
 {
-    const int OVERWORLD_SPRITE_W = 64;
-    const int OVERWORLD_SPRITE_H = 64;
-
 public:
+    static const int OVERWORLD_SPRITE_W = 64;
+    static const int OVERWORLD_SPRITE_H = 64;
+
     static std::map <int, Place*>places;
 
 /// Identity
@@ -41,6 +41,16 @@ public:
 
 /// Economy
     Inventory inventory;
+
+    std::vector<Industry*>industries;
+
+    std::map<int,float>insufficiencies;
+
+    //std::map<int,float>production;  // per day
+
+    //std::map<int,float>demand;
+
+    //std::map<int,float>consumption;
 
 /// Inventory
 
@@ -67,6 +77,25 @@ public:
 
     void AddVisitorCaravan(Caravan *c);
     void RemoveVisitorCaravan(Caravan *c);
+
+/// Economy functions
+    //void AdjustProduction(int a, float b);
+    //void AdjustDemand(int a, float b);
+    void AddIndustry(int whichIndustry, float baseProdPerTick);
+    bool ActivateJob(Industry* whichIndustry);
+
+    void AdjustConsumption(int a, float b);
+
+    void EvaluateEconomy();
+    void EvaluateProduction();
+    void EvaluateDemand();
+    void EvaluateConsumption();
+
+    void ProgressEconomy();
+
+/// Location functions
+    float GetOverworldXPosition(){return overworldXPosition;}
+    float GetOverworldYPosition(){return overworldYPosition;}
 
 /// Bubble functions
     void AdjustBubbleDimensions();

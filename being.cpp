@@ -30,7 +30,7 @@ void Being::SetActivity(int act)
     activity = act;
     currentFrame = 0;
     frameDelayCount = 0;
-    frameDelayThreshold = 5;
+    frameDelayThreshold = 6;
 
     switch(activity)
     {
@@ -158,7 +158,7 @@ void Being::DrawSkillsDetailed(float x, float y)
 void Being::DrawActivity(float x, float y)
 {
     int f = 0;
-    if(facingLeft)
+    if(!facingLeft)
         f = ALLEGRO_FLIP_HORIZONTAL;
 
     al_draw_bitmap_region(beingPng[race],

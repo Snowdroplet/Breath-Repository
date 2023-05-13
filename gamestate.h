@@ -20,21 +20,6 @@ extern bool redraw;
 
 extern ALLEGRO_COLOR currentClearColor;
 
-
-/// UI
-extern bool UIChangeDelay;
-
-extern int activeUI;
-extern int previousActiveUI;
-
-extern int activeSubUI;
-extern int previousActiveSubUI;
-
-extern int activeTab;
-extern int previousActiveTab;
-
-
-
 /*
 extern bool playerAtPlace;
 extern int playerLocation;

@@ -15,6 +15,7 @@ enum enumInputKeys
     KEY_V = 21, KEY_W = 22, KEY_X = 23,
     KEY_Y = 24, KEY_Z = 25,
 
+    KEY_SPACE,
     KEY_ENTER,
     KEY_PAD_1, KEY_PAD_2, KEY_PAD_3,
     KEY_PAD_4, KEY_PAD_5, KEY_PAD_6,

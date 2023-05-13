@@ -16,19 +16,6 @@ enum enumItems
     IT_COLD_BLOOD, IT_CONTRACT, IT_SPELLBOOK
 };
 
-const std::map<int,float>baseValue =
-{
-    {IT_MEAT, 4},
-    {IT_MUSHROOMS, 1},
-    {IT_SPICE, 5},
-    {IT_RICE, 1}, {IT_ALCOHOL, 4},
-    {IT_HERBS, 2}, {IT_MEDICINE, 7},
-    {IT_CLAY, 1}, {IT_POTTERY, 1},
-    {IT_SILVER, 10}, {IT_JEWELRY, 20},
-    {IT_LEYSTONE, 2}, {IT_CLOCKWORK, 8}, {IT_AUTOMATON, 80},
-    {IT_COLD_BLOOD, 6}, {IT_CONTRACT, 20}, {IT_SPELLBOOK, 100}
-};
-
 /*
 enum enumItems
 {

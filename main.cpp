@@ -16,6 +16,7 @@
 #include "road.h"
 #include "place.h"
 #include "overworld.h"
+#include "calendar.h"
 
 //Place *playerLocationPtr = nullptr;
 
@@ -40,6 +41,8 @@ Being *crewLala = nullptr;
 
 void InterpretInput();
 void ProgressWorld();
+void UpdateUI();
+
 void ChangeUI(int whichUI, int whichSubUI, int whichTab);
 //void ChangePlayerLocation(int whichLocation);
 
@@ -103,6 +106,7 @@ int main(int argc, char *argv[])
     //ChangePlayerLocation(PL_ERICENNES);
 
     ChangeUI(UI_OVERWORLD,SUB_OVERWORLD_NONE, TAB_OVERWORLD_NONE);
+    InitCalendar(22,30,12,2023);
 
     al_start_timer(FPSTimer);
 
@@ -124,15 +128,13 @@ int main(int argc, char *argv[])
             redraw = true;
 
             InterpretInput();
-
             ProgressWorld();
-
+            UpdateUI();
         }
 
         if(redraw && al_is_event_queue_empty(eventQueue))
         {
             redraw = false;
-
             al_clear_to_color(currentClearColor);
             DrawUI();
             al_flip_display();
@@ -160,6 +162,8 @@ void InterpretInput()
 {
     if(activeUI == UI_OVERWORLD)
     {
+        if(!overworldCameraLocked)
+        {
             if(keyInput[KEY_PAD_8] || keyInput[KEY_PAD_7] || keyInput[KEY_PAD_9])
                 overworldCameraYPosition -= overworldCameraYSensitivity;
 
@@ -171,188 +175,240 @@ void InterpretInput()
 
             if(keyInput[KEY_PAD_6] || keyInput[KEY_PAD_9] || keyInput[KEY_PAD_3])
                 overworldCameraXPosition += overworldCameraXSensitivity;
-    }
 
-    if(!UIChangeDelay)
-    {
-
-        /*
-        if(activeUI == UI_PLACE)
-        {
-            if(activeSubUI == SUB_PLACE_NONE)
+            if(keyInput[KEY_SPACE])
             {
-                if(keyInput[KEY_1])
+                for(std::map<int,Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
                 {
-                    ChangeUI(UI_BARTER, SUB_BARTER_NONE,TAB_BARTER_ALL);
+                    float x = (*it).second->overworldXPosition;
+                    float y = (*it).second->overworldYPosition;
+                    float w = Place::OVERWORLD_SPRITE_W;
+                    float h = Place::OVERWORLD_SPRITE_H;
+
+                    if(overworldCameraXPosition > x - w/2
+                        && overworldCameraXPosition < x + w/2
+                        && overworldCameraYPosition > y - h/2
+                        && overworldCameraYPosition < y + h/2)
+                    {
+                        std::cout << "Locking on place" << std::endl;
+                        OverworldLockCameraPlace((*it).second);
+                        break;
+                    }
                 }
+
+                for(std::vector<Caravan*>::iterator it = Caravan::caravans.begin(); it != Caravan::caravans.end(); ++it)
+                {
+                    float x = (*it)->overworldXPosition;
+                    float y = (*it)->overworldYPosition;
+                    float w = (*it)->caravanLeader->spriteWidth;
+                    float h = (*it)->caravanLeader->spriteHeight;
+
+                    if(overworldCameraXPosition > x - w/2
+                        && overworldCameraXPosition < x + w/2
+                        && overworldCameraYPosition > y - h/2
+                        && overworldCameraYPosition < y + h/2)
+                    {
+                        std::cout << "Locking on caravan" << std::endl;
+                        OverworldLockCameraCaravan(*it);
+                        break;
+                    }
+                }
+            }
+            else if(overworldCameraLocked)
+            {
+                if(keyInput[KEY_ESC])
+                    OverworldUnlockCamera();
+            }
+        }
+
+
+        if(!UIChangeDelay)
+        {
+
+            /*
+            if(activeUI == UI_PLACE)
+            {
+                if(activeSubUI == SUB_PLACE_NONE)
+                {
+                    if(keyInput[KEY_1])
+                    {
+                        ChangeUI(UI_BARTER, SUB_BARTER_NONE,TAB_BARTER_ALL);
+                    }
+                    else if(keyInput[KEY_2])
+                    {
+
+                    }
+                    else if(keyInput[KEY_3])
+                        ChangeUI(UI_CREW,SUB_CREW_NONE,TAB_CREW_YOUR_CREW);
+                }
+                else if(activeSubUI == SUB_PLACE_DEPART_CONFIRMATION)
+                {
+                    if(keyInput[KEY_Y])
+                    {
+                        ChangeUI(UI_TRAVEL,SUB_TRAVEL_NONE,TAB_TRAVEL_NONE);
+                    }
+                    else if(keyInput[KEY_N] || keyInput[KEY_ESC])
+                    {
+                        activeSubUI = SUB_PLACE_NONE;
+                    }
+                }
+            }
+            */
+
+            /*
+            else if(activeUI == UI_BARTER)
+            {
+                if(activeSubUI == SUB_BARTER_NONE)
+                {
+                    if(keyInput[KEY_ESC])
+                        ChangeUI(UI_PLACE,SUB_PLACE_NONE,TAB_PLACE_NONE);
+
+                    for(unsigned k = KEY_1; k <= KEY_7; k++)
+                    {
+                        if(keyInput[k])
+                        {
+                            ChangeUI(UI_BARTER, SUB_BARTER_NONE, k-KEY_1);
+                            break;
+                        }
+                    }
+
+                    if(keyInput[KEY_LEFT])
+                        barterKeyInputNPCSide = false;
+
+                    else if(keyInput[KEY_RIGHT])
+                        barterKeyInputNPCSide = true;
+
+                    else if(keyInput[KEY_UP])
+                    {
+                        // Scroll inventory up
+                    }
+                    else if(keyInput[KEY_DOWN])
+                    {
+                        // Scroll inventory down
+                    }
+
+                    for(unsigned k = KEY_A; k <= KEY_T; k++)
+                    {
+                        if(keyInput[k])
+                        {
+                            if(barterKeyInputNPCSide)
+                            {
+                                barterItemType = playerLocationPtr->inventory.GetItemTypeAtInput(k-KEY_A);
+                            }
+                            else
+                            {
+                                barterItemType = playerCrew->inventory.GetItemTypeAtInput(k-KEY_A);
+                            }
+
+                            if(barterItemType != IT_NONE)
+                            {
+                                ChangeUI(UI_BARTER, SUB_BARTER_QUANTITY, activeTab);
+                            }
+                        }
+                    }
+
+
+                }
+                else if(activeSubUI == SUB_BARTER_QUANTITY)
+                {
+                    if(keyInput[KEY_ESC])
+                    {
+                        ChangeUI(UI_BARTER, SUB_BARTER_NONE, activeTab);
+                    }
+                    if(keyInput[KEY_UP])
+                    {
+                        barterItemQuantity ++;
+                    }
+                    else if(keyInput[KEY_DOWN])
+                    {
+                        barterItemQuantity --;
+                    }
+                    else if(keyInput[KEY_LEFT])
+                    {
+                        barterItemQuantity -= 5;
+                    }
+                    else if(keyInput[KEY_RIGHT])
+                    {
+                        barterItemQuantity += 5;
+                    }
+
+                }
+            }
+            */
+
+            /*
+            else if(activeUI == UI_CREW)
+            {
+                if(keyInput[KEY_ESC])
+                {
+                    if(playerAtPlace)
+                        ChangeUI(UI_PLACE,SUB_PLACE_NONE,TAB_PLACE_NONE);
+                    else
+                        ChangeUI(UI_TRAVEL,SUB_TRAVEL_NONE,TAB_TRAVEL_NONE);
+                }
+
+                else if(keyInput[KEY_1])
+                    activeTab = TAB_CREW_YOUR_CREW;
+
                 else if(keyInput[KEY_2])
-                {
+                    activeTab = TAB_CREW_AVAILABLE;
 
-                }
-                else if(keyInput[KEY_3])
-                    ChangeUI(UI_CREW,SUB_CREW_NONE,TAB_CREW_YOUR_CREW);
-            }
-            else if(activeSubUI == SUB_PLACE_DEPART_CONFIRMATION)
-            {
-                if(keyInput[KEY_Y])
-                {
-                    ChangeUI(UI_TRAVEL,SUB_TRAVEL_NONE,TAB_TRAVEL_NONE);
-                }
-                else if(keyInput[KEY_N] || keyInput[KEY_ESC])
-                {
-                    activeSubUI = SUB_PLACE_NONE;
-                }
-            }
-        }
-        */
-
-        /*
-        else if(activeUI == UI_BARTER)
-        {
-            if(activeSubUI == SUB_BARTER_NONE)
-            {
-                if(keyInput[KEY_ESC])
-                    ChangeUI(UI_PLACE,SUB_PLACE_NONE,TAB_PLACE_NONE);
-
-                for(unsigned k = KEY_1; k <= KEY_7; k++)
-                {
-                    if(keyInput[k])
-                    {
-                        ChangeUI(UI_BARTER, SUB_BARTER_NONE, k-KEY_1);
-                        break;
-                    }
-                }
-
-                if(keyInput[KEY_LEFT])
-                    barterKeyInputNPCSide = false;
-
-                else if(keyInput[KEY_RIGHT])
-                    barterKeyInputNPCSide = true;
-
-                else if(keyInput[KEY_UP])
-                {
-                    // Scroll inventory up
-                }
-                else if(keyInput[KEY_DOWN])
-                {
-                    // Scroll inventory down
-                }
-
-                for(unsigned k = KEY_A; k <= KEY_T; k++)
-                {
-                    if(keyInput[k])
-                    {
-                        if(barterKeyInputNPCSide)
-                        {
-                            barterItemType = playerLocationPtr->inventory.GetItemTypeAtInput(k-KEY_A);
-                        }
-                        else
-                        {
-                            barterItemType = playerCrew->inventory.GetItemTypeAtInput(k-KEY_A);
-                        }
-
-                        if(barterItemType != IT_NONE)
-                        {
-                            ChangeUI(UI_BARTER, SUB_BARTER_QUANTITY, activeTab);
-                        }
-                    }
-                }
-
-
-            }
-            else if(activeSubUI == SUB_BARTER_QUANTITY)
-            {
-                if(keyInput[KEY_ESC])
-                {
-                    ChangeUI(UI_BARTER, SUB_BARTER_NONE, activeTab);
-                }
-                if(keyInput[KEY_UP])
-                {
-                    barterItemQuantity ++;
-                }
-                else if(keyInput[KEY_DOWN])
-                {
-                    barterItemQuantity --;
-                }
-                else if(keyInput[KEY_LEFT])
-                {
-                    barterItemQuantity -= 5;
-                }
-                else if(keyInput[KEY_RIGHT])
-                {
-                    barterItemQuantity += 5;
-                }
-
-            }
-        }
-        */
-
-        /*
-        else if(activeUI == UI_CREW)
-        {
-            if(keyInput[KEY_ESC])
-            {
-                if(playerAtPlace)
-                    ChangeUI(UI_PLACE,SUB_PLACE_NONE,TAB_PLACE_NONE);
                 else
-                    ChangeUI(UI_TRAVEL,SUB_TRAVEL_NONE,TAB_TRAVEL_NONE);
-            }
-
-            else if(keyInput[KEY_1])
-                activeTab = TAB_CREW_YOUR_CREW;
-
-            else if(keyInput[KEY_2])
-                activeTab = TAB_CREW_AVAILABLE;
-
-            else
-            {
-                for(unsigned k = KEY_A; k < KEY_J; k++) // 0-10
                 {
-                    if(keyInput[k])
+                    for(unsigned k = KEY_A; k < KEY_J; k++) // 0-10
                     {
-                        if(activeTab == TAB_CREW_YOUR_CREW && k < playerCrew->members.size())
+                        if(keyInput[k])
                         {
-                            ChangeUI(UI_CREW_DETAILED, SUB_CREW_DETAILED_NONE, TAB_CREW_DETAILED_NONE);
+                            if(activeTab == TAB_CREW_YOUR_CREW && k < playerCrew->members.size())
+                            {
+                                ChangeUI(UI_CREW_DETAILED, SUB_CREW_DETAILED_NONE, TAB_CREW_DETAILED_NONE);
 
-                            crewDetailPtr = playerCrew->members[k];
+                                crewDetailPtr = playerCrew->members[k];
+                            }
+
+                            else if(activeTab == TAB_CREW_AVAILABLE && k < playerLocationPtr->availableCrew.size())
+                            {
+                                ChangeUI(UI_CREW_DETAILED, SUB_CREW_DETAILED_NONE, TAB_CREW_DETAILED_NONE);
+
+                                crewDetailPtr = playerLocationPtr->availableCrew[k];
+                            }
+
+                            break;
                         }
-
-                        else if(activeTab == TAB_CREW_AVAILABLE && k < playerLocationPtr->availableCrew.size())
-                        {
-                            ChangeUI(UI_CREW_DETAILED, SUB_CREW_DETAILED_NONE, TAB_CREW_DETAILED_NONE);
-
-                            crewDetailPtr = playerLocationPtr->availableCrew[k];
-                        }
-
-                        break;
                     }
                 }
             }
-        }
 
-        else if(activeUI == UI_CREW_DETAILED)
-        {
-            if(keyInput[KEY_ESC])
+            else if(activeUI == UI_CREW_DETAILED)
             {
-                ChangeUI(UI_CREW, SUB_CREW_NONE, previousActiveTab);
-                crewDetailPtr = nullptr;
+                if(keyInput[KEY_ESC])
+                {
+                    ChangeUI(UI_CREW, SUB_CREW_NONE, previousActiveTab);
+                    crewDetailPtr = nullptr;
+                }
             }
+            */
+
+
         }
-        */
-
-
+        else
+            UIChangeDelay = false;
     }
-    else
-        UIChangeDelay = false;
 }
 
 void ProgressWorld()
 {
     if(activeUI == UI_OVERWORLD)
     {
+        ///Todo: for(int i = 0; i < world speed...)
+
+        AdvanceHourFrame(); // 1 for normal speed, 2 for double speed, etc.
+        UpdateCalendarText();
+
         for(std::map<int,Place*>::iterator it = Place::places.begin(); it != Place::places.end(); it++)
         {
-
+            if(hourChangeTick)
+                ((*it).second)->ProgressEconomy();
         }
 
         for(std::map<int,Road*>::iterator it = Road::roads.begin(); it != Road::roads.end(); it++)
@@ -371,6 +427,26 @@ void ProgressWorld()
         }
     }
 
+}
+
+void UpdateUI()
+{
+    if(activeUI == UI_OVERWORLD)
+    {
+        if(overworldCameraLocked)
+        {
+            if(overworldCameraLockedOnPlace)
+            {
+                overworldCameraXPosition = overworldCameraPlace->overworldXPosition;
+                overworldCameraYPosition = overworldCameraPlace->overworldYPosition;
+            }
+            else if(overworldCameraLockedOnCaravan)
+            {
+                overworldCameraXPosition = overworldCameraCaravan->overworldXPosition;
+                overworldCameraYPosition = overworldCameraCaravan->overworldYPosition;
+            }
+        }
+    }
 }
 
 
@@ -419,7 +495,7 @@ void DrawUI()
 {
     if(activeUI == UI_OVERWORLD)
     {
-        DrawOverworldDebugOverlay();
+        OverworldDrawDebugOverlay();
 
         for(unsigned i = 0; i < Place::places.size(); i++)
             Place::places[i]->DrawSpriteOnOverworld();
@@ -431,7 +507,9 @@ void DrawUI()
             Caravan::caravans[i]->DrawSpriteOnOverworld();
 
         for(unsigned i = 0; i < Place::places.size(); i++)
-           Place::places[i]->DrawBubbleOnOverworld();
+            Place::places[i]->DrawBubbleOnOverworld();
+
+        DrawCalendar();
     }
     /*
     else if(activeUI == UI_PLACE)

@@ -1,12 +1,18 @@
 #include "overworld.h"
 
+bool overworldCameraLocked = false;
+bool overworldCameraLockedOnPlace = false;
+Place *overworldCameraPlace = nullptr;
+bool overworldCameraLockedOnCaravan = false;
+Caravan *overworldCameraCaravan = nullptr;
+
 int overworldCameraXPosition = OVERWORLD_W/2 - SCREEN_W/2;
 int overworldCameraYPosition = OVERWORLD_H/2 - SCREEN_H/2;
 
 int overworldCameraXSensitivity = 4;
 int overworldCameraYSensitivity = 4;
 
-void DrawOverworldDebugOverlay()
+void OverworldDrawDebugOverlay()
 {
 
     for(int i = 0; i <= OVERWORLD_W; i+= TILE_W) //Columns
@@ -38,4 +44,38 @@ void DrawOverworldDebugOverlay()
 
     al_draw_line(SCREEN_W/2,0,SCREEN_W/2,SCREEN_H,COL_ORANGE,1);
     al_draw_line(0,SCREEN_H/2,SCREEN_W,SCREEN_H/2,COL_ORANGE,1);
+}
+
+void OverworldLockCameraPlace(Place *whichPlace)
+{
+    OverworldUnlockCameraCaravan();
+
+    overworldCameraPlace = whichPlace;
+    overworldCameraLockedOnPlace = true;
+}
+
+void OverworldLockCameraCaravan(Caravan *whichCaravan)
+{
+    OverworldUnlockCameraPlace();
+
+    overworldCameraCaravan = whichCaravan;
+    overworldCameraLockedOnCaravan = true;
+}
+
+void OverworldUnlockCameraCaravan()
+{
+    overworldCameraCaravan = nullptr;
+    overworldCameraLockedOnCaravan = false;
+}
+
+void OverworldUnlockCameraPlace()
+{
+    overworldCameraPlace = nullptr;
+    overworldCameraLockedOnPlace = false;
+}
+
+void OverworldUnlockCamera()
+{
+    OverworldUnlockCameraPlace();
+    OverworldUnlockCameraCaravan();
 }

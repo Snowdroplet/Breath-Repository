@@ -32,6 +32,8 @@ void Caravan::SetActive(bool a)
 
 void Caravan::UpdateOverworldPosition()
 {
+    float previousOverworldXPosition = overworldXPosition;
+
     if(distanceFromNextWaypoint <= 0)
     {
         currentWaypoint = nextWaypoint;
@@ -54,6 +56,14 @@ void Caravan::UpdateOverworldPosition()
 
         //std::cout << "T from waypoint: " << timeToNextWaypoint << std::endl;
         //std::cout << "D from waypoint: " << distanceFromNextWaypoint << ", X: " << overworldXPosition << " , Y: " << overworldXPosition << std::endl;
+
+        if(overworldXPosition != previousOverworldXPosition) // Prevents defaulting to left-facing when moving up or down vertical roads.
+        {
+            if(overworldXPosition > previousOverworldXPosition)
+                caravanLeader->facingLeft = false;
+            else
+                caravanLeader->facingLeft = true;
+        }
     }
 }
 
@@ -88,7 +98,9 @@ void Caravan::OverworldLogic()
                 if(pathfindingDestination != whichPlace->identity)
                 {
                     worldGraph.Dijkstra(whichPlace->identity,pathfindingDestination);
+#ifdef debug_output_worldgraph_dijkstra
                     std::cout << std::endl;
+#endif
                 }
                 else
                 {
@@ -133,8 +145,12 @@ void Caravan::MoveToPlace(Place *p)
     atRoadsEnd = false;
 
     currentTimeAtPlace = 0;
-
     thresholdTimeAtPlace = rand()%(MAX_TIME_AT_PLACE-MIN_TIME_AT_PLACE) + MIN_TIME_AT_PLACE;
+
+    overworldXPosition = p->overworldXPosition;
+    overworldYPosition = p->overworldYPosition;
+
+    caravanLeader->facingLeft = false;
 
 
 }
@@ -229,7 +245,7 @@ void Caravan::AddMember(Being *b)
         caravanLeader = members[0];
 
     UpdateTravelSpeed();
-    std::cout << travelSpeed << std::endl;
+    //std::cout << travelSpeed << std::endl;
 }
 
 void Caravan::UpdateTravelSpeed()

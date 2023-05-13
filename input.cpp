@@ -142,6 +142,9 @@ void InputKeydown()
         case ALLEGRO_KEY_Z:
             keyInput[KEY_Z] = true;
             break;
+        case ALLEGRO_KEY_SPACE:
+            keyInput[KEY_SPACE] = true;
+            break;
         case ALLEGRO_KEY_ENTER:
             keyInput[KEY_ENTER] = true;
             break;
@@ -310,6 +313,9 @@ void InputKeyup()
             break;
         case ALLEGRO_KEY_Z:
             keyInput[KEY_Z] = false;
+            break;
+        case ALLEGRO_KEY_SPACE:
+            keyInput[KEY_SPACE] = false;
             break;
         case ALLEGRO_KEY_PAD_1:
             keyInput[KEY_PAD_1] = false;
