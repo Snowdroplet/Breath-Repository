@@ -17,6 +17,7 @@ public:
     bool jobActive;
     bool jobActivationPaused;
     int jobActivationPauseTicks;
+    int jobActivationPauseThreshold;
 
     bool jobComplete;
     bool jobRepeating;
@@ -45,8 +46,8 @@ public:
     ~Industry();
 
 /// Job state functions
-    void PauseJobActivation(int ticks);
-    void CountdownPausedJobActivation(int ticks);
+    void PauseJobActivation(int thresh);
+    void ProgressPausedJobActivation(int ticks);
 
 /// Production functions
     void SetBaseProductionPerTick(float bppt);

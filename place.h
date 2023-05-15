@@ -39,6 +39,8 @@ public:
     std::vector<Being*>citizens;
     std::vector<Caravan*>visitors;
 
+    const int removeVisitorCaravanDelay = 60; /// Todo: Tie to advancement of calendar time instead of arbitrary number
+
 /// Economy
     Inventory inventory;
 
@@ -59,10 +61,28 @@ public:
 
     std::vector<Road*>connections;
 
-/// Bubble
-    bool bubbleActive;
-    float bubbleWidth, bubbleHeight;
+/// Bubbles
+    const float bubbleWidthPadding = TILE_W/4;
+    const float bubbleHeightPadding = TILE_H/4;
     const float bubbleCornerRadius = 8;
+
+    bool visitorBubbleActive;
+    float visitorBubbleWidth, visitorBubbleHeight;
+    unsigned visitorBubbleNumCols;
+    unsigned visitorBubbleNumRows;
+
+    const float inventoryBubbleDrawX = SCREEN_W*6/10;
+    const float inventoryBubbleDrawY = SCREEN_H*3/10;
+    const float inventoryBubbleRowSpacing = 8; // 8 being the height of the builtin text.
+    float inventoryBubbleWidth, inventoryBubbleHeight;
+    unsigned inventoryBubbleNumCols;
+    unsigned inventoryBubbleNumRows;
+
+    const float industriesBubbleDrawX = SCREEN_W*6/10;
+    const float industriesBubbleDrawY = SCREEN_H*6/10;
+    const float industriesBubbleRowSpacing = 4; // Arbitrary gap
+    const float industriesBubbleWidth = TILE_W*10 + bubbleWidthPadding;
+    float industriesBubbleHeight;
 
 /// Constructor
     Place(int id);
@@ -93,17 +113,24 @@ public:
 
     void ProgressEconomy();
 
+/// Inventory functions
+    void AddInventoryStock(int a, float b);
+    void RemoveInventoryStock(int a, float b);
+    void SetInventoryStock(int a, float b);
+
 /// Location functions
-    float GetOverworldXPosition(){return overworldXPosition;}
-    float GetOverworldYPosition(){return overworldYPosition;}
 
 /// Bubble functions
-    void AdjustBubbleDimensions();
+    void UpdateAllBubbles();
+    void UpdateVisitorBubble();
+    void UpdateInventoryBubble();
+    void UpdateIndustriesBubble();
 
 /// Overworld drawing functions
     void DrawSpriteOnOverworld();
-    void DrawBubbleOnOverworld();
-
+    void DrawVisitorBubbleOnOverworld();
+    void DrawInventoryBubble();
+    void DrawIndustriesBubble();
 };
 
 #endif // PLACE_H_INCLUDED

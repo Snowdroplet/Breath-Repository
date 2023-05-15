@@ -6,13 +6,13 @@ Place *overworldCameraPlace = nullptr;
 bool overworldCameraLockedOnCaravan = false;
 Caravan *overworldCameraCaravan = nullptr;
 
-int overworldCameraXPosition = OVERWORLD_W/2 - SCREEN_W/2;
-int overworldCameraYPosition = OVERWORLD_H/2 - SCREEN_H/2;
+float overworldCameraXPosition = OVERWORLD_W/2 - SCREEN_W/2;
+float overworldCameraYPosition = OVERWORLD_H/2 - SCREEN_H/2;
 
 int overworldCameraXSensitivity = 4;
 int overworldCameraYSensitivity = 4;
 
-void OverworldDrawDebugOverlay()
+void OverworldDrawGridUnderlay()
 {
 
     for(int i = 0; i <= OVERWORLD_W; i+= TILE_W) //Columns
@@ -40,10 +40,18 @@ void OverworldDrawDebugOverlay()
     int crosshairYPositionCell = crosshairYPosition/TILE_H;
 
     std::string positionString = "(" + std::to_string(crosshairXPosition) + ", " + std::to_string(crosshairYPosition) + ") : (" + std::to_string(crosshairXPositionCell) + ", " + std::to_string(crosshairYPositionCell) + ")";
-    string_al_draw_text(builtin,COL_ORANGE,0,0,ALLEGRO_ALIGN_LEFT,positionString);
-
-    al_draw_line(SCREEN_W/2,0,SCREEN_W/2,SCREEN_H,COL_ORANGE,1);
-    al_draw_line(0,SCREEN_H/2,SCREEN_W,SCREEN_H/2,COL_ORANGE,1);
+    if(!overworldCameraLocked)
+    {
+        string_al_draw_text(builtin,COL_BLUE,0,0,ALLEGRO_ALIGN_LEFT,positionString);
+        al_draw_line(SCREEN_W/2,0,SCREEN_W/2,SCREEN_H,COL_BLUE,1);
+        al_draw_line(0,SCREEN_H/2,SCREEN_W,SCREEN_H/2,COL_BLUE,1);
+    }
+    else
+    {
+        string_al_draw_text(builtin,COL_ORANGE,0,0,ALLEGRO_ALIGN_LEFT,positionString);
+        al_draw_line(SCREEN_W/2,0,SCREEN_W/2,SCREEN_H,COL_ORANGE,1);
+        al_draw_line(0,SCREEN_H/2,SCREEN_W,SCREEN_H/2,COL_ORANGE,1);
+    }
 }
 
 void OverworldLockCameraPlace(Place *whichPlace)
@@ -52,6 +60,7 @@ void OverworldLockCameraPlace(Place *whichPlace)
 
     overworldCameraPlace = whichPlace;
     overworldCameraLockedOnPlace = true;
+    overworldCameraLocked = true;
 }
 
 void OverworldLockCameraCaravan(Caravan *whichCaravan)
@@ -60,6 +69,7 @@ void OverworldLockCameraCaravan(Caravan *whichCaravan)
 
     overworldCameraCaravan = whichCaravan;
     overworldCameraLockedOnCaravan = true;
+    overworldCameraLocked = true;
 }
 
 void OverworldUnlockCameraCaravan()
@@ -78,4 +88,8 @@ void OverworldUnlockCamera()
 {
     OverworldUnlockCameraPlace();
     OverworldUnlockCameraCaravan();
+    overworldCameraLocked = false;
+
+    overworldCameraXPosition = overworldCameraXPosition/4*4; // rounds down to nearest 4 (truncates decimal)
+    overworldCameraYPosition = overworldCameraYPosition/4*4;
 }

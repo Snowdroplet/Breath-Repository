@@ -22,21 +22,21 @@ extern Place*overworldCameraPlace;
 extern bool overworldCameraLockedOnCaravan;
 extern Caravan* overworldCameraCaravan;
 
-extern int overworldCameraXPosition;
-extern int overworldCameraYPosition;
+extern float overworldCameraXPosition;
+extern float overworldCameraYPosition;
 
 extern int overworldCameraXSensitivity;
 extern int overworldCameraYSensitivity;
 
-const int OVERWORLD_W = 1280;
-const int OVERWORLD_H = 1280;
+const float OVERWORLD_W = 1280;
+const float OVERWORLD_H = 1280;
 
 const int OVERWORLD_MIN_DRAW_X = 0 - TILE_W*2;
 const int OVERWORLD_MIN_DRAW_Y = 0 - TILE_H*2;
 const int OVERWORLD_MAX_DRAW_X = SCREEN_W + TILE_W*2;
 const int OVERWORLD_MAX_DRAW_Y = SCREEN_H + TILE_H*2;
 
-void OverworldDrawDebugOverlay();
+void OverworldDrawGridUnderlay();
 
 void OverworldLockCameraPlace(Place *whichPlace);
 void OverworldLockCameraCaravan(Caravan *whichCaravan);

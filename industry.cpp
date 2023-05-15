@@ -136,16 +136,17 @@ Industry::~Industry()
 
 }
 
-void Industry::PauseJobActivation(int ticks)
+void Industry::PauseJobActivation(int thresh)
 {
     jobActivationPaused = true;
-    jobActivationPauseTicks = ticks;
+    jobActivationPauseTicks = 0;
+    jobActivationPauseThreshold = thresh;
 }
 
-void Industry::CountdownPausedJobActivation(int ticks)
+void Industry::ProgressPausedJobActivation(int ticks)
 {
-    jobActivationPauseTicks -= ticks;
-    if(jobActivationPauseTicks <= 0)
+    jobActivationPauseTicks += ticks;
+    if(jobActivationPauseTicks >= jobActivationPauseThreshold)
     {
         jobActivationPauseTicks = 0;
         jobActivationPaused = false;

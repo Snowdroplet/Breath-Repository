@@ -78,6 +78,9 @@ public:
 
     void OverworldLogic();
 /// Inventory functions
+    void AddInventoryStock(int a, float b);
+    void RemoveInventoryStock(int a, float b);
+    void SetInventoryStock(int a, float b);
 
 /// Drawing functions
     void DrawSpriteOnOverworld();

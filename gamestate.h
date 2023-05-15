@@ -9,11 +9,11 @@
 extern bool gameExit;
 
 /// Drawing
-const int SCREEN_W = 1280;
-const int SCREEN_H = 800;
+const float SCREEN_W = 1280;
+const float SCREEN_H = 800;
 
-const int TILE_W = 32; // Standard width of sprites meant to be arranged in grids.
-const int TILE_H = 32;
+const float TILE_W = 32; // Standard width of sprites meant to be arranged in grids.
+const float TILE_H = 32;
 
 const float FPS = 30.0;
 extern bool redraw;

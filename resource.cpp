@@ -19,9 +19,10 @@ ALLEGRO_BITMAP *beingPng[NUM_RACES];
 ALLEGRO_BITMAP *beingPortraitPng;
 
 ALLEGRO_BITMAP *skillSquarePng;
-
-ALLEGRO_BITMAP *cargoPng;
 */
+ALLEGRO_BITMAP *miniCargoPng;
+ALLEGRO_BITMAP *cargoPng;
+
 
 void LoadResources()
 {
@@ -55,9 +56,10 @@ void LoadResources()
     beingPortraitPng = al_load_bitmap("placeholderBeingPortrait.png");
 
     skillSquarePng = al_load_bitmap("placeholderSkillSquare.png");
-
-    cargoPng = al_load_bitmap("placeholderCargo.png");
     */
+    cargoPng = al_load_bitmap("placeholderMiniCargo.png");
+    cargoPng = al_load_bitmap("placeholderCargo.png");
+
 }
 
 void UnloadResources()
@@ -90,8 +92,8 @@ void UnloadResources()
 
     al_destroy_bitmap(skillSquarePng);
 
-    al_destroy_bitmap(cargoPng);
-
     */
+    al_destroy_bitmap(miniCargoPng);
+    al_destroy_bitmap(cargoPng);
 
 }

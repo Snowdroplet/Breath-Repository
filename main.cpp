@@ -178,24 +178,6 @@ void InterpretInput()
 
             if(keyInput[KEY_SPACE])
             {
-                for(std::map<int,Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
-                {
-                    float x = (*it).second->overworldXPosition;
-                    float y = (*it).second->overworldYPosition;
-                    float w = Place::OVERWORLD_SPRITE_W;
-                    float h = Place::OVERWORLD_SPRITE_H;
-
-                    if(overworldCameraXPosition > x - w/2
-                        && overworldCameraXPosition < x + w/2
-                        && overworldCameraYPosition > y - h/2
-                        && overworldCameraYPosition < y + h/2)
-                    {
-                        std::cout << "Locking on place" << std::endl;
-                        OverworldLockCameraPlace((*it).second);
-                        break;
-                    }
-                }
-
                 for(std::vector<Caravan*>::iterator it = Caravan::caravans.begin(); it != Caravan::caravans.end(); ++it)
                 {
                     float x = (*it)->overworldXPosition;
@@ -203,22 +185,39 @@ void InterpretInput()
                     float w = (*it)->caravanLeader->spriteWidth;
                     float h = (*it)->caravanLeader->spriteHeight;
 
-                    if(overworldCameraXPosition > x - w/2
-                        && overworldCameraXPosition < x + w/2
-                        && overworldCameraYPosition > y - h/2
-                        && overworldCameraYPosition < y + h/2)
+                    if((overworldCameraXPosition + SCREEN_W/2) > x - w/2
+                            && (overworldCameraXPosition + SCREEN_W/2) < x + w/2
+                            && (overworldCameraYPosition + SCREEN_H/2) > y - h/2
+                            && (overworldCameraYPosition + SCREEN_H/2) < y + h/2)
                     {
-                        std::cout << "Locking on caravan" << std::endl;
                         OverworldLockCameraCaravan(*it);
                         break;
                     }
                 }
+
+                for(std::map<int,Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
+                {
+                    float x = (*it).second->overworldXPosition;
+                    float y = (*it).second->overworldYPosition;
+                    float w = Place::OVERWORLD_SPRITE_W;
+                    float h = Place::OVERWORLD_SPRITE_H;
+
+                    if((overworldCameraXPosition + SCREEN_W/2) > x - w/2
+                            && (overworldCameraXPosition + SCREEN_W/2) < x + w/2
+                            && (overworldCameraYPosition + SCREEN_H/2) > y - h/2
+                            && (overworldCameraYPosition + SCREEN_H/2) < y + h/2)
+                    {
+                        OverworldLockCameraPlace((*it).second);
+                        (*it).second->UpdateAllBubbles();
+                        break;
+                    }
+                }
             }
-            else if(overworldCameraLocked)
-            {
-                if(keyInput[KEY_ESC])
-                    OverworldUnlockCamera();
-            }
+        }
+        else if(overworldCameraLocked)
+        {
+            if(keyInput[KEY_ESC])
+                OverworldUnlockCamera();
         }
 
 
@@ -437,13 +436,13 @@ void UpdateUI()
         {
             if(overworldCameraLockedOnPlace)
             {
-                overworldCameraXPosition = overworldCameraPlace->overworldXPosition;
-                overworldCameraYPosition = overworldCameraPlace->overworldYPosition;
+                overworldCameraXPosition = overworldCameraPlace->overworldXPosition-SCREEN_W/2;
+                overworldCameraYPosition = overworldCameraPlace->overworldYPosition-SCREEN_H/2;
             }
             else if(overworldCameraLockedOnCaravan)
             {
-                overworldCameraXPosition = overworldCameraCaravan->overworldXPosition;
-                overworldCameraYPosition = overworldCameraCaravan->overworldYPosition;
+                overworldCameraXPosition = overworldCameraCaravan->overworldXPosition-SCREEN_W/2;
+                overworldCameraYPosition = overworldCameraCaravan->overworldYPosition-SCREEN_H/2;
             }
         }
     }
@@ -495,7 +494,7 @@ void DrawUI()
 {
     if(activeUI == UI_OVERWORLD)
     {
-        OverworldDrawDebugOverlay();
+        OverworldDrawGridUnderlay();
 
         for(unsigned i = 0; i < Place::places.size(); i++)
             Place::places[i]->DrawSpriteOnOverworld();
@@ -506,8 +505,16 @@ void DrawUI()
         for(unsigned i = 0; i < Caravan::caravans.size(); i++)
             Caravan::caravans[i]->DrawSpriteOnOverworld();
 
-        for(unsigned i = 0; i < Place::places.size(); i++)
-            Place::places[i]->DrawBubbleOnOverworld();
+        for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
+            (*it).second->DrawVisitorBubbleOnOverworld();
+        for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
+        {
+            if(overworldCameraPlace == (*it).second)
+            {
+                (*it).second->DrawInventoryBubble();
+                (*it).second->DrawIndustriesBubble();
+            }
+        }
 
         DrawCalendar();
     }
@@ -760,21 +767,19 @@ void InitObjects()
     testCrew5->AddMember(crewLala);
     Caravan::caravans.push_back(testCrew5);
 
-    testCrew1->MoveToRoad(Road::roads[ROAD_ROSKANEL_ROSELLA],true);
-    testCrew2->MoveToRoad(Road::roads[ROAD_OBSERVIA_COLDLAKE],false);
-    testCrew3->MoveToRoad(Road::roads[ROAD_KETH_KETHER_VIELLEICHT], true);
+    testCrew1->MoveToPlace(Place::places[PL_ERICENNES]);
+    testCrew2->MoveToPlace(Place::places[PL_ERICENNES]);
+    testCrew3->MoveToPlace(Place::places[PL_ERICENNES]);
     testCrew4->MoveToPlace(Place::places[PL_ERICENNES]);
-    testCrew5->MoveToPlace(Place::places[PL_CHORAS]);
+    testCrew5->MoveToPlace(Place::places[PL_ERICENNES]);
 
     //ericennes->AddAvailableCrew(crewLala);
 
-    //playerCrew->inventory.SetStock(IT_RICE, 10);
-    //playerCrew->inventory.SetStock(IT_WAYBREAD, 2);
+    //playerCrew->SetInventoryStock(IT_RICE, 10);
+    //playerCrew->SetInventoryStock(IT_WAYBREAD, 2);
 
-    //ericennes->inventory.SetStock(IT_RICE, 10);
-    //ericennes->inventory.SetStock(IT_BEAST_FLESH, 4);
-    //ericennes->inventory.SetStock(IT_SALVE, 4);
-    //ericennes->inventory.SetStock(IT_LEYPOST, 5);
+    //ericennes->SetInventoryStock(IT_RICE, 10);
+    //ericennes->SetInventoryStock(IT_BEAST_FLESH, 4);
 
 }
 

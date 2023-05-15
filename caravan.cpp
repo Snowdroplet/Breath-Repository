@@ -135,6 +135,10 @@ void Caravan::OverworldLogic()
     }
 }
 
+void Caravan::AddInventoryStock(int a, float b){inventory.AddStock(a,b); /*UpdateInventoryBubble();*/}
+void Caravan::RemoveInventoryStock(int a, float b){inventory.RemoveStock(a,b); /*UpdateInventoryBubble();*/}
+void Caravan::SetInventoryStock(int a, float b){inventory.SetStock(a,b); /*UpdateInventoryBubble();*/}
+
 void Caravan::MoveToPlace(Place *p)
 {
     atPlace = true;
