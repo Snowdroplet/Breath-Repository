@@ -35,9 +35,7 @@ public:
 
 
     void SetWaypoint(unsigned index, int x, int y);
-
     float ReturnSegmentLength(int a, int b);
-
     void DrawSegmentsOnOverworld();
 };
 

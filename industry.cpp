@@ -25,14 +25,14 @@ Industry::Industry(int id, float baseProd)
         expertiseLevelRequired = 1;
         break;
 
-    case IND_HUNT_COLD_BLOOD:
-        outputs[IT_COLD_BLOOD] = 6;
+    case IND_HUNT_COLD_BREATH:
+        outputs[IT_COLD_BREATH] = 6;
         expertiseType = EXP_HUNT;
         expertiseLevelRequired = 2;
         break;
 
     case IND_ALCHEMY_CONTRACT:
-        inputs[IT_COLD_BLOOD] = 4;
+        inputs[IT_COLD_BREATH] = 4;
         outputs[IT_CONTRACT] = 1;
         expertiseType = EXP_ALCHEMY;
         expertiseLevelRequired = 3;
@@ -160,9 +160,9 @@ void Industry::SetBaseProductionPerTick(float bppt)
 
 void Industry::ProgressJob()
 {
-        jobComplete = false;
+        //jobComplete = false;
 
-        //Todo: productionContributed += the number and quality of workers
+        //Todo: productionContributed += the number*quality of workers
         productionContributed += baseProductionPerTick;
 
         //std::cout << productionContributed << "/" << productionToComplete << std::endl;

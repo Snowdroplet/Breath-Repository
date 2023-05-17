@@ -17,83 +17,113 @@ Place::Place(int id)
         epithet = ", Capital of Verus";
         overworldXPosition = TILE_W*20;
         overworldYPosition = TILE_H*20;
-
+        AddIndustry(IND_FARM_RICE,1);
+        AddIndustry(IND_ALCHEMY_ALCOHOL, 1);
+        AddIndustry(IND_ALCHEMY_CONTRACT, 1);
         break;
 
     case PL_CHORAS:
         overworldXPosition = TILE_W*24;
         overworldYPosition = TILE_H*12;
-        AddIndustry(IND_FARM_MUSHROOMS, 30);
-        AddIndustry(IND_FARM_HERBS, 30);
-        AddIndustry(IND_CRAFT_POTTERY, 30);
+        AddIndustry(IND_FARM_MUSHROOMS, 1);
+        AddIndustry(IND_FARM_HERBS, 1);
+        AddIndustry(IND_MINE_CLAY, 1);
+        AddIndustry(IND_CRAFT_POTTERY, 1);
         break;
 
     case PL_KETH_KETHER:
         overworldXPosition = TILE_W*12;
         overworldYPosition = TILE_H*24;
+        AddIndustry(IND_MINE_LEYSTONE,1);
+        AddIndustry(IND_CRAFT_CLOCKWORK,1);
+        AddIndustry(IND_CRAFT_AUTOMATON,1);
         break;
 
     case PL_KETH_ENTWEIR:
         overworldXPosition = TILE_W*9;
         overworldYPosition = TILE_H*17;
+        AddIndustry(IND_FARM_HERBS,1);
+        AddIndustry(IND_FARM_MUSHROOMS,1);
         break;
 
     case PL_VIELLEICHT:
         overworldXPosition = TILE_W*1;
         overworldYPosition = TILE_H*28;
+        AddIndustry(IND_HUNT_COLD_BREATH,1);
+        AddIndustry(IND_FARM_SPICE,1);
         break;
 
     case PL_QUELLUDE:
         overworldXPosition = TILE_W*6;
         overworldYPosition = TILE_H*32;
+        AddIndustry(IND_ALCHEMY_ALCOHOL,1);
+        AddIndustry(IND_ALCHEMY_SPELLBOOK,1);
         break;
 
     case PL_AMBLEFORTH:
         overworldXPosition = TILE_W*4;
         overworldYPosition = TILE_H*14;
+        AddIndustry(IND_HUNT_MEAT,1);
+        AddIndustry(IND_FARM_RICE,1);
         break;
 
     case PL_ROSKANEL:
         overworldXPosition = TILE_W*26;
         overworldYPosition = TILE_H*24;
+        AddIndustry(IND_HUNT_COLD_BREATH,1);
         break;
 
     case PL_ROSELLA:
         overworldXPosition = TILE_W*28;
         overworldYPosition = TILE_H*30;
+        AddIndustry(IND_FARM_SPICE,1);
         break;
 
     case PL_OBSERVIA:
         overworldXPosition = TILE_W*11;
         overworldYPosition = TILE_H*5;
+        AddIndustry(IND_ALCHEMY_CONTRACT,1);
+        AddIndustry(IND_ALCHEMY_SPELLBOOK,1);
         break;
 
     case PL_COLDLAKE:
         overworldXPosition = TILE_W*16;
         overworldYPosition = TILE_H*10;
+        AddIndustry(IND_MINE_SILVER,1);
+        AddIndustry(IND_MINE_LEYSTONE,1);
         break;
 
     case PL_UMBERDELL:
         overworldXPosition = TILE_W*17;
         overworldYPosition = TILE_H*3;
+        AddIndustry(IND_FARM_MUSHROOMS,1);
+        AddIndustry(IND_FARM_HERBS,1);
+        AddIndustry(IND_ALCHEMY_MEDICINE,1);
         break;
 
     case PL_RAMSHORN:
         overworldXPosition = TILE_W*31;
         overworldYPosition = TILE_H*9;
+        AddIndustry(IND_HUNT_MEAT,1);
+        AddIndustry(IND_HUNT_COLD_BREATH,1);
         break;
 
     case PL_HOLLYHEAD:
         overworldXPosition = TILE_W*25;
         overworldYPosition = TILE_H*5;
+        AddIndustry(IND_CRAFT_JEWELRY,1);
         break;
 
     case PL_JASPER:
         overworldXPosition = TILE_W*36;
         overworldYPosition = TILE_H*2;
+        AddIndustry(IND_MINE_SILVER,1);
+        AddIndustry(IND_CRAFT_JEWELRY,1);
+        AddIndustry(IND_ALCHEMY_ALCOHOL,1);
         break;
     }
 
+    AddInitialStock();
     visitorBubbleActive = false;
 }
 
@@ -136,21 +166,26 @@ void Place::RemoveCitizen(Being *b)
 void Place::AddVisitorCaravan(Caravan *c)
 {
     visitors.push_back(c);
-    UpdateVisitorBubble();
+    if(overworldCameraCaravan == c)
+        UpdateAllBubbles();
+    else
+        UpdateVisitorBubble();
 }
 
 void Place::RemoveVisitorCaravan(Caravan *c)
 {
-    for(std::vector<Caravan*>::iterator it = visitors.begin(); it != visitors.end(); ++it)
+    for(std::vector<Caravan*>::iterator it = visitors.begin(); it != visitors.end();)
     {
         if(*it == c)
-        {
-            visitors.erase(it);
-            break;
-        }
+            it = visitors.erase(it);
         else
+        {
             (*it)->thresholdTimeAtPlace += removeVisitorCaravanDelay;
+            ++it;
+        }
     }
+
+
 
     UpdateVisitorBubble();
 }
@@ -173,29 +208,27 @@ bool Place::ActivateJob(Industry *whichIndustry)
             if(inventory.cargo[(*jt).first] < materialsRequested[(*jt).first])
             {
                 materialsSufficient = false;
-                insufficiencies[(*jt).first] += (materialsRequested[(*jt).first] - inventory.cargo[(*jt).first]);
+                //insufficiencies[(*jt).first] += (materialsRequested[(*jt).first] - inventory.cargo[(*jt).first]);
             }
         }
         else
         {
             materialsSufficient = false;
-            insufficiencies[(*jt).first] += materialsRequested[(*jt).first];
+            //insufficiencies[(*jt).first] += materialsRequested[(*jt).first];
         }
     }
 
     if(materialsSufficient)
     {
         for(std::map<int,float>::iterator jt = materialsRequested.begin(); jt != materialsRequested.end(); ++jt)
-            inventory.cargo[(*jt).first] -= (*jt).first;
+            RemoveInventoryStock((*jt).first,(*jt).second);
 
         whichIndustry->jobActive = true;
-        return true; // Materials sufficient
+        whichIndustry->jobComplete = false;
+        return true;
     }
     else
-    {
-
-        return false; // Materials insufficient
-    }
+        return false;
 }
 
 void Place::ProgressEconomy()
@@ -213,7 +246,7 @@ void Place::ProgressEconomy()
             {
                 if(!ActivateJob(*it)) // Materials were insufficient
                 {
-                    (*it)->PauseJobActivation(24); //hours, hopefully
+                    (*it)->PauseJobActivation(8); //hours, hopefully
                     // Adjust industrial demand for insufficient materials here.
                 }
             }
@@ -228,6 +261,7 @@ void Place::ProgressEconomy()
             {
                 AddInventoryStock((*jt).first, (*jt).second);
             }
+            (*it)->jobComplete = false;
         }
     }
 }
@@ -255,6 +289,22 @@ void Place::SetInventoryStock(int a, float b)
 
     if(inventory.cargo.size() != prev)
         UpdateInventoryBubble();
+}
+
+void Place::AddInitialStock()
+{
+    for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
+    {
+        for(std::map<int,float>::iterator jt = (*it)->inputs.begin(); jt != (*it)->inputs.end(); ++jt)
+        {
+            inventory.cargo[(*jt).first] += (*jt).second*5;
+        }
+        for(std::map<int,float>::iterator jt = (*it)->outputs.begin(); jt != (*it)->outputs.end(); ++jt)
+        {
+            inventory.cargo[(*jt).first] += (*jt).second*5;
+        }
+
+    }
 }
 
 void Place::UpdateAllBubbles()
@@ -289,8 +339,8 @@ void Place::UpdateVisitorBubble()
 
 void Place::UpdateInventoryBubble()
 {
-    inventoryBubbleNumCols = 6;
-    inventoryBubbleNumRows = 2;
+    inventoryBubbleNumCols = inventoryBubbleBaseCols;
+    inventoryBubbleNumRows = inventoryBubbleBaseRows;
 
     while(inventory.cargo.size() > inventoryBubbleNumCols*inventoryBubbleNumRows)
     {
@@ -306,7 +356,7 @@ void Place::UpdateInventoryBubble()
 
 void Place::UpdateIndustriesBubble()
 {
-    industriesBubbleHeight = (industries.size()+1)*(TILE_H+industriesBubbleRowSpacing);
+    industriesBubbleHeight = industries.size()*(TILE_H+industriesBubbleRowSpacing);
 }
 
 void Place::DrawSpriteOnOverworld()
@@ -445,35 +495,60 @@ void Place::DrawIndustriesBubble()
         {
             if(industries[i]->jobActive)
             {
-                al_draw_filled_rectangle(industriesBubbleDrawX,
-                                         industriesBubbleDrawY + i*(TILE_H+industriesBubbleRowSpacing),
-                                         industriesBubbleDrawX + industriesBubbleWidth * industries[i]->productionContributed/industries[i]->productionToComplete,
-                                         industriesBubbleDrawY + i*(TILE_H+industriesBubbleRowSpacing) + TILE_H,
+                float percentage = industries[i]->productionContributed/industries[i]->productionToComplete;
+                al_draw_filled_rectangle(industriesBubbleDrawX + 2.5*TILE_W,
+                                         industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing),
+                                         industriesBubbleDrawX + 2.5*TILE_W + (industriesBubbleWidth-2.5*TILE_W)*percentage,
+                                         industriesBubbleDrawY + i * (TILE_H + industriesBubbleRowSpacing) + TILE_H,
                                          COL_WHITE);
-                al_draw_rectangle(industriesBubbleDrawX,
-                                  industriesBubbleDrawY + i*(TILE_H+industriesBubbleRowSpacing),
+                al_draw_rectangle(industriesBubbleDrawX + 2.5*TILE_W,
+                                  industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing),
                                   industriesBubbleDrawX + industriesBubbleWidth,
-                                  industriesBubbleDrawY + i*(TILE_H+industriesBubbleRowSpacing) + TILE_H,
-                                  COL_WHITE,
+                                  industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing) + TILE_H,
+                                  COL_VIOLET,
                                   1);
             }
             else // if !jobActive
             {
-                al_draw_filled_rectangle(industriesBubbleDrawX,
-                                         industriesBubbleDrawY + i*(TILE_H+industriesBubbleRowSpacing),
-                                         industriesBubbleDrawX + industriesBubbleWidth * industries[i]->jobActivationPauseTicks/industries[i]->jobActivationPauseThreshold,
-                                         industriesBubbleDrawY + i*(TILE_H+industriesBubbleRowSpacing) + TILE_H,
+                float percentage = industries[i]->jobActivationPauseTicks/industries[i]->jobActivationPauseThreshold;
+                al_draw_filled_rectangle(industriesBubbleDrawX + 2.5*TILE_W,
+                                         industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing),
+                                         industriesBubbleDrawX + 2.5*TILE_W + (industriesBubbleWidth-2.5*TILE_W)*percentage,
+                                         industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing) + TILE_H,
                                          COL_RED);
-                al_draw_rectangle(industriesBubbleDrawX,
-                                  industriesBubbleDrawY + i*(TILE_H+industriesBubbleRowSpacing),
+
+                al_draw_rectangle(industriesBubbleDrawX + 2.5*TILE_W,
+                                  industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing),
                                   industriesBubbleDrawX + industriesBubbleWidth,
-                                  industriesBubbleDrawY + i*(TILE_H+industriesBubbleRowSpacing) + TILE_H,
-                                  COL_RED,
+                                  industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing) + TILE_H,
+                                  COL_ORANGE,
                                   1);
 
             }
 
-            string_al_draw_text(builtin, COL_BLACK, industriesBubbleDrawX,industriesBubbleDrawY + i*(TILE_H+industriesBubbleRowSpacing), ALLEGRO_ALIGN_LEFT, industries[i]->industryName);
+            al_draw_bitmap_region(cargoPng,
+                                  (industries[i]->outputs.begin()->first)*TILE_W,0,
+                                  TILE_W,TILE_H,
+                                  industriesBubbleDrawX+TILE_W*1.5, industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing),
+                                  0);
+
+            if(industries[i]->inputs.size() > 0)
+            {
+                al_draw_bitmap_region(cargoPng,
+                                      (industries[i]->inputs.begin()->first)*TILE_W,0,
+                                       TILE_W,TILE_H,
+                                       industriesBubbleDrawX, industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing),
+                                       0);
+
+                al_draw_bitmap(industryRedArrowPng,
+                               industriesBubbleDrawX+TILE_W*0.75,
+                               industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing),
+                               0);
+            }
+
+
+
+            string_al_draw_text(builtin, COL_BLACK, industriesBubbleDrawX + 3*TILE_W,industriesBubbleDrawY + i*(TILE_H+industriesBubbleRowSpacing) + 12, ALLEGRO_ALIGN_LEFT, industries[i]->industryName);
         }
     }
     else

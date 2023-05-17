@@ -13,7 +13,7 @@ enum enumExpertiseTypes
 enum enumIndustries
 {
     IND_HUNT_MEAT,
-    IND_HUNT_COLD_BLOOD, IND_ALCHEMY_CONTRACT, IND_ALCHEMY_SPELLBOOK,
+    IND_HUNT_COLD_BREATH, IND_ALCHEMY_CONTRACT, IND_ALCHEMY_SPELLBOOK,
     IND_FARM_RICE, IND_ALCHEMY_ALCOHOL,
     IND_FARM_MUSHROOMS,
     IND_FARM_HERBS, IND_ALCHEMY_MEDICINE,
@@ -25,36 +25,36 @@ enum enumIndustries
 
 const std::map<int, std::string>industryNames =
 {
-    {IND_HUNT_MEAT, "Hunting meaty beasts"},
-    {IND_HUNT_COLD_BLOOD, "Hunting cold-blooded monsters"},
-    {IND_ALCHEMY_CONTRACT, "Binding blood contracts"},
-    {IND_ALCHEMY_SPELLBOOK, "Binding spellbooks"},
-    {IND_FARM_RICE, "Growing rice"},
-    {IND_ALCHEMY_ALCOHOL, "Brewing alcohol"},
-    {IND_FARM_MUSHROOMS, "Growing mushrooms"},
-    {IND_FARM_HERBS, "Growing herbs"},
-    {IND_ALCHEMY_MEDICINE, "Mixing medicines"},
-    {IND_FARM_SPICE, "Growing spice"},
-    {IND_MINE_CLAY, "Mining clay"},
-    {IND_CRAFT_POTTERY, "Crafting pottery"},
-    {IND_MINE_SILVER, "Mining silver"},
-    {IND_CRAFT_JEWELRY, "Crafting jewelry"},
-    {IND_MINE_LEYSTONE, "Mining leystone"},
-    {IND_CRAFT_CLOCKWORK, "Constructing clockwork parts"},
-    {IND_CRAFT_AUTOMATON, "Constructing automata"}
+    {IND_HUNT_MEAT, "Hunting Beasts for Meat"},
+    {IND_HUNT_COLD_BREATH, "Hunting Ghosts for Cold Breath"},
+    {IND_ALCHEMY_CONTRACT, "Binding Cold Breath -> Contracts"},
+    {IND_ALCHEMY_SPELLBOOK, "Binding Contracts -> Spellbooks"},
+    {IND_FARM_RICE, "Growing Rice"},
+    {IND_ALCHEMY_ALCOHOL, "Brewing Rice -> Alcohol"},
+    {IND_FARM_MUSHROOMS, "Growing Mushrooms"},
+    {IND_FARM_HERBS, "Cultivating Herbs"},
+    {IND_ALCHEMY_MEDICINE, "Brewing Herbs -> Medicines"},
+    {IND_FARM_SPICE, "Cultivating Spices"},
+    {IND_MINE_CLAY, "Mining Clay"},
+    {IND_CRAFT_POTTERY, "Shaping Clay -> Pottery"},
+    {IND_MINE_SILVER, "Mining Silver"},
+    {IND_CRAFT_JEWELRY, "Crafting Silver -> Jewelry"},
+    {IND_MINE_LEYSTONE, "Mining Leystone"},
+    {IND_CRAFT_CLOCKWORK, "Shaping Leystone -> Clockwork"},
+    {IND_CRAFT_AUTOMATON, "Assembling Clockwork -> Automata"}
 };
 
 const std::map<int, float>baseProductionToComplete =
 {
     {IND_HUNT_MEAT, 24},
-    {IND_HUNT_COLD_BLOOD, 24},
-    {IND_ALCHEMY_CONTRACT, 8},
-    {IND_ALCHEMY_SPELLBOOK, 8},
+    {IND_HUNT_COLD_BREATH, 36},
+    {IND_ALCHEMY_CONTRACT, 16},
+    {IND_ALCHEMY_SPELLBOOK, 24},
     {IND_FARM_RICE, 120},
     {IND_ALCHEMY_ALCOHOL, 448},
     {IND_FARM_MUSHROOMS, 120},
     {IND_FARM_HERBS, 240},
-    {IND_ALCHEMY_MEDICINE, 8},
+    {IND_ALCHEMY_MEDICINE, 12},
     {IND_FARM_SPICE, 240},
     {IND_MINE_CLAY, 24},
     {IND_CRAFT_POTTERY, 24},

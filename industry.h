@@ -16,8 +16,8 @@ public:
 /// Job state
     bool jobActive;
     bool jobActivationPaused;
-    int jobActivationPauseTicks;
-    int jobActivationPauseThreshold;
+    float jobActivationPauseTicks;
+    float jobActivationPauseThreshold;
 
     bool jobComplete;
     bool jobRepeating;
@@ -52,6 +52,7 @@ public:
 /// Production functions
     void SetBaseProductionPerTick(float bppt);
     void ProgressJob();
+
 
 };
 

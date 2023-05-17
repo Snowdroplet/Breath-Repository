@@ -51,12 +51,26 @@ public:
 
 /// Place activities
     int currentTimeAtPlace, thresholdTimeAtPlace;
-    const int MIN_TIME_AT_PLACE = 50;
-    const int MAX_TIME_AT_PLACE = 300;
+    const int MIN_TIME_AT_PLACE = 250;
+    const int MAX_TIME_AT_PLACE = 1000;
 
 /// Inventory
     Inventory inventory;
     float weight, maxWeight;
+
+/// Bubbles
+    const float bubbleWidthPadding = TILE_W/4;
+    const float bubbleHeightPadding = TILE_H/4;
+    const float bubbleCornerRadius = 8;
+
+    const float inventoryBubbleDrawX = SCREEN_W*2/10;
+    const float inventoryBubbleDrawY = SCREEN_H*3/10;
+    const float inventoryBubbleRowSpacing = 8; // 8 being the height of the builtin text.
+    const float inventoryBubbleBaseCols = 5;
+    const float inventoryBubbleBaseRows = 1;
+    unsigned inventoryBubbleNumCols;
+    unsigned inventoryBubbleNumRows;
+    float inventoryBubbleWidth, inventoryBubbleHeight;
 
 /// Constructor
     Caravan();
@@ -82,9 +96,13 @@ public:
     void RemoveInventoryStock(int a, float b);
     void SetInventoryStock(int a, float b);
 
+/// Bubble functions
+    void UpdateInventoryBubble();
+
 /// Drawing functions
     void DrawSpriteOnOverworld();
     void DrawActivity(float x, float y);
+    void DrawInventoryBubble();
 };
 
 #endif // CARAVAN_H_INCLUDED

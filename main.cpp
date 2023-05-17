@@ -26,17 +26,19 @@ Caravan *testCrew2 = nullptr;
 Caravan *testCrew3 = nullptr;
 Caravan *testCrew4 = nullptr;
 Caravan *testCrew5 = nullptr;
+Caravan *testCrew6 = nullptr;
+Caravan *testCrew7 = nullptr;
 
 Being *crewDetailPtr = nullptr;
 Being *player = nullptr;
 Being *crewZynes = nullptr;
-Being *crewRukhra = nullptr;
 Being *crewPurp = nullptr;
+Being *crewWindow = nullptr;
+Being *crewRukhran = nullptr;
 Being *crewYubi = nullptr;
+Being *crewEmily = nullptr;
 Being *crewBel = nullptr;
 Being *crewPaul = nullptr;
-Being *crewWindow = nullptr;
-Being *crewEmily = nullptr;
 Being *crewLala = nullptr;
 
 void InterpretInput();
@@ -503,13 +505,18 @@ void DrawUI()
             Road::roads[i]->DrawSegmentsOnOverworld();
 
         for(unsigned i = 0; i < Caravan::caravans.size(); i++)
+        {
             Caravan::caravans[i]->DrawSpriteOnOverworld();
+            if(overworldCameraCaravan == Caravan::caravans[i])
+                Caravan::caravans[i]->DrawInventoryBubble();
+        }
 
         for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
             (*it).second->DrawVisitorBubbleOnOverworld();
         for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
         {
-            if(overworldCameraPlace == (*it).second)
+            if(overworldCameraPlace == (*it).second
+               || (overworldCameraCaravan != nullptr && overworldCameraCaravan->atPlace && overworldCameraCaravan->whichPlace == (*it).second))
             {
                 (*it).second->DrawInventoryBubble();
                 (*it).second->DrawIndustriesBubble();
@@ -680,6 +687,8 @@ void InitObjects()
     testCrew3 = new Caravan;
     testCrew4 = new Caravan;
     testCrew5 = new Caravan;
+    testCrew6 = new Caravan;
+    testCrew7 = new Caravan;
 
     /*
     player = new Being;
@@ -695,29 +704,11 @@ void InitObjects()
     //crewZynes->SetPortrait(RACE_VERIT,0);
     Being::people.push_back(crewZynes);
 
-    crewRukhra = new Being;
-    crewRukhra->SetName("Test Haphae Rukhra");
-    crewRukhra->SetRace(RACE_HAPHAE);
-    //crewRukhra->SetPortrait(RACE_HAPHAE,0);
-    Being::people.push_back(crewRukhra);
-
     crewPurp = new Being;
     crewPurp->SetName("Test Verit Purp");
-    crewPurp->SetRace(RACE_VERIT);
-    //crewPurp->SetPortrait(RACE_VERIT,2);
+    crewPurp->SetRace(RACE_YETI);
+    //crewPurp->SetPortrait(RACE_YETI,2);
     Being::people.push_back(crewPurp);
-
-    crewYubi = new Being;
-    crewYubi->SetName("Test Beyu Yubi");
-    crewYubi->SetRace(RACE_BEYU);
-    //crewYubi->SetPortrait(RACE_BEYU,2);
-    Being::people.push_back(crewYubi);
-
-    crewBel = new Being;
-    crewBel->SetName ("Test Ordon Bel");
-    crewBel->SetRace (RACE_ORDON);
-    //crewBel->SetPortrait(RACE_ORDON,2);
-    Being::people.push_back(crewBel);
 
     crewWindow = new Being;
     crewWindow->SetName ("Test Makhi Window");
@@ -726,17 +717,35 @@ void InitObjects()
     //crewWindow->SetSkill(SK_MECHANIC, 1);
     Being::people.push_back(crewWindow);
 
+    crewYubi = new Being;
+    crewYubi->SetName("Test Beyu Yubi");
+    crewYubi->SetRace(RACE_BEYU);
+    //crewYubi->SetPortrait(RACE_BEYU,2);
+    Being::people.push_back(crewYubi);
+
+    crewRukhran = new Being;
+    crewRukhran->SetName("Test Haphae Rukhra");
+    crewRukhran->SetRace(RACE_HAPHAE);
+    //crewRukhra->SetPortrait(RACE_HAPHAE,0);
+    Being::people.push_back(crewRukhran);
+
+    crewEmily = new Being;
+    crewEmily->SetName("Test Yeti Emily");
+    crewEmily->SetRace(RACE_MESERA);
+    //crewEmily->SetPortrait(RACE_MESERA,1);
+    Being::people.push_back(crewEmily);
+
+    crewBel = new Being;
+    crewBel->SetName ("Test Ordon Bel");
+    crewBel->SetRace (RACE_ORDON);
+    //crewBel->SetPortrait(RACE_ORDON,2);
+    Being::people.push_back(crewBel);
+
     crewPaul = new Being;
     crewPaul->SetName("Test Makhi Paul");
     crewPaul->SetRace(RACE_MAKHI);
     //crewPaul->SetPortrait(RACE_MAKHI,2);
     Being::people.push_back(crewPaul);
-
-    crewEmily = new Being;
-    crewEmily->SetName("Test Yeti Emily");
-    crewEmily->SetRace(RACE_YETI);
-    //crewEmily->SetPortrait(RACE_YETI,1);
-    Being::people.push_back(crewEmily);
 
     crewLala = new Being;
     crewLala->SetName("Test Beyu Lala");
@@ -748,30 +757,46 @@ void InitObjects()
     //playerCrew->AddMember(player);
 
     testCrew1->AddMember(crewZynes);
-    testCrew1->AddMember(crewRukhra);
+    testCrew1->AddMember(crewPaul);
     Caravan::caravans.push_back(testCrew1);
 
 
-    testCrew2->AddMember(crewYubi);
     testCrew2->AddMember(crewPurp);
+    testCrew2->AddMember(crewLala);
     Caravan::caravans.push_back(testCrew2);
 
     testCrew3->AddMember(crewWindow);
-    testCrew3->AddMember(crewPaul);
     Caravan::caravans.push_back(testCrew3);
 
-    testCrew4->AddMember(crewBel);
+    testCrew4->AddMember(crewRukhran);
     Caravan::caravans.push_back(testCrew4);
 
-    testCrew5->AddMember(crewEmily);
-    testCrew5->AddMember(crewLala);
+    testCrew5->AddMember(crewYubi);
     Caravan::caravans.push_back(testCrew5);
+
+    testCrew6->AddMember(crewEmily);
+    Caravan::caravans.push_back(testCrew6);
+
+    testCrew7->AddMember(crewBel);
+    Caravan::caravans.push_back(testCrew7);
 
     testCrew1->MoveToPlace(Place::places[PL_ERICENNES]);
     testCrew2->MoveToPlace(Place::places[PL_ERICENNES]);
     testCrew3->MoveToPlace(Place::places[PL_ERICENNES]);
     testCrew4->MoveToPlace(Place::places[PL_ERICENNES]);
     testCrew5->MoveToPlace(Place::places[PL_ERICENNES]);
+    testCrew6->MoveToPlace(Place::places[PL_ERICENNES]);
+    testCrew7->MoveToPlace(Place::places[PL_ERICENNES]);
+
+    for(unsigned i = 0; i < Caravan::caravans.size(); i++)
+    {
+        for(unsigned j = 0; j < rand()%((unsigned)3+1); j++)
+        {
+            unsigned item = rand()%(IT_MARKER_FIRST + IT_MARKER_LAST + 1);
+            unsigned quanitity = rand()%9 + 1;
+            Caravan::caravans[i]->AddInventoryStock(item,quanitity);
+        }
+    }
 
     //ericennes->AddAvailableCrew(crewLala);
 

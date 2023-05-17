@@ -39,7 +39,7 @@ public:
     std::vector<Being*>citizens;
     std::vector<Caravan*>visitors;
 
-    const int removeVisitorCaravanDelay = 60; /// Todo: Tie to advancement of calendar time instead of arbitrary number
+    const int removeVisitorCaravanDelay = 50; // Todo: Tie to advancement of calendar time instead of arbitrary number
 
 /// Economy
     Inventory inventory;
@@ -74,14 +74,17 @@ public:
     const float inventoryBubbleDrawX = SCREEN_W*6/10;
     const float inventoryBubbleDrawY = SCREEN_H*3/10;
     const float inventoryBubbleRowSpacing = 8; // 8 being the height of the builtin text.
-    float inventoryBubbleWidth, inventoryBubbleHeight;
+    const float inventoryBubbleBaseCols = 6;
+    const float inventoryBubbleBaseRows = 2;
     unsigned inventoryBubbleNumCols;
     unsigned inventoryBubbleNumRows;
+    float inventoryBubbleWidth, inventoryBubbleHeight;
+
 
     const float industriesBubbleDrawX = SCREEN_W*6/10;
     const float industriesBubbleDrawY = SCREEN_H*6/10;
     const float industriesBubbleRowSpacing = 4; // Arbitrary gap
-    const float industriesBubbleWidth = TILE_W*10 + bubbleWidthPadding;
+    const float industriesBubbleWidth = TILE_W*12 + bubbleWidthPadding;
     float industriesBubbleHeight;
 
 /// Constructor
@@ -118,6 +121,7 @@ public:
     void RemoveInventoryStock(int a, float b);
     void SetInventoryStock(int a, float b);
 
+    void AddInitialStock();
 /// Location functions
 
 /// Bubble functions

@@ -12,6 +12,8 @@ Caravan::Caravan()
     onRoad = false;
     whichPlace = nullptr;
     whichRoad = nullptr;
+
+    UpdateInventoryBubble();
 }
 
 Caravan::~Caravan()
@@ -135,9 +137,19 @@ void Caravan::OverworldLogic()
     }
 }
 
-void Caravan::AddInventoryStock(int a, float b){inventory.AddStock(a,b); /*UpdateInventoryBubble();*/}
-void Caravan::RemoveInventoryStock(int a, float b){inventory.RemoveStock(a,b); /*UpdateInventoryBubble();*/}
-void Caravan::SetInventoryStock(int a, float b){inventory.SetStock(a,b); /*UpdateInventoryBubble();*/}
+void Caravan::UpdateTravelSpeed()
+{
+    if(members.size() > 0)
+    {
+        float lowestTravelSpeed = 99;
+        for(std::vector<Being*>::iterator it = members.begin(); it != members.end(); ++it)
+        {
+            if((*it)->travelSpeed < lowestTravelSpeed)
+                lowestTravelSpeed = (*it)->travelSpeed;
+        }
+        travelSpeed = lowestTravelSpeed;
+    }
+}
 
 void Caravan::MoveToPlace(Place *p)
 {
@@ -218,25 +230,6 @@ void Caravan::MoveToRoadSegment(int a, bool isReverseRoad)
     //std::cout << "Number of segments: " << whichRoad->xWaypoints.size() << std::endl;
 }
 
-void Caravan::DrawSpriteOnOverworld()
-{
-    if(onRoad)
-    {
-        DrawActivity(overworldXPosition - overworldCameraXPosition,overworldYPosition - overworldCameraYPosition);
-
-    }
-
-    else if(atPlace /* and the open place interface is equal to whichPlace */)
-    {
-
-    }
-}
-
-void Caravan::DrawActivity(float x, float y)
-{
-    caravanLeader->DrawActivity(x, y);
-}
-
 bool Caravan::IsActive()
 {
     return active;
@@ -252,17 +245,85 @@ void Caravan::AddMember(Being *b)
     //std::cout << travelSpeed << std::endl;
 }
 
-void Caravan::UpdateTravelSpeed()
+void Caravan::AddInventoryStock(int a, float b){inventory.AddStock(a,b); UpdateInventoryBubble();}
+void Caravan::RemoveInventoryStock(int a, float b){inventory.RemoveStock(a,b); UpdateInventoryBubble();}
+void Caravan::SetInventoryStock(int a, float b){inventory.SetStock(a,b); UpdateInventoryBubble();}
+
+void Caravan::UpdateInventoryBubble()
 {
-    if(members.size() > 0)
+    inventoryBubbleNumCols = inventoryBubbleBaseCols;
+    inventoryBubbleNumRows = inventoryBubbleBaseRows;
+
+    while(inventory.cargo.size() > inventoryBubbleNumCols*inventoryBubbleNumRows)
     {
-        float lowestTravelSpeed = 99;
-        for(std::vector<Being*>::iterator it = members.begin(); it != members.end(); ++it)
-        {
-            if((*it)->travelSpeed < lowestTravelSpeed)
-                lowestTravelSpeed = (*it)->travelSpeed;
-        }
-        travelSpeed = lowestTravelSpeed;
+        if(inventoryBubbleNumCols <= inventoryBubbleNumRows)
+            inventoryBubbleNumCols++;
+        else
+            inventoryBubbleNumRows++;
     }
 
+    inventoryBubbleWidth = inventoryBubbleNumCols*TILE_W;
+    inventoryBubbleHeight = inventoryBubbleNumRows*(TILE_H+inventoryBubbleRowSpacing);
+}
+
+void Caravan::DrawSpriteOnOverworld()
+{
+    if(onRoad)
+    {
+        DrawActivity(overworldXPosition - overworldCameraXPosition,overworldYPosition - overworldCameraYPosition);
+    }
+
+    else if(atPlace /* and the open place interface is equal to whichPlace */)
+    {
+
+    }
+}
+
+void Caravan::DrawActivity(float x, float y)
+{
+    caravanLeader->DrawActivity(x, y);
+}
+
+void Caravan::DrawInventoryBubble()
+{
+    al_draw_filled_rounded_rectangle(inventoryBubbleDrawX - bubbleWidthPadding,
+                                     inventoryBubbleDrawY - bubbleHeightPadding,
+                                     inventoryBubbleDrawX + inventoryBubbleWidth + bubbleWidthPadding,
+                                     inventoryBubbleDrawY + inventoryBubbleHeight + bubbleHeightPadding,
+                                     bubbleCornerRadius,
+                                     bubbleCornerRadius,
+                                     COL_DARK_WHITE);
+
+
+    al_draw_rounded_rectangle(inventoryBubbleDrawX - bubbleWidthPadding,
+                              inventoryBubbleDrawY - bubbleHeightPadding,
+                              inventoryBubbleDrawX + inventoryBubbleWidth + bubbleWidthPadding,
+                              inventoryBubbleDrawY + inventoryBubbleHeight + bubbleHeightPadding,
+                              bubbleCornerRadius,
+                              bubbleCornerRadius,
+                              COL_INDIGO,
+                              4);
+
+    al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX, inventoryBubbleDrawY-bubbleHeightPadding-8, ALLEGRO_ALIGN_LEFT, "Cargo:");
+
+    if(inventory.cargo.size() > 0)
+    {
+        unsigned i = 0;
+        for(std::map<int,float>::iterator it = inventory.cargo.begin(); it != inventory.cargo.end(); ++it)
+        {
+            float drawX = inventoryBubbleDrawX + i%inventoryBubbleNumCols*TILE_W;
+            float drawY = inventoryBubbleDrawY + i/inventoryBubbleNumCols*(TILE_H+inventoryBubbleRowSpacing);
+
+            al_draw_bitmap_region(cargoPng,
+                                  0+((*it).first)*TILE_W, 0,
+                                  TILE_W, TILE_H,
+                                  drawX, drawY,
+                                  0);
+
+            string_al_draw_text(builtin, COL_BLACK, drawX+TILE_W, drawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
+            i++;
+        }
+    }
+    else
+        al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX,inventoryBubbleDrawY,ALLEGRO_ALIGN_LEFT,"(No cargo carried).");
 }

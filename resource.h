@@ -32,6 +32,8 @@ extern ALLEGRO_BITMAP *skillSquarePng;
 extern ALLEGRO_BITMAP *miniCargoPng;
 extern ALLEGRO_BITMAP *cargoPng;
 
+extern ALLEGRO_BITMAP *industryRedArrowPng;
+
 void LoadResources();
 void UnloadResources();
 
