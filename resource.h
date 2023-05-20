@@ -11,6 +11,9 @@
 const int PNG_INACTIVE = 0;
 const int PNG_ACTIVE = 1;
 */
+
+
+const int BUILTIN_TEXT_HEIGHT = 8;
 extern ALLEGRO_FONT *builtin;
 
 extern ALLEGRO_BITMAP *overworldPlacePng;
@@ -32,7 +35,7 @@ extern ALLEGRO_BITMAP *skillSquarePng;
 extern ALLEGRO_BITMAP *miniCargoPng;
 extern ALLEGRO_BITMAP *cargoPng;
 
-extern ALLEGRO_BITMAP *industryRedArrowPng;
+extern ALLEGRO_BITMAP *redArrowPng;
 
 void LoadResources();
 void UnloadResources();

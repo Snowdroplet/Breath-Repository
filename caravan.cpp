@@ -43,7 +43,6 @@ void Caravan::UpdateOverworldPosition()
         if(currentWaypoint == finalWaypoint)
         {
             atRoadsEnd = true;
-            atPlace = true;
             //std::cout << "at roads end true" << std::endl;
         }
 
@@ -88,7 +87,7 @@ void Caravan::OverworldLogic()
         currentTimeAtPlace++;
         if(currentTimeAtPlace >= thresholdTimeAtPlace)
         {
-            if(worldGraph.path.empty())
+            if(worldGraph.path.size() <= 1) // The last remaining node will be the destination - I can't call clear() worldGraph.path prematurely, but whatever.
             {
 #ifdef debug_output_worldgraph_dijkstra
                 std::cout << "Worldgraph path empty. " << std::endl;
@@ -111,7 +110,7 @@ void Caravan::OverworldLogic()
 #endif
                 }
             }
-            else
+            else // !worldGraph.path.empty()
             {
                 worldGraph.path.erase(worldGraph.path.begin());
 
@@ -127,12 +126,10 @@ void Caravan::OverworldLogic()
 
                     else if((*it)->endpointB == nextPlaceOnPath)
                         MoveToRoad((*it),false);
-
                 }
-
-                if(worldGraph.path.size() == 1)
-                    worldGraph.path.clear();
             }
+
+            UpdatePathfindingBubble();
         }
     }
 }
@@ -168,6 +165,14 @@ void Caravan::MoveToPlace(Place *p)
 
     caravanLeader->facingLeft = false;
 
+    /*
+    if(!worldGraph.path.empty())
+    {
+        worldGraph.path.erase(worldGraph.path.begin());
+        UpdatePathfindingBubble();
+    }
+    */
+
 
 }
 
@@ -196,6 +201,8 @@ void Caravan::MoveToRoad(Road *r, bool isReverseRoad)
         roadDestination = r->endpointA;
         MoveToRoadSegment(whichRoad->lastWaypoint, true);
     }
+
+    UpdatePathfindingBubble();
 
 }
 
@@ -245,9 +252,21 @@ void Caravan::AddMember(Being *b)
     //std::cout << travelSpeed << std::endl;
 }
 
-void Caravan::AddInventoryStock(int a, float b){inventory.AddStock(a,b); UpdateInventoryBubble();}
-void Caravan::RemoveInventoryStock(int a, float b){inventory.RemoveStock(a,b); UpdateInventoryBubble();}
-void Caravan::SetInventoryStock(int a, float b){inventory.SetStock(a,b); UpdateInventoryBubble();}
+void Caravan::AddInventoryStock(int a, float b)
+{
+    inventory.AddStock(a,b);
+    UpdateInventoryBubble();
+}
+void Caravan::RemoveInventoryStock(int a, float b)
+{
+    inventory.RemoveStock(a,b);
+    UpdateInventoryBubble();
+}
+void Caravan::SetInventoryStock(int a, float b)
+{
+    inventory.SetStock(a,b);
+    UpdateInventoryBubble();
+}
 
 void Caravan::UpdateInventoryBubble()
 {
@@ -264,6 +283,18 @@ void Caravan::UpdateInventoryBubble()
 
     inventoryBubbleWidth = inventoryBubbleNumCols*TILE_W;
     inventoryBubbleHeight = inventoryBubbleNumRows*(TILE_H+inventoryBubbleRowSpacing);
+}
+
+void Caravan::UpdatePathfindingBubble()
+{
+    pathfindingBubbleNumCols = pathfindingBubbleBaseCols;
+    pathfindingBubbleNumRows = pathfindingBubbleBaseRows;
+
+    if(worldGraph.path.size() > pathfindingBubbleBaseCols)
+        pathfindingBubbleNumCols = worldGraph.path.size();
+
+    pathfindingBubbleWidth = pathfindingBubbleNumCols*(2*TILE_W+pathfindingBubbleColSpacing) - pathfindingBubbleColSpacing;
+    pathfindingBubbleHeight = pathfindingBubbleNumRows*(2*TILE_H+pathfindingBubbleRowSpacing);
 }
 
 void Caravan::DrawSpriteOnOverworld()
@@ -304,7 +335,7 @@ void Caravan::DrawInventoryBubble()
                               COL_INDIGO,
                               4);
 
-    al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX, inventoryBubbleDrawY-bubbleHeightPadding-8, ALLEGRO_ALIGN_LEFT, "Cargo:");
+    al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX, inventoryBubbleDrawY-bubbleHeightPadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, "Cargo:");
 
     if(inventory.cargo.size() > 0)
     {
@@ -312,10 +343,10 @@ void Caravan::DrawInventoryBubble()
         for(std::map<int,float>::iterator it = inventory.cargo.begin(); it != inventory.cargo.end(); ++it)
         {
             float drawX = inventoryBubbleDrawX + i%inventoryBubbleNumCols*TILE_W;
-            float drawY = inventoryBubbleDrawY + i/inventoryBubbleNumCols*(TILE_H+inventoryBubbleRowSpacing);
+            float drawY = inventoryBubbleDrawY + i/inventoryBubbleNumCols*(TILE_H + inventoryBubbleRowSpacing);
 
             al_draw_bitmap_region(cargoPng,
-                                  0+((*it).first)*TILE_W, 0,
+                                  ((*it).first)*TILE_W, 0,
                                   TILE_W, TILE_H,
                                   drawX, drawY,
                                   0);
@@ -326,4 +357,61 @@ void Caravan::DrawInventoryBubble()
     }
     else
         al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX,inventoryBubbleDrawY,ALLEGRO_ALIGN_LEFT,"(No cargo carried).");
+}
+
+void Caravan::DrawPathfindingBubble()
+{
+    al_draw_filled_rounded_rectangle(pathfindingBubbleDrawX - bubbleWidthPadding,
+                                         pathfindingBubbleDrawY - bubbleHeightPadding,
+                                         pathfindingBubbleDrawX + pathfindingBubbleWidth + bubbleWidthPadding,
+                                         pathfindingBubbleDrawY + pathfindingBubbleHeight + bubbleHeightPadding,
+                                         bubbleCornerRadius,
+                                         bubbleCornerRadius,
+                                         COL_DARK_WHITE);
+
+        al_draw_rectangle(pathfindingBubbleDrawX - bubbleWidthPadding,
+                          pathfindingBubbleDrawY - bubbleHeightPadding,
+                          pathfindingBubbleDrawX + pathfindingBubbleWidth + bubbleWidthPadding,
+                          pathfindingBubbleDrawY + pathfindingBubbleHeight + bubbleHeightPadding,
+                          COL_INDIGO,
+                          4);
+
+    if(!worldGraph.path.empty())
+    {
+
+        for(unsigned i = 0; i < worldGraph.path.size(); i++)
+        {
+            float drawX = pathfindingBubbleDrawX + i*(2*TILE_H+pathfindingBubbleColSpacing);
+            float drawY = pathfindingBubbleDrawY;
+            al_draw_bitmap_region(overworldPlacePng,
+                                  worldGraph.path[i]*2*TILE_W, 0,
+                                  2*TILE_W, 2*TILE_H,
+                                  drawX, drawY,
+                                  0);
+
+            string_al_draw_text(builtin, COL_BLACK,
+                                drawX + TILE_W, drawY + 2*TILE_H,
+                                ALLEGRO_ALIGN_CENTER,
+                                placeNames.at(worldGraph.path[i]));
+
+            if(i < worldGraph.path.size()-1)
+            {
+                al_draw_bitmap(redArrowPng,
+                               drawX+2*TILE_W,
+                               drawY+TILE_H/2,
+                               0);
+            }
+        }
+    }
+    else
+    {
+        al_draw_text(builtin, COL_BLACK,
+                     pathfindingBubbleDrawX+pathfindingBubbleWidth/2,
+                     pathfindingBubbleDrawY+pathfindingBubbleWidth/2 - BUILTIN_TEXT_HEIGHT,
+                     ALLEGRO_ALIGN_CENTER, "(No Path)");
+    }
+    al_draw_text(builtin,COL_BLACK,
+                 pathfindingBubbleDrawX,
+                 pathfindingBubbleDrawY-bubbleHeightPadding-BUILTIN_TEXT_HEIGHT,
+                 ALLEGRO_ALIGN_LEFT, "Pathfinding:");
 }

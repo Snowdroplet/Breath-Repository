@@ -23,7 +23,7 @@ ALLEGRO_BITMAP *skillSquarePng;
 ALLEGRO_BITMAP *miniCargoPng;
 ALLEGRO_BITMAP *cargoPng;
 
-ALLEGRO_BITMAP *industryRedArrowPng;
+ALLEGRO_BITMAP *redArrowPng;
 
 void LoadResources()
 {
@@ -58,10 +58,10 @@ void LoadResources()
 
     skillSquarePng = al_load_bitmap("placeholderSkillSquare.png");
     */
-    cargoPng = al_load_bitmap("placeholderMiniCargo.png");
+    miniCargoPng = al_load_bitmap("placeholderMiniCargo.png");
     cargoPng = al_load_bitmap("placeholderCargo.png");
 
-    industryRedArrowPng = al_load_bitmap("placeholderIndustryRedArrow.png");
+    redArrowPng = al_load_bitmap("placeholderRedArrow.png");
 }
 
 void UnloadResources()
@@ -98,6 +98,6 @@ void UnloadResources()
     al_destroy_bitmap(miniCargoPng);
     al_destroy_bitmap(cargoPng);
 
-    al_destroy_bitmap(industryRedArrowPng);
+    al_destroy_bitmap(redArrowPng);
 
 }

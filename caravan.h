@@ -25,9 +25,17 @@ public:
 /// Roster
     std::vector<Being*>members;
     Being*caravanLeader;
-/// Pathfinding
+
+/// Objectives: Pathfinding
     WorldGraph worldGraph;
     int pathfindingDestination; /// Later modify to support multiple objectives in a priority queue.
+/// Objectives: Recruiting
+    std::map<int,int>recruitingQualifications;
+/// Objectives: Purchasing
+
+/// Objectives:
+
+/// Objectives: Investment
 
 /// Location
     bool atPlace;
@@ -51,8 +59,8 @@ public:
 
 /// Place activities
     int currentTimeAtPlace, thresholdTimeAtPlace;
-    const int MIN_TIME_AT_PLACE = 250;
-    const int MAX_TIME_AT_PLACE = 1000;
+    const int MIN_TIME_AT_PLACE = 50;
+    const int MAX_TIME_AT_PLACE = 100;
 
 /// Inventory
     Inventory inventory;
@@ -65,12 +73,22 @@ public:
 
     const float inventoryBubbleDrawX = SCREEN_W*2/10;
     const float inventoryBubbleDrawY = SCREEN_H*3/10;
-    const float inventoryBubbleRowSpacing = 8; // 8 being the height of the builtin text.
+    const float inventoryBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
     const float inventoryBubbleBaseCols = 5;
     const float inventoryBubbleBaseRows = 1;
     unsigned inventoryBubbleNumCols;
     unsigned inventoryBubbleNumRows;
     float inventoryBubbleWidth, inventoryBubbleHeight;
+
+    const float pathfindingBubbleColSpacing = TILE_W;
+    const float pathfindingBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
+    const float pathfindingBubbleDrawX = TILE_W;
+    const float pathfindingBubbleDrawY = SCREEN_H - 2*TILE_H - 2*pathfindingBubbleRowSpacing - TILE_H;
+    const float pathfindingBubbleBaseCols = 1;
+    const float pathfindingBubbleBaseRows = 1;
+    unsigned pathfindingBubbleNumCols;
+    unsigned pathfindingBubbleNumRows;
+    float pathfindingBubbleWidth, pathfindingBubbleHeight;
 
 /// Constructor
     Caravan();
@@ -98,11 +116,13 @@ public:
 
 /// Bubble functions
     void UpdateInventoryBubble();
+    void UpdatePathfindingBubble();
 
 /// Drawing functions
     void DrawSpriteOnOverworld();
     void DrawActivity(float x, float y);
     void DrawInventoryBubble();
+    void DrawPathfindingBubble();
 };
 
 #endif // CARAVAN_H_INCLUDED

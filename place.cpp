@@ -5,10 +5,11 @@ std::map<int, Place*> Place::places;
 Place::Place(int id)
 {
     identity = id;
-    selfPointer = this;
     //std::cout << "Place created with ID " << id << std::endl;
 
     name = placeNames.at(identity);
+
+    const int d/*ebug production quantity*/ = 6;
 
     /// Replace with read from external file later
     switch(identity)
@@ -17,109 +18,109 @@ Place::Place(int id)
         epithet = ", Capital of Verus";
         overworldXPosition = TILE_W*20;
         overworldYPosition = TILE_H*20;
-        AddIndustry(IND_FARM_RICE,1);
-        AddIndustry(IND_ALCHEMY_ALCOHOL, 1);
-        AddIndustry(IND_ALCHEMY_CONTRACT, 1);
+        AddIndustry(IND_FARM_RICE, d);
+        AddIndustry(IND_ALCHEMY_ALCOHOL, d);
+        AddIndustry(IND_ALCHEMY_CONTRACT, d);
         break;
 
     case PL_CHORAS:
         overworldXPosition = TILE_W*24;
         overworldYPosition = TILE_H*12;
-        AddIndustry(IND_FARM_MUSHROOMS, 1);
-        AddIndustry(IND_FARM_HERBS, 1);
-        AddIndustry(IND_MINE_CLAY, 1);
-        AddIndustry(IND_CRAFT_POTTERY, 1);
+        AddIndustry(IND_FARM_MUSHROOMS, d);
+        AddIndustry(IND_FARM_HERBS, d);
+        AddIndustry(IND_MINE_CLAY, d);
+        AddIndustry(IND_CRAFT_POTTERY, d);
         break;
 
     case PL_KETH_KETHER:
         overworldXPosition = TILE_W*12;
         overworldYPosition = TILE_H*24;
-        AddIndustry(IND_MINE_LEYSTONE,1);
-        AddIndustry(IND_CRAFT_CLOCKWORK,1);
-        AddIndustry(IND_CRAFT_AUTOMATON,1);
+        AddIndustry(IND_MINE_LEYSTONE, d);
+        AddIndustry(IND_CRAFT_CLOCKWORK, d);
+        AddIndustry(IND_CRAFT_AUTOMATON, d);
         break;
 
     case PL_KETH_ENTWEIR:
         overworldXPosition = TILE_W*9;
         overworldYPosition = TILE_H*17;
-        AddIndustry(IND_FARM_HERBS,1);
-        AddIndustry(IND_FARM_MUSHROOMS,1);
+        AddIndustry(IND_FARM_HERBS,d );
+        AddIndustry(IND_FARM_MUSHROOMS, d);
         break;
 
     case PL_VIELLEICHT:
         overworldXPosition = TILE_W*1;
         overworldYPosition = TILE_H*28;
-        AddIndustry(IND_HUNT_COLD_BREATH,1);
-        AddIndustry(IND_FARM_SPICE,1);
+        AddIndustry(IND_HUNT_COLD_BREATH, d);
+        AddIndustry(IND_FARM_SPICE, d);
         break;
 
     case PL_QUELLUDE:
         overworldXPosition = TILE_W*6;
         overworldYPosition = TILE_H*32;
-        AddIndustry(IND_ALCHEMY_ALCOHOL,1);
-        AddIndustry(IND_ALCHEMY_SPELLBOOK,1);
+        AddIndustry(IND_ALCHEMY_ALCOHOL, d);
+        AddIndustry(IND_ALCHEMY_SPELLBOOK, d);
         break;
 
     case PL_AMBLEFORTH:
         overworldXPosition = TILE_W*4;
         overworldYPosition = TILE_H*14;
-        AddIndustry(IND_HUNT_MEAT,1);
-        AddIndustry(IND_FARM_RICE,1);
+        AddIndustry(IND_HUNT_MEAT, d);
+        AddIndustry(IND_FARM_RICE, d);
         break;
 
     case PL_ROSKANEL:
         overworldXPosition = TILE_W*26;
         overworldYPosition = TILE_H*24;
-        AddIndustry(IND_HUNT_COLD_BREATH,1);
+        AddIndustry(IND_HUNT_COLD_BREATH, d);
         break;
 
     case PL_ROSELLA:
         overworldXPosition = TILE_W*28;
         overworldYPosition = TILE_H*30;
-        AddIndustry(IND_FARM_SPICE,1);
+        AddIndustry(IND_FARM_SPICE, d);
         break;
 
     case PL_OBSERVIA:
         overworldXPosition = TILE_W*11;
         overworldYPosition = TILE_H*5;
-        AddIndustry(IND_ALCHEMY_CONTRACT,1);
-        AddIndustry(IND_ALCHEMY_SPELLBOOK,1);
+        AddIndustry(IND_ALCHEMY_CONTRACT, d);
+        AddIndustry(IND_ALCHEMY_SPELLBOOK, d);
         break;
 
     case PL_COLDLAKE:
         overworldXPosition = TILE_W*16;
         overworldYPosition = TILE_H*10;
-        AddIndustry(IND_MINE_SILVER,1);
-        AddIndustry(IND_MINE_LEYSTONE,1);
+        AddIndustry(IND_MINE_SILVER, d);
+        AddIndustry(IND_MINE_LEYSTONE, d);
         break;
 
     case PL_UMBERDELL:
         overworldXPosition = TILE_W*17;
         overworldYPosition = TILE_H*3;
-        AddIndustry(IND_FARM_MUSHROOMS,1);
-        AddIndustry(IND_FARM_HERBS,1);
-        AddIndustry(IND_ALCHEMY_MEDICINE,1);
+        AddIndustry(IND_FARM_MUSHROOMS, d);
+        AddIndustry(IND_FARM_HERBS, d);
+        AddIndustry(IND_ALCHEMY_MEDICINE, d);
         break;
 
     case PL_RAMSHORN:
         overworldXPosition = TILE_W*31;
         overworldYPosition = TILE_H*9;
-        AddIndustry(IND_HUNT_MEAT,1);
-        AddIndustry(IND_HUNT_COLD_BREATH,1);
+        AddIndustry(IND_HUNT_MEAT, d);
+        AddIndustry(IND_HUNT_COLD_BREATH, d);
         break;
 
     case PL_HOLLYHEAD:
         overworldXPosition = TILE_W*25;
         overworldYPosition = TILE_H*5;
-        AddIndustry(IND_CRAFT_JEWELRY,1);
+        AddIndustry(IND_CRAFT_JEWELRY, d);
         break;
 
     case PL_JASPER:
         overworldXPosition = TILE_W*36;
         overworldYPosition = TILE_H*2;
-        AddIndustry(IND_MINE_SILVER,1);
-        AddIndustry(IND_CRAFT_JEWELRY,1);
-        AddIndustry(IND_ALCHEMY_ALCOHOL,1);
+        AddIndustry(IND_MINE_SILVER, d);
+        AddIndustry(IND_CRAFT_JEWELRY, d);
+        AddIndustry(IND_ALCHEMY_ALCOHOL, d);
         break;
     }
 
@@ -131,16 +132,23 @@ Place::~Place()
 {
     //std::cout << "Place deleted." << std::endl;
 
-    for(std::vector<Being*>::iterator it = availableCrew.begin(); it != availableCrew.end();)
-    {
-        availableCrew.erase(it);
-    }
+    availableCrew.clear();
+    citizens.clear();
+    visitors.clear();
 
     for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end();)
     {
         delete *it;
         industries.erase(it);
     }
+
+    connections.clear();
+
+    for(std::vector<FlyingText*>::iterator it = flyingTexts.begin(); it != flyingTexts.end(); ++it)
+        delete *it;
+
+    flyingTexts.clear();
+
 }
 
 void Place::AddAvailableCrew(Being *b)
@@ -260,6 +268,7 @@ void Place::ProgressEconomy()
             for(std::map<int,float>::iterator jt = (*it)->outputs.begin(); jt != (*it)->outputs.end(); ++jt)
             {
                 AddInventoryStock((*jt).first, (*jt).second);
+                QueueFlyingText((*jt).first, "+" + std::to_string((int)(*jt).second), overworldXPosition, overworldYPosition, true);
             }
             (*it)->jobComplete = false;
         }
@@ -361,14 +370,14 @@ void Place::UpdateIndustriesBubble()
 
 void Place::DrawSpriteOnOverworld()
 {
-    int drawX = overworldXPosition - overworldCameraXPosition - OVERWORLD_SPRITE_W/2;
-    int drawY = overworldYPosition - overworldCameraYPosition - OVERWORLD_SPRITE_H/2;
+    float drawX = overworldXPosition - overworldCameraXPosition - OVERWORLD_SPRITE_W/2;
+    float drawY = overworldYPosition - overworldCameraYPosition - OVERWORLD_SPRITE_H/2;
 
     if(drawX > OVERWORLD_MIN_DRAW_X && drawX < OVERWORLD_MAX_DRAW_X
             && drawY > OVERWORLD_MIN_DRAW_Y && drawY < OVERWORLD_MAX_DRAW_Y)
     {
-        int nameDrawX = overworldXPosition - overworldCameraXPosition;
-        int nameDrawY = overworldYPosition - overworldCameraYPosition + OVERWORLD_SPRITE_H/2;
+        float nameDrawX = overworldXPosition - overworldCameraXPosition;
+        float nameDrawY = overworldYPosition - overworldCameraYPosition + OVERWORLD_SPRITE_H/2;
 
         al_draw_bitmap_region(overworldPlacePng,
                               0 + identity*64, 0,
@@ -419,6 +428,43 @@ void Place::DrawVisitorBubbleOnOverworld()
                                           drawY - visitorBubbleHeight/2 + (i/visitorBubbleNumCols*TILE_H) + TILE_H/2);
             }
 
+        }
+    }
+}
+
+void Place::QueueFlyingText(int ic, std::string t, float x, float y, bool up)
+{
+    flyingTexts.push_back(new FlyingText(ic, t, x, y, up));
+}
+
+void Place::ProgressFlyingTexts()
+{
+    for(std::vector<FlyingText*>::iterator it = flyingTexts.begin(); it != flyingTexts.end();)
+    {
+        if(!(*it)->active)
+        {
+            delete *it;
+            flyingTexts.erase(it);
+        }
+        else
+        {
+            if((*it)->queued)
+            {
+                if(it == flyingTexts.begin())
+                {
+                    (*it)->queued = false;
+                }
+                if(it > flyingTexts.begin())
+                {
+                    if((*(it - 1))->distanceFlown >= 20)
+                    {
+                        (*it)->queued = false;
+                    }
+                }
+            }
+
+            (*it)->Progress();
+            ++it;
         }
     }
 }
@@ -536,11 +582,11 @@ void Place::DrawIndustriesBubble()
             {
                 al_draw_bitmap_region(cargoPng,
                                       (industries[i]->inputs.begin()->first)*TILE_W,0,
-                                       TILE_W,TILE_H,
-                                       industriesBubbleDrawX, industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing),
-                                       0);
+                                      TILE_W,TILE_H,
+                                      industriesBubbleDrawX, industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing),
+                                      0);
 
-                al_draw_bitmap(industryRedArrowPng,
+                al_draw_bitmap(redArrowPng,
                                industriesBubbleDrawX+TILE_W*0.75,
                                industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing),
                                0);
@@ -554,4 +600,12 @@ void Place::DrawIndustriesBubble()
     else
         al_draw_text(builtin, COL_BLACK, industriesBubbleDrawX,industriesBubbleDrawY,ALLEGRO_ALIGN_LEFT,"(No industries here).");
 
+}
+
+void Place::DrawFlyingTexts()
+{
+    for(std::vector<FlyingText*>::iterator it = flyingTexts.begin(); it != flyingTexts.end(); ++it)
+    {
+        (*it)->DrawOnOverworld();
+    }
 }

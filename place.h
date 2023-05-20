@@ -5,16 +5,15 @@
 #include <vector>
 
 #include "allegrocustom.h"
-
 #include "placeindex.h"
-
 #include "overworld.h"
-
 #include "caravan.h"
-
 #include "industry.h"
-
+#include "flyingtext.h"
 #include "resource.h"
+
+#include "flyingtext.h"
+
 
 /// Dependencies
 class Caravan; // Circular
@@ -29,7 +28,6 @@ public:
 
 /// Identity
     int identity;
-    Place *selfPointer;
 
     std::string name; // Just the simple name for identification on the overworld map.
     std::string epithet; // e.g. ", City of Dreaming Spires"
@@ -73,7 +71,7 @@ public:
 
     const float inventoryBubbleDrawX = SCREEN_W*6/10;
     const float inventoryBubbleDrawY = SCREEN_H*3/10;
-    const float inventoryBubbleRowSpacing = 8; // 8 being the height of the builtin text.
+    const float inventoryBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
     const float inventoryBubbleBaseCols = 6;
     const float inventoryBubbleBaseRows = 2;
     unsigned inventoryBubbleNumCols;
@@ -86,6 +84,9 @@ public:
     const float industriesBubbleRowSpacing = 4; // Arbitrary gap
     const float industriesBubbleWidth = TILE_W*12 + bubbleWidthPadding;
     float industriesBubbleHeight;
+
+/// Flying text
+    std::vector<FlyingText*>flyingTexts;
 
 /// Constructor
     Place(int id);
@@ -130,11 +131,16 @@ public:
     void UpdateInventoryBubble();
     void UpdateIndustriesBubble();
 
+/// Flying text functions
+    void QueueFlyingText(int ic, std::string t, float x, float y, bool up);
+    void ProgressFlyingTexts();
+
 /// Overworld drawing functions
     void DrawSpriteOnOverworld();
     void DrawVisitorBubbleOnOverworld();
     void DrawInventoryBubble();
     void DrawIndustriesBubble();
+    void DrawFlyingTexts();
 };
 
 #endif // PLACE_H_INCLUDED

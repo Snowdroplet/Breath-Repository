@@ -406,23 +406,27 @@ void ProgressWorld()
         AdvanceHourFrame(); // 1 for normal speed, 2 for double speed, etc.
         UpdateCalendarText();
 
-        for(std::map<int,Place*>::iterator it = Place::places.begin(); it != Place::places.end(); it++)
+        for(std::map<int,Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
         {
+            ((*it).second)->ProgressFlyingTexts();
+
             if(hourChangeTick)
+            {
                 ((*it).second)->ProgressEconomy();
+            }
         }
 
-        for(std::map<int,Road*>::iterator it = Road::roads.begin(); it != Road::roads.end(); it++)
+        for(std::map<int,Road*>::iterator it = Road::roads.begin(); it != Road::roads.end(); ++it)
         {
 
         }
 
-        for(std::vector<Being*>::iterator it = Being::people.begin(); it != Being::people.end(); it++)
+        for(std::vector<Being*>::iterator it = Being::people.begin(); it != Being::people.end(); ++it)
         {
 
         }
 
-        for(std::vector<Caravan*>::iterator it = Caravan::caravans.begin(); it != Caravan::caravans.end(); it++)
+        for(std::vector<Caravan*>::iterator it = Caravan::caravans.begin(); it != Caravan::caravans.end(); ++it)
         {
             (*it)->OverworldLogic();
         }
@@ -505,23 +509,33 @@ void DrawUI()
             Road::roads[i]->DrawSegmentsOnOverworld();
 
         for(unsigned i = 0; i < Caravan::caravans.size(); i++)
-        {
             Caravan::caravans[i]->DrawSpriteOnOverworld();
-            if(overworldCameraCaravan == Caravan::caravans[i])
-                Caravan::caravans[i]->DrawInventoryBubble();
-        }
 
         for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
             (*it).second->DrawVisitorBubbleOnOverworld();
+
         for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
+            (*it).second->DrawFlyingTexts();
+
+        if(overworldCameraPlace != nullptr)
         {
-            if(overworldCameraPlace == (*it).second
-               || (overworldCameraCaravan != nullptr && overworldCameraCaravan->atPlace && overworldCameraCaravan->whichPlace == (*it).second))
+            overworldCameraPlace->DrawInventoryBubble();
+            overworldCameraPlace->DrawIndustriesBubble();
+        }
+        else if(overworldCameraCaravan != nullptr)
+        {
+            overworldCameraCaravan->DrawInventoryBubble();
+            overworldCameraCaravan->DrawPathfindingBubble();
+
+            if(overworldCameraCaravan->atPlace)
             {
-                (*it).second->DrawInventoryBubble();
-                (*it).second->DrawIndustriesBubble();
+                overworldCameraCaravan->whichPlace->DrawInventoryBubble();
+                overworldCameraCaravan->whichPlace->DrawIndustriesBubble();
             }
         }
+
+
+/// End Draw Bubbles
 
         DrawCalendar();
     }
@@ -783,10 +797,10 @@ void InitObjects()
     testCrew1->MoveToPlace(Place::places[PL_ERICENNES]);
     testCrew2->MoveToPlace(Place::places[PL_ERICENNES]);
     testCrew3->MoveToPlace(Place::places[PL_ERICENNES]);
-    testCrew4->MoveToPlace(Place::places[PL_ERICENNES]);
-    testCrew5->MoveToPlace(Place::places[PL_ERICENNES]);
-    testCrew6->MoveToPlace(Place::places[PL_ERICENNES]);
-    testCrew7->MoveToPlace(Place::places[PL_ERICENNES]);
+    testCrew4->MoveToRoad(Road::roads[ROAD_ERICENNES_CHORAS],false);
+    testCrew5->MoveToRoad(Road::roads[ROAD_ERICENNES_KETH_KETHER],false);
+    testCrew6->MoveToRoad(Road::roads[ROAD_ERICENNES_KETH_ENTWEIR],false);
+    testCrew7->MoveToRoad(Road::roads[ROAD_ERICENNES_ROSKANEL],false);
 
     for(unsigned i = 0; i < Caravan::caravans.size(); i++)
     {
