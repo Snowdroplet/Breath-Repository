@@ -58,12 +58,15 @@ public:
     float productionProgressBarFill; // 0.0 to 1.0
     float pauseProgressBarFill;
 
+    bool productionProgressBarNeedsRollover;
+    bool pauseProgressBarNeedsRollover;
+
 /// Constructor
     Industry(int id, float baseProd);
     ~Industry();
 
 /// Job state function;
-    void ProgressJobPause(int ticks);
+    void ProgressJobPause();
 
     void SetJobStateInsufficientInputs(int thresh);
     void SetJobStateDeductionsNecessary();
@@ -77,7 +80,6 @@ public:
 
 /// Aesthetic functions
     void UpdateProgressBar(); // Unlike ProgressJob(); which is meant to be called on an (hourly) production tick, UpdateProgressBar is meant to be called on frame timer tick.
-
 
 };
 

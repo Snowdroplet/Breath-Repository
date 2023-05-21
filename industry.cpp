@@ -129,7 +129,10 @@ Industry::Industry(int id, float ppt)
     }
 
     pauseProgressBarFill = jobPauseTicks/jobPauseThreshold;
+    pauseProgressBarNeedsRollover = false;
+
     productionProgressBarFill = productionContributed/productionToComplete;
+    productionProgressBarNeedsRollover = false;
 }
 
 Industry::~Industry()
@@ -163,13 +166,14 @@ void Industry::SetJobStateHarvestReady()
     jobState = JOB_STATE_HARVEST_READY;
 }
 
-void Industry::ProgressJobPause(int ticks)
+void Industry::ProgressJobPause()
 {
-    jobPauseTicks += ticks;
+    jobPauseTicks++;
 
     if(jobPauseTicks >= jobPauseThreshold)
     {
         jobPauseTicks = 0;
+        pauseProgressBarNeedsRollover = true;
         SetJobStateDeductionsNecessary();
     }
 }
@@ -186,40 +190,61 @@ void Industry::ProgressJobNormalState()
     if(productionContributed >= productionToComplete)
     {
         productionContributed -= productionToComplete; // Excess production may roll over
+        productionProgressBarNeedsRollover = true;
         SetJobStateHarvestReady();
     }
 }
 
 void Industry::UpdateProgressBar()
 {
-    float progressFillPercentage = productionContributed/productionToComplete;
-    if(productionProgressBarFill < progressFillPercentage - 0.01)
-    {
-        productionProgressBarFill += 0.01;
-    }
-    else if(productionProgressBarFill > progressFillPercentage +0.01)
-    {
-        productionProgressBarFill -= 0.01;
-    }
 
-    if(productionProgressBarFill > 1.0)
+    float progressFillPercentage = productionContributed/productionToComplete;
+    float progressFillRate = productionPerTick/productionToComplete/FRAMES_PER_HOUR;
+    if(productionProgressBarNeedsRollover)
+    {
+        productionProgressBarFill += progressFillRate;
+        if(productionProgressBarFill >= 1.0)
+        {
+            productionProgressBarFill = 0.0;
+            productionProgressBarNeedsRollover = false;
+        }
+    }
+    else
+    {
+        if(productionProgressBarFill < progressFillPercentage - progressFillRate)
+            productionProgressBarFill += progressFillRate;
+        else if(productionProgressBarFill > progressFillPercentage +progressFillRate)
+            productionProgressBarFill -= progressFillRate;
+    }
+    if(productionProgressBarFill >= 1.0)
         productionProgressBarFill = 1.0;
     else if(productionProgressBarFill < 0.0)
         productionProgressBarFill = 0.0;
 
+
+
     if(jobState == JOB_STATE_INSUFFICIENT_INPUTS)
     {
         float pauseFillPercentage = jobPauseTicks/jobPauseThreshold;
-        if(pauseProgressBarFill < pauseFillPercentage - 0.01)
+        float pauseFillRate = 1/jobPauseThreshold/FRAMES_PER_HOUR;
+        if(pauseProgressBarNeedsRollover)
         {
-            pauseProgressBarFill += 0.01;
+            pauseProgressBarFill += pauseFillRate;
+            if(pauseProgressBarFill >= 1.0)
+            {
+                pauseProgressBarFill = 0.0;
+                pauseProgressBarNeedsRollover = false;
+            }
         }
-        else if(pauseProgressBarFill > pauseFillPercentage +0.01)
+        else
         {
-            pauseProgressBarFill -= 0.01;
+            if(pauseProgressBarFill < pauseFillPercentage - pauseFillRate)
+                pauseProgressBarFill += pauseFillRate;
+            else if(pauseProgressBarFill > pauseFillPercentage + pauseFillRate)
+                pauseProgressBarFill -= pauseFillRate;
         }
 
-        if(pauseProgressBarFill > 1.0)
+        if(pauseProgressBarFill >= 1.0)
             pauseProgressBarFill = 1.0;
         else if(pauseProgressBarFill < 0.0)
             pauseProgressBarFill = 0.0;

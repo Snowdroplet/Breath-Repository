@@ -234,7 +234,7 @@ void Place::ProgressEconomy()
     for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
     {
         if((*it)->jobState == JOB_STATE_INSUFFICIENT_INPUTS)
-            (*it)->ProgressJobPause(1);
+            (*it)->ProgressJobPause();
 
         if((*it)->jobState == JOB_STATE_DEDUCTIONS_NECESSARY)
         {

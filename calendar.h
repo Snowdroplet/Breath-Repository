@@ -10,7 +10,7 @@
 #include "gamestate.h"
 #include "resource.h"
 
-const int FRAMES_PER_HOUR = FPS*3;
+const int FRAMES_PER_HOUR = FPS*1; // smaller value = faster
 extern int hourFrame;
 extern bool hourChangeTick;
 
