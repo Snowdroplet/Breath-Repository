@@ -23,6 +23,7 @@ Place::Place(int id)
         AddIndustry(IND_ALCHEMY_CONTRACT, d);
         break;
 
+
     case PL_CHORAS:
         overworldXPosition = TILE_W*24;
         overworldYPosition = TILE_H*12;
@@ -144,10 +145,13 @@ Place::~Place()
 
     connections.clear();
 
-    for(std::vector<FlyingText*>::iterator it = flyingTexts.begin(); it != flyingTexts.end(); ++it)
+    for(std::vector<FlyingText*>::iterator it = upFlyingTexts.begin(); it != upFlyingTexts.end(); ++it)
         delete *it;
+    upFlyingTexts.clear();
 
-    flyingTexts.clear();
+    for(std::vector<FlyingText*>::iterator it = downFlyingTexts.begin(); it != downFlyingTexts.end(); ++it)
+        delete *it;
+    downFlyingTexts.clear();
 
 }
 
@@ -203,74 +207,58 @@ void Place::AddIndustry(int whichIndustry, float baseProdPerTick)
     industries.push_back(new Industry(whichIndustry, baseProdPerTick));
 }
 
-bool Place::ActivateJob(Industry *whichIndustry)
+bool Place::CheckJobInputs(Industry *whichIndustry)
 {
-    bool materialsSufficient = true;
-    std::map<int, float>materialsRequested;
     for(std::map<int,float>::iterator jt = whichIndustry->inputs.begin(); jt != whichIndustry->inputs.end(); ++jt)
     {
-        materialsRequested[(*jt).first] = (*jt).second;
-
-        if(inventory.cargo.count((*jt).first) > 0)
-        {
-            if(inventory.cargo[(*jt).first] < materialsRequested[(*jt).first])
-            {
-                materialsSufficient = false;
-                //insufficiencies[(*jt).first] += (materialsRequested[(*jt).first] - inventory.cargo[(*jt).first]);
-            }
-        }
+        if(!(inventory.cargo.count((*jt).first) > 0)) // Is the job's input requirement not present in inventory at all?
+            return false;
         else
-        {
-            materialsSufficient = false;
-            //insufficiencies[(*jt).first] += materialsRequested[(*jt).first];
-        }
+            if(!(inventory.cargo[(*jt).first] >= (*jt).first)) // Is the quantity in inventory not at least equal to the job's input requirement?
+                return false;
     }
+    return true;
+}
 
-    if(materialsSufficient)
+void Place::DeductJobInputs(Industry* whichIndustry)
+{
+    for(std::map<int,float>::iterator it = whichIndustry->inputs.begin(); it != whichIndustry->inputs.end(); ++it)
     {
-        for(std::map<int,float>::iterator jt = materialsRequested.begin(); jt != materialsRequested.end(); ++jt)
-            RemoveInventoryStock((*jt).first,(*jt).second);
-
-        whichIndustry->jobActive = true;
-        whichIndustry->jobComplete = false;
-        return true;
+            RemoveInventoryStock((*it).first,(*it).second);
+            QueueDownFlyingText((*it).first, "-" + std::to_string((int)(*it).second), overworldXPosition, overworldYPosition);
     }
-    else
-        return false;
 }
 
 void Place::ProgressEconomy()
 {
     for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
     {
-        // Activate job if materials are sufficient.
-        if(!(*it)->jobActive)
+        if((*it)->jobState == JOB_STATE_INSUFFICIENT_INPUTS)
+            (*it)->ProgressJobPause(1);
+
+        if((*it)->jobState == JOB_STATE_DEDUCTIONS_NECESSARY)
         {
-            if((*it)->jobActivationPaused)
+            if(CheckJobInputs(*it))
             {
-                (*it)->ProgressPausedJobActivation(1);
+                DeductJobInputs(*it);
+                (*it)->SetJobStateNormal();
             }
             else
-            {
-                if(!ActivateJob(*it)) // Materials were insufficient
-                {
-                    (*it)->PauseJobActivation(8); //hours, hopefully
-                    // Adjust industrial demand for insufficient materials here.
-                }
-            }
+                (*it)->SetJobStateInsufficientInputs(4);
         }
 
-        if((*it)->jobActive)
-            (*it)->ProgressJob();
+        if((*it)->jobState == JOB_STATE_NORMAL)
+            (*it)->ProgressJobNormalState();
 
-        if((*it)->jobComplete)
+        if((*it)->jobState == JOB_STATE_HARVEST_READY)
         {
             for(std::map<int,float>::iterator jt = (*it)->outputs.begin(); jt != (*it)->outputs.end(); ++jt)
             {
                 AddInventoryStock((*jt).first, (*jt).second);
-                QueueFlyingText((*jt).first, "+" + std::to_string((int)(*jt).second), overworldXPosition, overworldYPosition, true);
+                QueueUpFlyingText((*jt).first, "+" + std::to_string((int)(*jt).second), overworldXPosition, overworldYPosition);
             }
-            (*it)->jobComplete = false;
+
+            (*it)->SetJobStateDeductionsNecessary();
         }
     }
 }
@@ -306,11 +294,11 @@ void Place::AddInitialStock()
     {
         for(std::map<int,float>::iterator jt = (*it)->inputs.begin(); jt != (*it)->inputs.end(); ++jt)
         {
-            inventory.cargo[(*jt).first] += (*jt).second*5;
+            inventory.cargo[(*jt).first] += (*jt).second*2;
         }
         for(std::map<int,float>::iterator jt = (*it)->outputs.begin(); jt != (*it)->outputs.end(); ++jt)
         {
-            inventory.cargo[(*jt).first] += (*jt).second*5;
+            inventory.cargo[(*jt).first] += (*jt).second*1;
         }
 
     }
@@ -365,7 +353,14 @@ void Place::UpdateInventoryBubble()
 
 void Place::UpdateIndustriesBubble()
 {
+
     industriesBubbleHeight = industries.size()*(TILE_H+industriesBubbleRowSpacing);
+}
+
+void Place::ProgressIndustriesBubbleProgressBars()
+{
+    for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
+        (*it)->UpdateProgressBar();
 }
 
 void Place::DrawSpriteOnOverworld()
@@ -432,33 +427,67 @@ void Place::DrawVisitorBubbleOnOverworld()
     }
 }
 
-void Place::QueueFlyingText(int ic, std::string t, float x, float y, bool up)
+void Place::QueueUpFlyingText(int ic, std::string t, float x, float y)
 {
-    flyingTexts.push_back(new FlyingText(ic, t, x, y, up));
+    upFlyingTexts.push_back(new FlyingText(ic, t, x, y, true));
+}
+
+void Place::QueueDownFlyingText(int ic, std::string t, float x, float y)
+{
+    downFlyingTexts.push_back(new FlyingText(ic, t, x, y, false));
 }
 
 void Place::ProgressFlyingTexts()
 {
-    for(std::vector<FlyingText*>::iterator it = flyingTexts.begin(); it != flyingTexts.end();)
+    for(std::vector<FlyingText*>::iterator it = upFlyingTexts.begin(); it != upFlyingTexts.end();)
     {
         if(!(*it)->active)
         {
             delete *it;
-            flyingTexts.erase(it);
+            upFlyingTexts.erase(it);
         }
         else
         {
             if((*it)->queued)
             {
-                if(it == flyingTexts.begin())
+                if(it == upFlyingTexts.begin())
+                    (*it)->queued = false;
+
+                if(it > upFlyingTexts.begin())
                 {
                     (*it)->queued = false;
-                }
-                if(it > flyingTexts.begin())
-                {
-                    if((*(it - 1))->distanceFlown >= 20)
+                    for(std::vector<FlyingText*>::iterator rjt = it; rjt != upFlyingTexts.begin(); --rjt)
                     {
-                        (*it)->queued = false;
+                        (*(rjt-1))->overworldYPosition -= MINI_TILE_H;
+                    }
+                }
+            }
+
+            (*it)->Progress();
+            ++it;
+        }
+    }
+
+    for(std::vector<FlyingText*>::iterator it = downFlyingTexts.begin(); it != downFlyingTexts.end();)
+    {
+        if(!(*it)->active)
+        {
+            delete *it;
+            downFlyingTexts.erase(it);
+        }
+        else
+        {
+            if((*it)->queued)
+            {
+                if(it == downFlyingTexts.begin())
+                    (*it)->queued = false;
+
+                if(it > downFlyingTexts.begin())
+                {
+                    (*it)->queued = false;
+                    for(std::vector<FlyingText*>::iterator rjt = it; rjt != downFlyingTexts.begin(); --rjt)
+                    {
+                        (*(rjt-1))->overworldYPosition += MINI_TILE_H;
                     }
                 }
             }
@@ -539,38 +568,37 @@ void Place::DrawIndustriesBubble()
     {
         for(unsigned i = 0; i < industries.size(); i++)
         {
-            if(industries[i]->jobActive)
-            {
-                float percentage = industries[i]->productionContributed/industries[i]->productionToComplete;
-                al_draw_filled_rectangle(industriesBubbleDrawX + 2.5*TILE_W,
-                                         industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing),
-                                         industriesBubbleDrawX + 2.5*TILE_W + (industriesBubbleWidth-2.5*TILE_W)*percentage,
-                                         industriesBubbleDrawY + i * (TILE_H + industriesBubbleRowSpacing) + TILE_H,
-                                         COL_WHITE);
-                al_draw_rectangle(industriesBubbleDrawX + 2.5*TILE_W,
-                                  industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing),
-                                  industriesBubbleDrawX + industriesBubbleWidth,
-                                  industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing) + TILE_H,
-                                  COL_VIOLET,
-                                  1);
-            }
-            else // if !jobActive
-            {
-                float percentage = industries[i]->jobActivationPauseTicks/industries[i]->jobActivationPauseThreshold;
-                al_draw_filled_rectangle(industriesBubbleDrawX + 2.5*TILE_W,
-                                         industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing),
-                                         industriesBubbleDrawX + 2.5*TILE_W + (industriesBubbleWidth-2.5*TILE_W)*percentage,
-                                         industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing) + TILE_H,
-                                         COL_RED);
+            al_draw_filled_rectangle(industriesBubbleDrawX + industriesBubbleProgressBarOffset,
+                                     industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing),
+                                     industriesBubbleDrawX + industriesBubbleProgressBarOffset + industries[i]->productionProgressBarFill*industriesBubbleProgressBarWidth,
+                                     industriesBubbleDrawY + i * (TILE_H + industriesBubbleRowSpacing) + TILE_H,
+                                     COL_WHITE);
 
-                al_draw_rectangle(industriesBubbleDrawX + 2.5*TILE_W,
+            if(industries[i]->jobState == JOB_STATE_INSUFFICIENT_INPUTS)
+            {
+                al_draw_filled_rectangle(industriesBubbleDrawX + industriesBubbleProgressBarOffset,
+                                         industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing) + TILE_H*0.75,
+                                         industriesBubbleDrawX + industriesBubbleProgressBarOffset + industries[i]->pauseProgressBarFill*industriesBubbleProgressBarWidth,
+                                         industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing) + TILE_H,
+                                         al_map_rgba(127,0,0,200));
+            }
+
+            if(industries[i]->jobState == JOB_STATE_INSUFFICIENT_INPUTS)
+                al_draw_rectangle(industriesBubbleDrawX + industriesBubbleProgressBarOffset,
                                   industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing),
-                                  industriesBubbleDrawX + industriesBubbleWidth,
+                                  industriesBubbleDrawX + industriesBubbleProgressBarOffset+industriesBubbleProgressBarWidth,
                                   industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing) + TILE_H,
                                   COL_ORANGE,
                                   1);
 
-            }
+            else
+                al_draw_rectangle(industriesBubbleDrawX + industriesBubbleProgressBarOffset,
+                                  industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing),
+                                  industriesBubbleDrawX + industriesBubbleProgressBarOffset+industriesBubbleProgressBarWidth,
+                                  industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing) + TILE_H,
+                                  COL_VIOLET,
+                                  1);
+
 
             al_draw_bitmap_region(cargoPng,
                                   (industries[i]->outputs.begin()->first)*TILE_W,0,
@@ -604,7 +632,12 @@ void Place::DrawIndustriesBubble()
 
 void Place::DrawFlyingTexts()
 {
-    for(std::vector<FlyingText*>::iterator it = flyingTexts.begin(); it != flyingTexts.end(); ++it)
+    for(std::vector<FlyingText*>::iterator it = upFlyingTexts.begin(); it != upFlyingTexts.end(); ++it)
+    {
+        (*it)->DrawOnOverworld();
+    }
+
+    for(std::vector<FlyingText*>::iterator it = downFlyingTexts.begin(); it != downFlyingTexts.end(); ++it)
     {
         (*it)->DrawOnOverworld();
     }

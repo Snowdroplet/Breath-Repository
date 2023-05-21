@@ -17,11 +17,6 @@
 
 #include "inventory.h"
 
-const std::string skillNames[NUM_SKILLS] =
-{
-
-};
-
 class Being
 {
 public:

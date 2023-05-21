@@ -1,12 +1,10 @@
 #include "industry.h"
 
-Industry::Industry(int id, float baseProd)
+Industry::Industry(int id, float ppt)
 {
-    jobActive = false;
-    jobActivationPaused = false;
-    jobActivationPauseTicks = 0;
-    jobComplete = false;
-    jobRepeating = true;
+    jobState = JOB_STATE_INSUFFICIENT_INPUTS;
+    jobPauseTicks = 0;
+
     industryName = industryNames.at(id);
 
     inputMultiplier = 1.0;
@@ -15,7 +13,7 @@ Industry::Industry(int id, float baseProd)
     productionMultiplier = 1.0;
     productionContributed = 0;
     productionToComplete = baseProductionToComplete.at(id);
-    SetBaseProductionPerTick(baseProd);
+    SetProductionPerTick(ppt);
 
     switch(id)
     {
@@ -129,6 +127,9 @@ Industry::Industry(int id, float baseProd)
         expertiseLevelRequired = 4;
         break;
     }
+
+    pauseProgressBarFill = jobPauseTicks/jobPauseThreshold;
+    productionProgressBarFill = productionContributed/productionToComplete;
 }
 
 Industry::~Industry()
@@ -136,43 +137,91 @@ Industry::~Industry()
 
 }
 
-void Industry::PauseJobActivation(int thresh)
+void Industry::SetJobStateInsufficientInputs(int thresh)
 {
-    jobActivationPaused = true;
-    jobActivationPauseTicks = 0;
-    jobActivationPauseThreshold = thresh;
+    jobState = JOB_STATE_INSUFFICIENT_INPUTS;
+
+    jobPauseTicks = 0;
+    jobPauseThreshold = thresh;
 }
 
-void Industry::ProgressPausedJobActivation(int ticks)
+void Industry::SetJobStateDeductionsNecessary()
 {
-    jobActivationPauseTicks += ticks;
-    if(jobActivationPauseTicks >= jobActivationPauseThreshold)
+    jobState = JOB_STATE_DEDUCTIONS_NECESSARY;
+}
+
+void Industry::SetJobStateNormal()
+{
+    jobState = JOB_STATE_NORMAL;
+
+    jobPauseTicks = 0;
+    jobPauseThreshold = 0;
+}
+
+void Industry::SetJobStateHarvestReady()
+{
+    jobState = JOB_STATE_HARVEST_READY;
+}
+
+void Industry::ProgressJobPause(int ticks)
+{
+    jobPauseTicks += ticks;
+
+    if(jobPauseTicks >= jobPauseThreshold)
     {
-        jobActivationPauseTicks = 0;
-        jobActivationPaused = false;
+        jobPauseTicks = 0;
+        SetJobStateDeductionsNecessary();
     }
 }
 
-void Industry::SetBaseProductionPerTick(float bppt)
+void Industry::SetProductionPerTick(float ppt)
 {
-    baseProductionPerTick = bppt;
+    productionPerTick = ppt;
 }
 
-void Industry::ProgressJob()
+void Industry::ProgressJobNormalState()
 {
-        //jobComplete = false;
+    productionContributed += productionPerTick;
 
-        //Todo: productionContributed += the number*quality of workers
-        productionContributed += baseProductionPerTick;
+    if(productionContributed >= productionToComplete)
+    {
+        productionContributed -= productionToComplete; // Excess production may roll over
+        SetJobStateHarvestReady();
+    }
+}
 
-        //std::cout << productionContributed << "/" << productionToComplete << std::endl;
+void Industry::UpdateProgressBar()
+{
+    float progressFillPercentage = productionContributed/productionToComplete;
+    if(productionProgressBarFill < progressFillPercentage - 0.01)
+    {
+        productionProgressBarFill += 0.01;
+    }
+    else if(productionProgressBarFill > progressFillPercentage +0.01)
+    {
+        productionProgressBarFill -= 0.01;
+    }
 
-        if(productionContributed >= productionToComplete)
+    if(productionProgressBarFill > 1.0)
+        productionProgressBarFill = 1.0;
+    else if(productionProgressBarFill < 0.0)
+        productionProgressBarFill = 0.0;
+
+    if(jobState == JOB_STATE_INSUFFICIENT_INPUTS)
+    {
+        float pauseFillPercentage = jobPauseTicks/jobPauseThreshold;
+        if(pauseProgressBarFill < pauseFillPercentage - 0.01)
         {
-            productionContributed -= productionToComplete; // Excess production may roll over
-            jobComplete = true;
-            jobActive = false;
-
-            //std::cout << "job completed" << std::endl;
+            pauseProgressBarFill += 0.01;
         }
+        else if(pauseProgressBarFill > pauseFillPercentage +0.01)
+        {
+            pauseProgressBarFill -= 0.01;
+        }
+
+        if(pauseProgressBarFill > 1.0)
+            pauseProgressBarFill = 1.0;
+        else if(pauseProgressBarFill < 0.0)
+            pauseProgressBarFill = 0.0;
+    }
 }

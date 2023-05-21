@@ -4,23 +4,35 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <cmath>
 
 #include "industryindex.h"
 #include "inventoryindex.h"
+
+#include "calendar.h"
+
+enum enumJobStates
+{
+    JOB_STATE_INSUFFICIENT_INPUTS,
+
+    JOB_STATE_DEDUCTIONS_NECESSARY,
+    JOB_STATE_NORMAL,
+    JOB_STATE_HARVEST_READY
+};
 
 class Industry
 {
 public:
     //static std::map<int, float>ItemBaseValue;
 
-/// Job state
-    bool jobActive;
-    bool jobActivationPaused;
-    float jobActivationPauseTicks;
-    float jobActivationPauseThreshold;
+/// Job status
+    int jobState;
 
-    bool jobComplete;
-    bool jobRepeating;
+    //bool jobPaused;
+    float jobPauseTicks;
+    float jobPauseThreshold;
+
+    //bool jobHarvestReady;
 
 /// Job identity
     std::string industryName;
@@ -39,19 +51,32 @@ public:
 
     float productionContributed;
     float productionToComplete;
-    float baseProductionPerTick;
+
+    float productionPerTick;
+
+/// Aesthetic
+    float productionProgressBarFill; // 0.0 to 1.0
+    float pauseProgressBarFill;
 
 /// Constructor
     Industry(int id, float baseProd);
     ~Industry();
 
-/// Job state functions
-    void PauseJobActivation(int thresh);
-    void ProgressPausedJobActivation(int ticks);
+/// Job state function;
+    void ProgressJobPause(int ticks);
+
+    void SetJobStateInsufficientInputs(int thresh);
+    void SetJobStateDeductionsNecessary();
+    void SetJobStateNormal();
+    void SetJobStateHarvestReady();
+
 
 /// Production functions
-    void SetBaseProductionPerTick(float bppt);
-    void ProgressJob();
+    void SetProductionPerTick(float ppt);
+    void ProgressJobNormalState();
+
+/// Aesthetic functions
+    void UpdateProgressBar(); // Unlike ProgressJob(); which is meant to be called on an (hourly) production tick, UpdateProgressBar is meant to be called on frame timer tick.
 
 
 };

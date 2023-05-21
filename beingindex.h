@@ -1,6 +1,8 @@
 #ifndef BEINGINDEX_H_INCLUDED
 #define BEINGINDEX_H_INCLUDED
 
+#include <map>
+
 const int NUM_RACES = 7;
 enum enumRace
 {
@@ -13,15 +15,15 @@ enum enumRace
     RACE_ORDON = 6,   // Salamanders of Ordozaal
 };
 
-const std::string raceNames[NUM_RACES] =
+const std::map<int,std::string>raceNames
 {
-    "Verit",
-    "Yeti",
-    "Makhi",
-    "Beyu",
-    "Haphae",
-    "Mesera",
-    "Ordon"
+    {RACE_VERIT, "Verit"},
+    {RACE_YETI, "Yeti"},
+    {RACE_MAKHI, "Makhi"},
+    {RACE_BEYU, "Beyu"},
+    {RACE_HAPHAE, "Haphae"},
+    {RACE_MESERA, "Mesera"},
+    {RACE_ORDON, "Ordon"}
 };
 
 const int NUM_SKILLS = 20;
@@ -50,6 +52,11 @@ enum enumSkillKeys
     SK_DESERT_SURVIVAL = 18,
     SK_SWAMP_SURVIVAL = 19,
     SK_OCEAN_SURVIVAL = 20
+
+};
+
+const std::string skillNames[NUM_SKILLS] =
+{
 
 };
 

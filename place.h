@@ -44,7 +44,7 @@ public:
 
     std::vector<Industry*>industries;
 
-    std::map<int,float>insufficiencies;
+    //std::map<int,float>insufficiencies;
 
     //std::map<int,float>production;  // per day
 
@@ -84,9 +84,12 @@ public:
     const float industriesBubbleRowSpacing = 4; // Arbitrary gap
     const float industriesBubbleWidth = TILE_W*12 + bubbleWidthPadding;
     float industriesBubbleHeight;
+    const float industriesBubbleProgressBarOffset = 2.5*TILE_W;
+    const float industriesBubbleProgressBarWidth = industriesBubbleWidth - industriesBubbleProgressBarOffset;
 
 /// Flying text
-    std::vector<FlyingText*>flyingTexts;
+    std::vector<FlyingText*>upFlyingTexts;
+    std::vector<FlyingText*>downFlyingTexts;
 
 /// Constructor
     Place(int id);
@@ -106,7 +109,9 @@ public:
     //void AdjustProduction(int a, float b);
     //void AdjustDemand(int a, float b);
     void AddIndustry(int whichIndustry, float baseProdPerTick);
-    bool ActivateJob(Industry* whichIndustry);
+
+    bool CheckJobInputs(Industry* whichIndustry);
+    void DeductJobInputs(Industry* whichIndustry);
 
     void AdjustConsumption(int a, float b);
 
@@ -129,10 +134,12 @@ public:
     void UpdateAllBubbles();
     void UpdateVisitorBubble();
     void UpdateInventoryBubble();
-    void UpdateIndustriesBubble();
+    void UpdateIndustriesBubble(); // Only called when industrial activity updated
+    void ProgressIndustriesBubbleProgressBars(); // Called on timer tick
 
 /// Flying text functions
-    void QueueFlyingText(int ic, std::string t, float x, float y, bool up);
+    void QueueUpFlyingText(int ic, std::string t, float x, float y);
+    void QueueDownFlyingText(int ic, std::string t, float x, float y);
     void ProgressFlyingTexts();
 
 /// Overworld drawing functions

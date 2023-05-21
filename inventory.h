@@ -43,6 +43,8 @@ struct Inventory
 
     //void RefreshCargoInTab();
     //int GetItemTypeAtInput(unsigned input);
+
+
 };
 
 #endif // INVENTORY_H_INCLUDED

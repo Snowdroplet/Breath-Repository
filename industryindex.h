@@ -1,6 +1,8 @@
 #ifndef INDUSTRYINDEX_H_INCLUDED
 #define INDUSTRYINDEX_H_INCLUDED
 
+#include <map>
+
 enum enumExpertiseTypes
 {
     EXP_HUNT,

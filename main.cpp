@@ -409,6 +409,7 @@ void ProgressWorld()
         for(std::map<int,Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
         {
             ((*it).second)->ProgressFlyingTexts();
+            ((*it).second)->ProgressIndustriesBubbleProgressBars();
 
             if(hourChangeTick)
             {
