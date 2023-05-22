@@ -28,11 +28,8 @@ public:
 /// Job status
     int jobState;
 
-    //bool jobPaused;
     float jobPauseTicks;
     float jobPauseThreshold;
-
-    //bool jobHarvestReady;
 
 /// Job identity
     std::string industryName;
@@ -73,13 +70,18 @@ public:
     void SetJobStateNormal();
     void SetJobStateHarvestReady();
 
+/// Input and output calculation
+
+    float CalculateAverageInput(int whichItem, int period); // Period in in-world hours
 
 /// Production functions
     void SetProductionPerTick(float ppt);
     void ProgressJobNormalState();
 
 /// Aesthetic functions
-    void UpdateProgressBar(); // Unlike ProgressJob(); which is meant to be called on an (hourly) production tick, UpdateProgressBar is meant to be called on frame timer tick.
+    void UpdateProgressBar(); // Unlike ProgressJobNormalState(); which is meant to be called on an (hourly) production tick, UpdateProgressBar is meant to be called on frame timer tick.
+
+
 
 };
 

@@ -3,34 +3,32 @@
 
 #include <map>
 
-enum enumExpertiseTypes
-{
-    EXP_HUNT,
-    EXP_FARM,
-    EXP_MINE,
-    EXP_ALCHEMY,
-    EXP_CRAFT
-};
+#include "inventoryindex.h"
 
 enum enumIndustries
 {
-    IND_HUNT_MEAT,
-    IND_HUNT_COLD_BREATH, IND_ALCHEMY_CONTRACT, IND_ALCHEMY_SPELLBOOK,
-    IND_FARM_RICE, IND_ALCHEMY_ALCOHOL,
-    IND_FARM_MUSHROOMS,
-    IND_FARM_HERBS, IND_ALCHEMY_MEDICINE,
-    IND_FARM_SPICE,
-    IND_MINE_CLAY, IND_CRAFT_POTTERY,
-    IND_MINE_SILVER, IND_CRAFT_JEWELRY,
-    IND_MINE_LEYSTONE, IND_CRAFT_CLOCKWORK, IND_CRAFT_AUTOMATON
+    IND_HUNT_MEAT = 0,
+    IND_HUNT_COLD_BREATH = 1, IND_SORCERY_CONTRACT = 2, IND_SORCERY_SPELLBOOK = 3,
+    IND_FARM_RICE = 4, IND_ALCHEMY_ALCOHOL = 5,
+    IND_FARM_MUSHROOMS = 6,
+    IND_FARM_HERBS = 7, IND_ALCHEMY_MEDICINE = 8,
+    IND_FARM_SPICE = 9,
+    IND_MINE_CLAY = 10, IND_CRAFT_POTTERY = 11,
+    IND_MINE_SILVER = 12, IND_CRAFT_JEWELRY = 13,
+    IND_MINE_LEYSTONE = 14, IND_MACHINE_CLOCKWORK = 15, IND_MACHINE_AUTOMATON = 17
 };
+
+enum enumExpertiseTypes {EXP_COMMON = 0, EXP_HUNT = 1, EXP_FARM = 2, EXP_MINE = 3, EXP_ALCHEMY = 4, EXP_SORCERY = 5, EXP_CRAFT = 6, EXP_MECHANICS = 7};
+const int EXPERTISE_MARKER_FIRST = EXP_COMMON;
+const int EXPERTISE_MARKER_LAST = EXP_MECHANICS;
+
 
 const std::map<int, std::string>industryNames =
 {
     {IND_HUNT_MEAT, "Hunting Beasts for Meat"},
     {IND_HUNT_COLD_BREATH, "Hunting Ghosts for Cold Breath"},
-    {IND_ALCHEMY_CONTRACT, "Binding Cold Breath -> Contracts"},
-    {IND_ALCHEMY_SPELLBOOK, "Binding Contracts -> Spellbooks"},
+    {IND_SORCERY_CONTRACT, "Binding Cold Breath -> Contracts"},
+    {IND_SORCERY_SPELLBOOK, "Binding Contracts -> Spellbooks"},
     {IND_FARM_RICE, "Growing Rice"},
     {IND_ALCHEMY_ALCOHOL, "Brewing Rice -> Alcohol"},
     {IND_FARM_MUSHROOMS, "Growing Mushrooms"},
@@ -42,16 +40,16 @@ const std::map<int, std::string>industryNames =
     {IND_MINE_SILVER, "Mining Silver"},
     {IND_CRAFT_JEWELRY, "Crafting Silver -> Jewelry"},
     {IND_MINE_LEYSTONE, "Mining Leystone"},
-    {IND_CRAFT_CLOCKWORK, "Shaping Leystone -> Clockwork"},
-    {IND_CRAFT_AUTOMATON, "Assembling Clockwork -> Automata"}
+    {IND_MACHINE_CLOCKWORK, "Shaping Leystone -> Clockwork"},
+    {IND_MACHINE_AUTOMATON, "Assembling Clockwork -> Automata"}
 };
 
 const std::map<int, float>baseProductionToComplete =
 {
     {IND_HUNT_MEAT, 24},
     {IND_HUNT_COLD_BREATH, 36},
-    {IND_ALCHEMY_CONTRACT, 16},
-    {IND_ALCHEMY_SPELLBOOK, 24},
+    {IND_SORCERY_CONTRACT, 16},
+    {IND_SORCERY_SPELLBOOK, 24},
     {IND_FARM_RICE, 120},
     {IND_ALCHEMY_ALCOHOL, 448},
     {IND_FARM_MUSHROOMS, 120},
@@ -63,11 +61,93 @@ const std::map<int, float>baseProductionToComplete =
     {IND_MINE_SILVER, 56},
     {IND_CRAFT_JEWELRY, 56},
     {IND_MINE_LEYSTONE, 88},
-    {IND_CRAFT_CLOCKWORK, 88},
-    {IND_CRAFT_AUTOMATON, 352}
+    {IND_MACHINE_CLOCKWORK, 88},
+    {IND_MACHINE_AUTOMATON, 352}
 };
 
+const std::map<int, std::map<int,float>>baseJobInputs =
+{
 
+    {IND_HUNT_MEAT,         { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
+    {IND_HUNT_COLD_BREATH,  { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
+    {IND_SORCERY_CONTRACT,  { { IT_COLD_BREATH,  4.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_SORCERY_SPELLBOOK, { { IT_CONTRACT,     6.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_FARM_RICE,         { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
+    {IND_ALCHEMY_ALCOHOL,   { { IT_RICE,        30.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_FARM_MUSHROOMS,    { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
+    {IND_FARM_HERBS,        { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
+    {IND_ALCHEMY_MEDICINE,  { { IT_HERBS,        2.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_FARM_SPICE,        { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
+    {IND_MINE_CLAY,         { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
+    {IND_CRAFT_POTTERY,     { { IT_CLAY,         4.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_MINE_SILVER,       { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
+    {IND_CRAFT_JEWELRY,     { { IT_SILVER,       2.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_MINE_LEYSTONE,     { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
+    {IND_MACHINE_CLOCKWORK,   { { IT_LEYSTONE,     5.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_MACHINE_AUTOMATON,   { { IT_CLOCKWORK,   50.0 } /*,{ IT_X, 0.0 }*/ } }
+};
 
+const std::map<int, std::map<int,float>>baseJobOutputs =
+{
+    {IND_HUNT_MEAT,         { { IT_MEAT,        10.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_HUNT_COLD_BREATH,  { { IT_COLD_BREATH,  6.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_SORCERY_CONTRACT,  { { IT_CONTRACT,     1.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_SORCERY_SPELLBOOK, { { IT_SPELLBOOK,    1.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_FARM_RICE,         { { IT_RICE,        50.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_ALCHEMY_ALCOHOL,   { { IT_ALCOHOL,     25.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_FARM_MUSHROOMS,    { { IT_MUSHROOMS,   30.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_FARM_HERBS,        { { IT_HERBS,       20.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_ALCHEMY_MEDICINE,  { { IT_MEDICINE,     2.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_FARM_SPICE,        { { IT_SPICE,       10.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_MINE_CLAY,         { { IT_CLAY,        10.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_CRAFT_POTTERY,     { { IT_POTTERY,      1.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_MINE_SILVER,       { { IT_SILVER,       5.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_CRAFT_JEWELRY,     { { IT_JEWELRY,      1.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_MINE_LEYSTONE,     { { IT_LEYSTONE,     6.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_MACHINE_CLOCKWORK,   { { IT_CLOCKWORK,   10.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_MACHINE_AUTOMATON,   { { IT_AUTOMATON,    1.0 } /*,{ IT_X, 0.0 }*/ } }
+};
+
+const std::map<int, int>jobExpertiseType =
+{
+    {IND_HUNT_MEAT, EXP_HUNT},
+    {IND_HUNT_COLD_BREATH, EXP_HUNT},
+    {IND_SORCERY_CONTRACT, EXP_SORCERY},
+    {IND_SORCERY_SPELLBOOK, EXP_SORCERY},
+    {IND_FARM_RICE, EXP_FARM},
+    {IND_ALCHEMY_ALCOHOL, EXP_ALCHEMY},
+    {IND_FARM_MUSHROOMS, EXP_FARM},
+    {IND_FARM_HERBS, EXP_FARM},
+    {IND_ALCHEMY_MEDICINE, EXP_ALCHEMY},
+    {IND_FARM_SPICE, EXP_FARM},
+    {IND_MINE_CLAY, EXP_MINE},
+    {IND_CRAFT_POTTERY, EXP_CRAFT},
+    {IND_MINE_SILVER, EXP_CRAFT},
+    {IND_CRAFT_JEWELRY, EXP_CRAFT},
+    {IND_MINE_LEYSTONE, EXP_MINE},
+    {IND_MACHINE_CLOCKWORK, EXP_MECHANICS},
+    {IND_MACHINE_AUTOMATON, EXP_MECHANICS}
+};
+
+const std::map<int, int>jobExpertiseLevel =
+{
+    {IND_HUNT_MEAT, 1},
+    {IND_HUNT_COLD_BREATH, 2},
+    {IND_SORCERY_CONTRACT, 3},
+    {IND_SORCERY_SPELLBOOK, 4},
+    {IND_FARM_RICE, 1},
+    {IND_ALCHEMY_ALCOHOL, 1},
+    {IND_FARM_MUSHROOMS, 2},
+    {IND_FARM_HERBS, 3},
+    {IND_ALCHEMY_MEDICINE, 2},
+    {IND_FARM_SPICE, 4},
+    {IND_MINE_CLAY, 1},
+    {IND_CRAFT_POTTERY, 1},
+    {IND_MINE_SILVER, 2},
+    {IND_CRAFT_JEWELRY, 2},
+    {IND_MINE_LEYSTONE, 3},
+    {IND_MACHINE_CLOCKWORK, 3},
+    {IND_MACHINE_AUTOMATON, 4}
+};
 
 #endif // INDUSTRYINDEX_H_INCLUDED

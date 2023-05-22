@@ -1,6 +1,9 @@
 #ifndef INVENTORYINDEX_H_INCLUDED
 #define INVENTORYINDEX_H_INCLUDED
 
+#include <map>
+#include <string>
+
 const int IT_NONE = -1;
 
 enum enumItems
@@ -17,6 +20,19 @@ enum enumItems
 };
 const unsigned IT_MARKER_FIRST = IT_MEAT;
 const unsigned IT_MARKER_LAST = IT_AUTOMATON;
+
+const std::map<int,std::string>itemNames =
+{
+    {IT_MEAT, "Meat"},
+    {IT_COLD_BREATH, "Cold Breath"}, {IT_CONTRACT, "Contract"}, {IT_SPELLBOOK, "Spellbook"},
+    {IT_RICE, "Rice"}, {IT_ALCOHOL, "Alcohol"},
+    {IT_MUSHROOMS, "Mushrooms"},
+    {IT_HERBS, "Herbs"}, {IT_MEDICINE, "Medicine"},
+    {IT_SPICE, "Spice"},
+    {IT_CLAY, "Clay"}, {IT_POTTERY, "Pottery"},
+    {IT_SILVER, "Silver"}, {IT_JEWELRY, "Jewelry"},
+    {IT_LEYSTONE, "Leystone"}, {IT_CLOCKWORK, "Clockwork"}, {IT_AUTOMATON, "Automaton"}
+};
 
 /*
 enum enumItems

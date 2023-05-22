@@ -1,6 +1,8 @@
 #include "calendar.h"
 
 bool hourChangeTick = false;
+bool dayChangeTick = false;
+
 int hourFrame;
 int hourOfTheDay;
 int dayOfTheWeek;
@@ -47,7 +49,10 @@ void AdvanceHourFrame()
         AdvanceHour();
     }
     else
+    {
         hourChangeTick = false;
+        dayChangeTick = false;
+    }
 }
 
 void AdvanceHour()
@@ -55,9 +60,11 @@ void AdvanceHour()
     hourOfTheDay ++;
     if(hourOfTheDay >= HOURS_PER_DAY)
     {
+        dayChangeTick = true;
         hourOfTheDay = 0;
         AdvanceDay();
     }
+
 }
 
 void AdvanceDay()

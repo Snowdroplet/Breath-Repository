@@ -401,9 +401,7 @@ void ProgressWorld()
 {
     if(activeUI == UI_OVERWORLD)
     {
-        ///Todo: for(int i = 0; i < world speed...)
-
-        AdvanceHourFrame(); // 1 for normal speed, 2 for double speed, etc.
+        AdvanceHourFrame();
         UpdateCalendarText();
 
         for(std::map<int,Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
@@ -413,8 +411,15 @@ void ProgressWorld()
 
             if(hourChangeTick)
             {
-                ((*it).second)->ProgressEconomy();
+                ((*it).second)->ProgressProduction();
             }
+
+            if(dayChangeTick)
+            {
+                ((*it).second)->UpdateEconomyData();
+            }
+
+
         }
 
         for(std::map<int,Road*>::iterator it = Road::roads.begin(); it != Road::roads.end(); ++it)

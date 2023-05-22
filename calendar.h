@@ -10,9 +10,11 @@
 #include "gamestate.h"
 #include "resource.h"
 
+extern bool hourChangeTick;
+extern bool dayChangeTick;
+
 const int FRAMES_PER_HOUR = FPS*1; // smaller value = faster
 extern int hourFrame;
-extern bool hourChangeTick;
 
 const int HOURS_PER_DAY = 24;
 extern int hourOfTheDay;

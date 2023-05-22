@@ -9,121 +9,12 @@ Place::Place(int id)
 
     name = placeNames.at(identity);
 
+    overworldXPosition = placeOverworldXYCells.at(id)[0] *TILE_W;
+    overworldYPosition = placeOverworldXYCells.at(id)[1] *TILE_H;
+
     const int d/*ebug production quantity*/ = 6;
-
-    /// Replace with read from external file later
-    switch(identity)
-    {
-    case PL_ERICENNES:
-        epithet = ", Capital of Verus";
-        overworldXPosition = TILE_W*20;
-        overworldYPosition = TILE_H*20;
-        AddIndustry(IND_FARM_RICE, d);
-        AddIndustry(IND_ALCHEMY_ALCOHOL, d);
-        AddIndustry(IND_ALCHEMY_CONTRACT, d);
-        break;
-
-
-    case PL_CHORAS:
-        overworldXPosition = TILE_W*24;
-        overworldYPosition = TILE_H*12;
-        AddIndustry(IND_FARM_MUSHROOMS, d);
-        AddIndustry(IND_FARM_HERBS, d);
-        AddIndustry(IND_MINE_CLAY, d);
-        AddIndustry(IND_CRAFT_POTTERY, d);
-        break;
-
-    case PL_KETH_KETHER:
-        overworldXPosition = TILE_W*12;
-        overworldYPosition = TILE_H*24;
-        AddIndustry(IND_MINE_LEYSTONE, d);
-        AddIndustry(IND_CRAFT_CLOCKWORK, d);
-        AddIndustry(IND_CRAFT_AUTOMATON, d);
-        break;
-
-    case PL_KETH_ENTWEIR:
-        overworldXPosition = TILE_W*9;
-        overworldYPosition = TILE_H*17;
-        AddIndustry(IND_FARM_HERBS,d );
-        AddIndustry(IND_FARM_MUSHROOMS, d);
-        break;
-
-    case PL_VIELLEICHT:
-        overworldXPosition = TILE_W*1;
-        overworldYPosition = TILE_H*28;
-        AddIndustry(IND_HUNT_COLD_BREATH, d);
-        AddIndustry(IND_FARM_SPICE, d);
-        break;
-
-    case PL_QUELLUDE:
-        overworldXPosition = TILE_W*6;
-        overworldYPosition = TILE_H*32;
-        AddIndustry(IND_ALCHEMY_ALCOHOL, d);
-        AddIndustry(IND_ALCHEMY_SPELLBOOK, d);
-        break;
-
-    case PL_AMBLEFORTH:
-        overworldXPosition = TILE_W*4;
-        overworldYPosition = TILE_H*14;
-        AddIndustry(IND_HUNT_MEAT, d);
-        AddIndustry(IND_FARM_RICE, d);
-        break;
-
-    case PL_ROSKANEL:
-        overworldXPosition = TILE_W*26;
-        overworldYPosition = TILE_H*24;
-        AddIndustry(IND_HUNT_COLD_BREATH, d);
-        break;
-
-    case PL_ROSELLA:
-        overworldXPosition = TILE_W*28;
-        overworldYPosition = TILE_H*30;
-        AddIndustry(IND_FARM_SPICE, d);
-        break;
-
-    case PL_OBSERVIA:
-        overworldXPosition = TILE_W*11;
-        overworldYPosition = TILE_H*5;
-        AddIndustry(IND_ALCHEMY_CONTRACT, d);
-        AddIndustry(IND_ALCHEMY_SPELLBOOK, d);
-        break;
-
-    case PL_COLDLAKE:
-        overworldXPosition = TILE_W*16;
-        overworldYPosition = TILE_H*10;
-        AddIndustry(IND_MINE_SILVER, d);
-        AddIndustry(IND_MINE_LEYSTONE, d);
-        break;
-
-    case PL_UMBERDELL:
-        overworldXPosition = TILE_W*17;
-        overworldYPosition = TILE_H*3;
-        AddIndustry(IND_FARM_MUSHROOMS, d);
-        AddIndustry(IND_FARM_HERBS, d);
-        AddIndustry(IND_ALCHEMY_MEDICINE, d);
-        break;
-
-    case PL_RAMSHORN:
-        overworldXPosition = TILE_W*31;
-        overworldYPosition = TILE_H*9;
-        AddIndustry(IND_HUNT_MEAT, d);
-        AddIndustry(IND_HUNT_COLD_BREATH, d);
-        break;
-
-    case PL_HOLLYHEAD:
-        overworldXPosition = TILE_W*25;
-        overworldYPosition = TILE_H*5;
-        AddIndustry(IND_CRAFT_JEWELRY, d);
-        break;
-
-    case PL_JASPER:
-        overworldXPosition = TILE_W*36;
-        overworldYPosition = TILE_H*2;
-        AddIndustry(IND_MINE_SILVER, d);
-        AddIndustry(IND_CRAFT_JEWELRY, d);
-        AddIndustry(IND_ALCHEMY_ALCOHOL, d);
-        break;
-    }
+    for(std::vector<int>::const_iterator it = placeInitialIndustries.at(id).cbegin(); it != placeInitialIndustries.at(id).cend(); ++it)
+        AddIndustry(*it,d);
 
     AddInitialStock();
     visitorBubbleActive = false;
@@ -202,6 +93,51 @@ void Place::RemoveVisitorCaravan(Caravan *c)
     UpdateVisitorBubble();
 }
 
+void Place::UpdateEconomyData()
+{
+    UpdateConsumptionData();
+    UpdateProductionData();
+}
+
+void Place::UpdateConsumptionData()
+{
+    dailyConsumption.clear();
+/// Industrial demand
+    for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
+    {
+        for(std::map<int,float>::iterator jt = (*it)->inputs.begin(); jt != (*it)->inputs.end(); ++jt)
+        {
+            if(dailyConsumption.count((*jt).first) < 1) // Not sure if this is necessary.
+                dailyConsumption[(*jt).first] = 0;
+
+            dailyConsumption[(*jt).first] += (*it)->CalculateAverageInput((*jt).first, 24);
+
+            //std::cout << this->name << ": Daily consumption of " << itemNames.at((*jt).first) << " += " << dailyConsumption[(*jt).first] << std::endl;
+        }
+    }
+
+/// Maintainence demand (city health/happiness demand)
+
+
+}
+
+void Place::UpdateProductionData()
+{
+    for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
+    {
+        for(std::map<int,float>::iterator jt = (*it)->inputs.begin(); jt != (*it)->inputs.end(); ++jt)
+        {
+            if(dailyConsumption.count((*jt).first) < 1) // Not sure if this is necessary.
+                dailyConsumption[(*jt).first] = 0;
+
+            dailyConsumption[(*jt).first] += (*it)->CalculateAverageInput((*jt).first, 24);
+
+            //std::cout << this->name << ": Daily consumption of " << itemNames.at((*jt).first) << " += " << dailyConsumption[(*jt).first] << std::endl;
+        }
+    }
+}
+
+
 void Place::AddIndustry(int whichIndustry, float baseProdPerTick)
 {
     industries.push_back(new Industry(whichIndustry, baseProdPerTick));
@@ -229,7 +165,7 @@ void Place::DeductJobInputs(Industry* whichIndustry)
     }
 }
 
-void Place::ProgressEconomy()
+void Place::ProgressProduction()
 {
     for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
     {
@@ -296,9 +232,9 @@ void Place::AddInitialStock()
         {
             inventory.cargo[(*jt).first] += (*jt).second*2;
         }
-        for(std::map<int,float>::iterator jt = (*it)->outputs.begin(); jt != (*it)->outputs.end(); ++jt)
+        for(std::map<int,float>::iterator kt = (*it)->outputs.begin(); kt != (*it)->outputs.end(); ++kt)
         {
-            inventory.cargo[(*jt).first] += (*jt).second*1;
+            inventory.cargo[(*kt).first] += (*kt).second*1;
         }
 
     }

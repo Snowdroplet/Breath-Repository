@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <array>
 
 #include "allegrocustom.h"
 #include "placeindex.h"
@@ -33,6 +34,9 @@ public:
     std::string epithet; // e.g. ", City of Dreaming Spires"
 
 /// Population
+    int totalPopulation;
+    std::array<int, EXPERTISE_MARKER_LAST>populationExpertises;
+
     std::vector<Being*>availableCrew;
     std::vector<Being*>citizens;
     std::vector<Caravan*>visitors;
@@ -46,11 +50,11 @@ public:
 
     //std::map<int,float>insufficiencies;
 
-    //std::map<int,float>production;  // per day
+    std::map<int,float>dailyProduction;
 
     //std::map<int,float>demand;
 
-    //std::map<int,float>consumption;
+    std::map<int,float>dailyConsumption;
 
 /// Inventory
 
@@ -77,7 +81,6 @@ public:
     unsigned inventoryBubbleNumCols;
     unsigned inventoryBubbleNumRows;
     float inventoryBubbleWidth, inventoryBubbleHeight;
-
 
     const float industriesBubbleDrawX = SCREEN_W*6/10;
     const float industriesBubbleDrawY = SCREEN_H*6/10;
@@ -108,19 +111,19 @@ public:
 /// Economy functions
     //void AdjustProduction(int a, float b);
     //void AdjustDemand(int a, float b);
+    void AdjustConsumption(int a, float b);
+
+    void UpdateEconomyData();
+    void UpdateProductionData();
+    void UpdateConsumptionData();
+
     void AddIndustry(int whichIndustry, float baseProdPerTick);
 
     bool CheckJobInputs(Industry* whichIndustry);
     void DeductJobInputs(Industry* whichIndustry);
 
-    void AdjustConsumption(int a, float b);
-
-    void EvaluateEconomy();
-    void EvaluateProduction();
-    void EvaluateDemand();
-    void EvaluateConsumption();
-
-    void ProgressEconomy();
+    void ProgressProduction();
+    void ProgressConsumption();
 
 /// Inventory functions
     void AddInventoryStock(int a, float b);
