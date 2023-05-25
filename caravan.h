@@ -71,8 +71,8 @@ public:
     const float bubbleHeightPadding = TILE_H/4;
     const float bubbleCornerRadius = 8;
 
-    const float inventoryBubbleDrawX = SCREEN_W*2/10;
-    const float inventoryBubbleDrawY = SCREEN_H*3/10;
+    const float inventoryBubbleDrawX = SCREEN_W*8/40;
+    const float inventoryBubbleDrawY = SCREEN_H*10/40;
     const float inventoryBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
     const float inventoryBubbleBaseCols = 5;
     const float inventoryBubbleBaseRows = 1;

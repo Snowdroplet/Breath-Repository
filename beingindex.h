@@ -26,6 +26,8 @@ const std::map<int,std::string>raceNames
     {RACE_ORDON, "Ordon"}
 };
 
+/*
+
 const int NUM_SKILLS = 20;
 enum enumSkillKeys
 {
@@ -59,6 +61,7 @@ const std::string skillNames[NUM_SKILLS] =
 {
 
 };
+*/
 
 enum enumActivities
 {

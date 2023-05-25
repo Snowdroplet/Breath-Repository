@@ -2,7 +2,6 @@
 
 bool keyInput[] =
 {
-
     false, false, false,                        //ABC
     false, false, false,                        //DEF
     false, false, false,                        //GHI
@@ -12,7 +11,9 @@ bool keyInput[] =
     false, false, false,                        //STU
     false, false, false,                        //VWX
     false, false,                               //YZ
+
     false,                                      //Enter
+    false,                                      //Space
     false, false, false,                        //numpad123
     false, false, false,                        //numpad456
     false, false, false,                        //numpad789
@@ -25,40 +26,6 @@ bool keyInput[] =
     false                                       //Esc
 
 };
-
-    /*
-    if(ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
-    {
-        al_get_mouse_state(&mouseState);
-        if(mouseState.buttons & 1)
-        {
-
-        }
-        if(mouseState.buttons & 2)
-        {
-
-        }
-    }
-    if(ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP)
-    {
-        al_get_mouse_state(&mouseState);
-        if(!mouseState.buttons & 1)
-        {
-
-        }
-    }
-    if(ev.type == ALLEGRO_EVENT_MOUSE_AXES || ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY)
-    {
-        mouseCurrentXPosition = al_get_mouse_state_axis(&mouseState,0); // mousestate,0 for x axis
-        mouseCurrentYPosition = al_get_mouse_state_axis(&mouseState,1); // mousestate,1 for y axis
-
-        al_get_mouse_state(&mouseState);
-        if(mouseState.buttons & 2)
-        {
-
-        }
-
-    }*/
 
 void InputKeydown()
 {
@@ -401,17 +368,6 @@ void InputKeyup()
         case ALLEGRO_KEY_ESCAPE:
             keyInput[KEY_ESC] = false;
             break;
-
-            /*
-            case ALLEGRO_KEY_F1:
-                debugMode = true;
-                break;
-            case ALLEGRO_KEY_F2:
-                debugMode = false;
-                break;
-            case ALLEGRO_KEY_F3:
-                break;
-                */
     }
 }
 

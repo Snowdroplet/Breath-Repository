@@ -28,15 +28,15 @@ const int inventoryRange[UI_BARTER_NUM_TABS][2] =
 
 struct Inventory
 {
-    std::map<int,float>cargo;
+    std::map<int,int>cargo;
     //std::map<int,float>cargoInTab;
 
     Inventory();
     ~Inventory();
 
-    void SetStock(int a, float b);
-    void AddStock(int a, float b);
-    void RemoveStock(int a, float b);
+    void SetStock(int a, int b);
+    void AddStock(int a, int b);
+    void RemoveStock(int a, int b);
 
     //void DrawVertical(int rows, float x, float y);
     //void DrawHorizontal(int cols, float x, float y);

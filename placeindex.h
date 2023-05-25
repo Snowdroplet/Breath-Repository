@@ -44,12 +44,12 @@ const std::map<int, std::string>placeNames =
     {PL_ROSKANEL,"Roskanel"}, {PL_ROSELLA,"Rosella"},
     {PL_OBSERVIA,"Observia"}, {PL_COLDLAKE,"Coldlake"}, {PL_UMBERDELL,"Umberdell"},
     {PL_RAMSHORN,"Ramshorn"}, {PL_HOLLYHEAD,"Hollyhead"}, {PL_JASPER,"Jasper"},
-    {PL_RUMNIR, "Rumnir"}, {PL_HEWNHEIM,"Hewnheim"}, {PL_ARTAS_ROCK,"Arta's Rock"}, {PL_VERSE,"Verse"},
-    {PL_YHANE,"Yhane"}, {PL_VEINS,"Veins"}, {PL_XENIA,"Xenia"},
-    {PL_TOBANDJAN,"Tobandjan"}, {PL_QUMANTHA,"Qumantha"},
-    {PL_MAKHIA,"Makhia"}, {PL_HAPHADEE,"Haphadee"}, {PL_ASTEROS,"Asteros"},
-    {PL_REACH,"Reach"}, {PL_KARUNE,"Karune"}, {PL_HATHSERA,"Hathsera"}, {PL_DOZAAL,"Dozaal"},
-    {PL_ETRURI,"Etruri"}
+    {PL_RUMNIR, "Rumnir"}, {PL_HEWNHEIM,"Hewnheim"}, {PL_ARTAS_ROCK, "Arta's Rock"}, {PL_VERSE, "Verse"},
+    {PL_YHANE, "Yhane"}, {PL_VEINS, "Veins"}, {PL_XENIA, "Xenia"},
+    {PL_TOBANDJAN, "Tobandjan"}, {PL_QUMANTHA, "Qumantha"},
+    {PL_MAKHIA, "Makhia"}, {PL_HAPHADEE, "Haphadee"}, {PL_ASTEROS, "Asteros"},
+    {PL_REACH, "Reach"}, {PL_KARUNE, "Karune"}, {PL_HATHSERA, "Hathsera"}, {PL_DOZAAL, "Dozaal"},
+    {PL_ETRURI, "Etruri"}
 };
 
 const std::map<int, std::array<float,2>>placeOverworldXYCells =
@@ -101,9 +101,9 @@ const std::map<int, std::array<float,2>>placeOverworldXYCells =
 
 
 
-const std::map<int, std::array<int,EXPERTISE_MARKER_LAST+1>>placeInitialPopulationExpertises =
+const std::map<int, std::array<int,EXP_MARKER_LAST+1>>placeInitialPopulation =
 {
-//enum enumExpertiseTypes {EXP_COMMON = 0, EXP_HUNT = 1, EXP_FARM = 2, EXP_MINE = 3, EXP_ALCHEMY = 4, EXP_SORCERY = 5, EXP_CRAFT = 6, EXP_MECHANICS = 7};
+//EXP_COMMON = 0, EXP_HUNT = 1, EXP_FARM = 2, EXP_MINE = 3, EXP_ALCHEMY = 4, EXP_SORCERY = 5, EXP_CRAFT = 6, EXP_MECHANICS = 7};
 // 1  = Homestead
 // 5  = Town
 // 10 = City
@@ -112,26 +112,26 @@ const std::map<int, std::array<int,EXPERTISE_MARKER_LAST+1>>placeInitialPopulati
 
 // Note that each citizen represents 1 expertise level in their industry.
 
-                     // C  H  F  M  A  S  C  M      Target
+//                      C  H  F  M  A  S  C  M      Target
     {PL_ERICENNES,    { 5, 1, 2, 0, 2, 2, 2, 1} }, // = 15
     {PL_CHORAS,       { 2, 1, 2, 2, 1, 1, 4, 0} }, // = 13
     {PL_KETH_KETHER,  { 3, 0, 1, 2, 0, 0, 1, 3} }, // = 10
 
-    {PL_KETH_ENTWEIR, { 0, 2, 3, 0, 0, 0, 0, 0} }, // =  5
-    {PL_VIELLEICHT,   { 0, 0, 0, 0, 0, 0, 0, 0} }, // = 10
-    {PL_QUELLUDE,     { 0, 0, 0, 0, 0, 0, 0, 0} }, // =  3
-    {PL_AMBLEFORTH,   { 0, 0, 0, 0, 0, 0, 0, 0} }, // =  2
+    {PL_KETH_ENTWEIR, { 1, 1, 3, 0, 0, 0, 0, 0} }, // =  5
+    {PL_VIELLEICHT,   { 4, 2, 2, 0, 0, 0, 1, 1} }, // = 10
+    {PL_QUELLUDE,     { 0, 0, 0, 0, 1, 2, 0, 0} }, // =  3
+    {PL_AMBLEFORTH,   { 1, 0, 1, 0, 0, 0, 0, 0} }, // =  2
 
-    {PL_ROSKANEL,     { 0, 0, 0, 0, 0, 0, 0, 0} }, // =  8
-    {PL_ROSELLA,      { 0, 0, 0, 0, 0, 0, 0, 0} }, // =  6
+    {PL_ROSKANEL,     { 4, 3, 0, 0, 1, 0, 0, 0} }, // =  8
+    {PL_ROSELLA,      { 2, 0, 2, 1, 0, 0, 1, 0} }, // =  6
 
-    {PL_OBSERVIA,     { 0, 0, 0, 0, 0, 0, 0, 0} }, // =  5
-    {PL_COLDLAKE,     { 0, 0, 0, 0, 0, 0, 0, 0} }, // =  7
-    {PL_UMBERDELL,    { 0, 0, 0, 0, 0, 0, 0, 0} }, // =  4
+    {PL_OBSERVIA,     { 0, 0, 0, 0, 0, 4, 1, 0} }, // =  5
+    {PL_COLDLAKE,     { 2, 0, 1, 4, 0, 0, 0, 0} }, // =  7
+    {PL_UMBERDELL,    { 0, 0, 2, 0, 2, 0, 0, 0} }, // =  4
 
-    {PL_RAMSHORN,     { 0, 0, 0, 0, 0, 0, 0, 0} }, // =  9
-    {PL_HOLLYHEAD,    { 0, 0, 0, 0, 0, 0, 0, 0} }, // =  8
-    {PL_JASPER,       { 0, 0, 0, 0, 0, 0, 0, 0} }, // =  5
+    {PL_RAMSHORN,     { 2, 5, 0, 0, 2, 0, 0, 0} }, // =  9
+    {PL_HOLLYHEAD,    { 3, 0, 3, 1, 0, 1, 0, 0} }, // =  8
+    {PL_JASPER,       { 0, 0, 0, 1, 0, 0, 3, 1} }, // =  5
 
     {PL_RUMNIR,       { 0, 0, 0, 0, 0, 0, 0, 0} }, // =  3
     {PL_HEWNHEIM,     { 0, 0, 0, 0, 0, 0, 0, 0} }, // = 13
@@ -176,21 +176,21 @@ const std::map<int, std::vector<int>>placeInitialIndustries =
     {PL_CHORAS,       { IND_FARM_MUSHROOMS, IND_FARM_HERBS, IND_MINE_CLAY, IND_CRAFT_POTTERY} },
     {PL_KETH_KETHER,  { IND_MINE_LEYSTONE, IND_MACHINE_CLOCKWORK, IND_MACHINE_AUTOMATON} },
 
-    {PL_KETH_ENTWEIR, { IND_FARM_MUSHROOMS, IND_FARM_HERBS} },
-    {PL_VIELLEICHT,   { IND_HUNT_COLD_BREATH, IND_FARM_SPICE} },
+    {PL_KETH_ENTWEIR, { IND_HUNT_MEAT, IND_FARM_MUSHROOMS, IND_FARM_HERBS} },
+    {PL_VIELLEICHT,   { IND_HUNT_COLD_BREATH, IND_FARM_RICE, IND_FARM_SPICE, IND_CRAFT_POTTERY} },
     {PL_QUELLUDE,     { IND_ALCHEMY_ALCOHOL, IND_SORCERY_SPELLBOOK} },
     {PL_AMBLEFORTH,   { IND_HUNT_MEAT, IND_FARM_RICE} },
 
-    {PL_ROSKANEL,     { IND_HUNT_COLD_BREATH} },
-    {PL_ROSELLA,      { IND_FARM_SPICE} },
+    {PL_ROSKANEL,     { IND_HUNT_COLD_BREATH, IND_ALCHEMY_MEDICINE} },
+    {PL_ROSELLA,      { IND_FARM_SPICE, IND_MINE_CLAY} },
 
-    {PL_OBSERVIA,     { IND_SORCERY_CONTRACT, IND_SORCERY_SPELLBOOK} },
-    {PL_COLDLAKE,     { IND_MINE_SILVER, IND_MINE_LEYSTONE} },
+    {PL_OBSERVIA,     { IND_SORCERY_CONTRACT, IND_SORCERY_SPELLBOOK, IND_CRAFT_POTTERY} },
+    {PL_COLDLAKE,     { IND_FARM_RICE, IND_MINE_SILVER, IND_MINE_LEYSTONE} },
     {PL_UMBERDELL,    { IND_FARM_MUSHROOMS, IND_FARM_HERBS, IND_ALCHEMY_MEDICINE} },
 
-    {PL_RAMSHORN,     { IND_HUNT_MEAT, IND_HUNT_COLD_BREATH} },
-    {PL_HOLLYHEAD,    { IND_FARM_RICE, IND_MINE_CLAY} },
-    {PL_JASPER,       { IND_MINE_SILVER, IND_CRAFT_JEWELRY, IND_ALCHEMY_ALCOHOL} },
+    {PL_RAMSHORN,     { IND_HUNT_MEAT, IND_HUNT_COLD_BREATH, IND_ALCHEMY_ALCOHOL} },
+    {PL_HOLLYHEAD,    { IND_SORCERY_CONTRACT, IND_FARM_RICE, IND_MINE_CLAY} },
+    {PL_JASPER,       { IND_MINE_SILVER, IND_CRAFT_JEWELRY, IND_MACHINE_CLOCKWORK} },
 
     {PL_RUMNIR,       { IND_FARM_MUSHROOMS, IND_FARM_HERBS, IND_MINE_CLAY, IND_CRAFT_POTTERY} },
     {PL_HEWNHEIM,     { IND_FARM_MUSHROOMS, IND_FARM_HERBS, IND_MINE_CLAY, IND_CRAFT_POTTERY} },

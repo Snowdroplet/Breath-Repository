@@ -19,8 +19,8 @@ enum enumIndustries
 };
 
 enum enumExpertiseTypes {EXP_COMMON = 0, EXP_HUNT = 1, EXP_FARM = 2, EXP_MINE = 3, EXP_ALCHEMY = 4, EXP_SORCERY = 5, EXP_CRAFT = 6, EXP_MECHANICS = 7};
-const int EXPERTISE_MARKER_FIRST = EXP_COMMON;
-const int EXPERTISE_MARKER_LAST = EXP_MECHANICS;
+const int EXP_MARKER_FIRST = EXP_COMMON;
+const int EXP_MARKER_LAST = EXP_MECHANICS;
 
 
 const std::map<int, std::string>industryNames =

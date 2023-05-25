@@ -4,9 +4,10 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <cmath>
 
 #include "allegrocustom.h"
-#include "placeindex.h"
+
 #include "overworld.h"
 #include "caravan.h"
 #include "industry.h"
@@ -15,9 +16,19 @@
 
 #include "flyingtext.h"
 
+#include "placeindex.h"
+#include "economyindex.h"
+
 
 /// Dependencies
 class Caravan; // Circular
+
+enum enumPlaceInventories {                                     //PLACE_INVENTORY_RESERVE     = 0,
+                           PLACE_INVENTORY_MARKET = /*1,*/ 0}; // PLACE_INVENTORY_INDUSTRIAL  = 2, PLACE_INVENTORY_MAINTAINENCE = 3};
+//const int PLACE_INVENTORY_MARKER_FIRST = PLACE_INVENTORY_RESERVE;
+//const int PLACE_INVENTORY_MARKER_LAST = PLACE_INVENTORY_MAINTAINENCE;
+const int PLACE_INVENTORY_MARKER_FIRST = PLACE_INVENTORY_MARKET;
+const int PLACE_INVENTORY_MARKER_LAST =  PLACE_INVENTORY_MARKET;
 
 class Place
 {
@@ -35,7 +46,7 @@ public:
 
 /// Population
     int totalPopulation;
-    std::array<int, EXPERTISE_MARKER_LAST>populationExpertises;
+    std::array<int, EXP_MARKER_LAST+1>population;
 
     std::vector<Being*>availableCrew;
     std::vector<Being*>citizens;
@@ -43,20 +54,32 @@ public:
 
     const int removeVisitorCaravanDelay = 50; // Todo: Tie to advancement of calendar time instead of arbitrary number
 
-/// Economy
-    Inventory inventory;
+/// Economy - Inventory
+    int standardOfLiving;
 
+    std::array<Inventory, PLACE_INVENTORY_MARKER_LAST+1>inventory;
+
+/// Economy - Industries
     std::vector<Industry*>industries;
 
+/// Economy - Production
     //std::map<int,float>insufficiencies;
 
     std::map<int,float>dailyProduction;
 
+
     //std::map<int,float>demand;
 
-    std::map<int,float>dailyConsumption;
+/// Economy - Consumption
+    std::map<int,int>consumptionTimer;
+    std::map<int,float>consumptionDecimalOwing;
 
-/// Inventory
+
+    //std::array<float, PLACE_INVENTORY_MARKER_LAST+1>resourceAllocation;      // Percentage out of 100 to allocate to each inventory.
+    //std::array<float, PLACE_INVENTORY_MARKER_LAST+1>resourceAllocationOwing; // Consequence of items needing interger quantities. Basically which inventory has been short-changed in the past, and by how much.
+
+    std::map<int,int>maintainenceConsumptionTier; // Maintainence consumption refers to "household consumption," as opposed to industrial consumption.
+    std::map<int,float>dailyConsumption;
 
 /// Location
     int overworldXPosition, overworldYPosition; // Absolute position on the overworld.
@@ -73,19 +96,22 @@ public:
     unsigned visitorBubbleNumCols;
     unsigned visitorBubbleNumRows;
 
-    const float inventoryBubbleDrawX = SCREEN_W*6/10;
-    const float inventoryBubbleDrawY = SCREEN_H*3/10;
+                                                                                     //  MARKET,            RESERVE,       INDUSTRIAL,    MAINTAINENCE
+    const std::array<std::string, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleLabel = {"Market"};       /*", Reserves",    "Industrial",  "Maintainence"};*/
+    const std::array<float, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleDrawX =       {SCREEN_W*22/40}; /*, SCREEN_W*28/40, SCREEN_W*28/40, SCREEN_W*34/40};*/
+    const std::array<float, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleDrawY =       {SCREEN_H*10/40}; /*, SCREEN_H* 2/40, SCREEN_H*10/40, SCREEN_H*10/40};*/
     const float inventoryBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
-    const float inventoryBubbleBaseCols = 6;
+    const float inventoryBubbleBaseCols = 5;
     const float inventoryBubbleBaseRows = 2;
-    unsigned inventoryBubbleNumCols;
-    unsigned inventoryBubbleNumRows;
-    float inventoryBubbleWidth, inventoryBubbleHeight;
+    std::array<unsigned, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleNumCols;
+    std::array<unsigned, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleNumRows;
+    std::array<unsigned, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleWidth;
+    std::array<unsigned, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleHeight;
 
-    const float industriesBubbleDrawX = SCREEN_W*6/10;
-    const float industriesBubbleDrawY = SCREEN_H*6/10;
+    const float industriesBubbleDrawX = SCREEN_W*22/40;
+    const float industriesBubbleDrawY = SCREEN_H*18/40;
     const float industriesBubbleRowSpacing = 4; // Arbitrary gap
-    const float industriesBubbleWidth = TILE_W*12 + bubbleWidthPadding;
+    const float industriesBubbleWidth = TILE_W*11 + bubbleWidthPadding;
     float industriesBubbleHeight;
     const float industriesBubbleProgressBarOffset = 2.5*TILE_W;
     const float industriesBubbleProgressBarWidth = industriesBubbleWidth - industriesBubbleProgressBarOffset;
@@ -126,17 +152,23 @@ public:
     void ProgressConsumption();
 
 /// Inventory functions
-    void AddInventoryStock(int a, float b);
-    void RemoveInventoryStock(int a, float b);
-    void SetInventoryStock(int a, float b);
+    void AddInventoryStock(unsigned whichInventory, int a, int b);
+    void RemoveInventoryStock(unsigned whichInventory, int a, int b);
+    void SetInventoryStock(unsigned whichInventory, int a, int b);
+    void TransferInventoryStock(unsigned sourceInv, unsigned destInv, int a, int b);
+
+    //void SetResourceAllocation(float reserveProportion, float marketProportion, float industrialProportion, float maintainenceProportion); // Doesn't have to be percentage. Divides by total.
+    //void AllocateReserve(unsigned whichItem);
+    //void AllocateReserves();
+
 
     void AddInitialStock();
-/// Location functions
 
 /// Bubble functions
     void UpdateAllBubbles();
     void UpdateVisitorBubble();
-    void UpdateInventoryBubble();
+    void UpdateInventoryBubbles();
+    void UpdateInventoryBubble(unsigned whichBubble);
     void UpdateIndustriesBubble(); // Only called when industrial activity updated
     void ProgressIndustriesBubbleProgressBars(); // Called on timer tick
 
@@ -148,7 +180,7 @@ public:
 /// Overworld drawing functions
     void DrawSpriteOnOverworld();
     void DrawVisitorBubbleOnOverworld();
-    void DrawInventoryBubble();
+    void DrawInventoryBubbles();
     void DrawIndustriesBubble();
     void DrawFlyingTexts();
 };

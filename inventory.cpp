@@ -10,7 +10,7 @@ Inventory::~Inventory()
 
 }
 
-void Inventory::SetStock(int a, float b)
+void Inventory::SetStock(int a, int b)
 {
     cargo[a] = b;
 
@@ -18,7 +18,7 @@ void Inventory::SetStock(int a, float b)
         cargo.erase(a);
 }
 
-void Inventory::AddStock(int a, float b)
+void Inventory::AddStock(int a, int b)
 {
     if(cargo.count(a) == 0) // Probably unnecessary, but whatever
         cargo[a] = 0;
@@ -26,12 +26,14 @@ void Inventory::AddStock(int a, float b)
     cargo[a] += b;
 }
 
-void Inventory::RemoveStock(int a, float b)
+void Inventory::RemoveStock(int a, int b)
 {
-    cargo[a] -= b;
-    if(cargo[a] <= 0)
-        cargo.erase(a);
-
+    if(cargo.count(a) > 0)
+    {
+        cargo[a] -= b;
+        if(cargo[a] <= 0)
+            cargo.erase(a);
+    }
 }
 
 /*

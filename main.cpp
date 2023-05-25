@@ -412,12 +412,15 @@ void ProgressWorld()
             if(hourChangeTick)
             {
                 ((*it).second)->ProgressProduction();
+                ((*it).second)->ProgressConsumption();
             }
 
+            /*
             if(dayChangeTick)
             {
                 ((*it).second)->UpdateEconomyData();
             }
+            */
 
 
         }
@@ -525,7 +528,7 @@ void DrawUI()
 
         if(overworldCameraPlace != nullptr)
         {
-            overworldCameraPlace->DrawInventoryBubble();
+            overworldCameraPlace->DrawInventoryBubbles();
             overworldCameraPlace->DrawIndustriesBubble();
         }
         else if(overworldCameraCaravan != nullptr)
@@ -535,7 +538,7 @@ void DrawUI()
 
             if(overworldCameraCaravan->atPlace)
             {
-                overworldCameraCaravan->whichPlace->DrawInventoryBubble();
+                overworldCameraCaravan->whichPlace->DrawInventoryBubbles();
                 overworldCameraCaravan->whichPlace->DrawIndustriesBubble();
             }
         }

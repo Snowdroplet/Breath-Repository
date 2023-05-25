@@ -340,7 +340,7 @@ void Caravan::DrawInventoryBubble()
     if(inventory.cargo.size() > 0)
     {
         unsigned i = 0;
-        for(std::map<int,float>::iterator it = inventory.cargo.begin(); it != inventory.cargo.end(); ++it)
+        for(std::map<int,int>::iterator it = inventory.cargo.begin(); it != inventory.cargo.end(); ++it)
         {
             float drawX = inventoryBubbleDrawX + i%inventoryBubbleNumCols*TILE_W;
             float drawY = inventoryBubbleDrawY + i/inventoryBubbleNumCols*(TILE_H + inventoryBubbleRowSpacing);
