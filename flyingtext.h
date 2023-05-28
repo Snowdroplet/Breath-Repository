@@ -10,28 +10,29 @@
 class FlyingText
 {
 public:
-    //static std::vector<FlyingText*>flyingTexts;
-
     bool active;
-    bool queued; // Queued text does not lose lifespan until queueTime is 0.
-    const int distanceFlownLimit = 60;
-    int distanceFlown;
-    int queueTime;
+    bool queued; // Queued text does not gain distanceFlown while queued.
 
     bool hasIcon;
     int itemIcon;
 
     std::string text;
 
-    const float scrollSpeed = 1;
-    const float yPositionDisplacement = TILE_H;
+    const float scrollUpSpeed = 0.4;
+    const float scrollUpXDisplacement = 0;
+    const float scrollUpYDisplacement = TILE_H*(-1.5);
+    const float scrollDownSpeed = 0.32;
+    const float scrollDownXDisplacement = TILE_W*(-1);
+    const float scrollDownYDisplacement = TILE_H*(-2);
+
     bool scrollUp;
     float overworldXPosition, overworldYPosition;
 
+    const int distanceFlownLimit = TILE_H*1.5;
+    int distanceFlown;
+
     FlyingText(int ic, std::string t, float x, float y, bool up);
     ~FlyingText();
-
-    //void static Output(int ic, std::string t, float x, float y, bool up);
 
     void Progress();
     void DrawOnOverworld();

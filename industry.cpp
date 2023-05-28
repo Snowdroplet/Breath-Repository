@@ -105,32 +105,6 @@ void Industry::ProgressJobNormalState()
 
 void Industry::UpdateProgressBar()
 {
-    //float progressFillPercentage = productionContributed/productionToComplete; // Original
-    float productionProgressBarFillAtFull = (productionContributed+productionPerTick)/productionToComplete; // Updated: Progress bar "visual" is one production tick ahead of "actual"
-    float progressFillRate = productionPerTick/productionToComplete/FRAMES_PER_HOUR;
-    if(productionProgressBarNeedsRollover)
-    {
-        productionProgressBarFill += progressFillRate;
-        if(productionProgressBarFill >= 1.0)
-        {
-            productionProgressBarNeedsRollover = false;
-            productionProgressBarFill = productionContributed/productionToComplete;
-        }
-    }
-    else
-    {
-        if(productionProgressBarFill < productionProgressBarFillAtFull - progressFillRate)
-            productionProgressBarFill += progressFillRate;
-        else if(productionProgressBarFill > productionProgressBarFillAtFull + progressFillRate)
-            productionProgressBarFill -= progressFillRate;
-    }
-    if(productionProgressBarFill >= 1.0)
-        productionProgressBarFill = 1.0;
-    else if(productionProgressBarFill < 0.0)
-        productionProgressBarFill = 0.0;
-
-
-
     if(jobState == JOB_STATE_INSUFFICIENT_INPUTS)
     {
         float pauseProgressBarFillAtFull = (jobPauseTicks+1)/jobPauseThreshold;
@@ -156,5 +130,45 @@ void Industry::UpdateProgressBar()
             pauseProgressBarFill = 1.0;
         else if(pauseProgressBarFill < 0.0)
             pauseProgressBarFill = 0.0;
+
+        remainingTimeText = "<PAUSED>";
+
     }
+
+    else // jobState != JOB_STATE_INSUFFICIENT_INPUTS
+    {
+        //float progressFillPercentage = productionContributed/productionToComplete; // Original
+        float productionProgressBarFillAtFull = (productionContributed+productionPerTick)/productionToComplete; // Updated: Progress bar "visual" is one production tick ahead of "actual"
+        float progressFillRate = productionPerTick/productionToComplete/FRAMES_PER_HOUR;
+        if(productionProgressBarNeedsRollover)
+        {
+            productionProgressBarFill += progressFillRate;
+            if(productionProgressBarFill >= 1.0)
+            {
+                productionProgressBarNeedsRollover = false;
+                productionProgressBarFill = productionContributed/productionToComplete;
+            }
+        }
+        else
+        {
+            if(productionProgressBarFill < productionProgressBarFillAtFull - progressFillRate)
+                productionProgressBarFill += progressFillRate;
+            else if(productionProgressBarFill > productionProgressBarFillAtFull + progressFillRate)
+                productionProgressBarFill -= progressFillRate;
+        }
+        if(productionProgressBarFill >= 1.0)
+            productionProgressBarFill = 1.0;
+        else if(productionProgressBarFill < 0.0)
+            productionProgressBarFill = 0.0;
+
+        int remainingTime = (productionToComplete-productionContributed)/productionPerTick;
+        int remainingTimeDays = remainingTime/HOURS_PER_DAY;
+        int remainingTimeHours = remainingTime%HOURS_PER_DAY;
+
+        if(remainingTimeDays > 0)
+            remainingTimeText = std::to_string(remainingTimeDays) + "d " + std::to_string(remainingTimeHours) + "h";
+        else
+            remainingTimeText = std::to_string(remainingTimeHours) + "h";
+    }
+
 }

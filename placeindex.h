@@ -101,7 +101,7 @@ const std::map<int, std::array<float,2>>placeOverworldXYCells =
 
 
 
-const std::map<int, std::array<int,EXP_MARKER_LAST+1>>placeInitialPopulation =
+const std::map<int, const std::array<int,EXP_MARKER_LAST+1>>placeInitialPopulation =
 {
 //EXP_COMMON = 0, EXP_HUNT = 1, EXP_FARM = 2, EXP_MINE = 3, EXP_ALCHEMY = 4, EXP_SORCERY = 5, EXP_CRAFT = 6, EXP_MECHANICS = 7};
 // 1  = Homestead

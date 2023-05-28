@@ -28,12 +28,11 @@ void Inventory::AddStock(int a, int b)
 
 void Inventory::RemoveStock(int a, int b)
 {
-    if(cargo.count(a) > 0)
-    {
+// It doesn't check if b is more than cargo[a], so do your checking before calling RemoveStock
+
         cargo[a] -= b;
         if(cargo[a] <= 0)
             cargo.erase(a);
-    }
 }
 
 /*

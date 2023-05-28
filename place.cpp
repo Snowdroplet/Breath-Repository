@@ -9,25 +9,29 @@ Place::Place(int id)
 
     name = placeNames.at(identity);
 
-    overworldXPosition = placeOverworldXYCells.at(id)[0] *TILE_W;
-    overworldYPosition = placeOverworldXYCells.at(id)[1] *TILE_H;
+    overworldXPosition = placeOverworldXYCells.at(identity)[0] *TILE_W;
+    overworldYPosition = placeOverworldXYCells.at(identity)[1] *TILE_H;
 
-    population = placeInitialPopulation.at(id);
+    //population = placeInitialPopulation.at(identity);
+
+    for(unsigned i = EXP_MARKER_FIRST; i <= EXP_MARKER_LAST; i++)
+    {
+        if(placeInitialPopulation.at(identity).at(i) > 0)
+            population[i] = placeInitialPopulation.at(identity).at(i);
+    }
 
     standardOfLiving = LIVING_COMFORTABLE;
 
     //const int d/*ebug production quantity*/ = 6;
-    for(std::vector<int>::const_iterator it = placeInitialIndustries.at(id).cbegin(); it != placeInitialIndustries.at(id).cend(); ++it)
-        AddIndustry(*it, 1 + population[jobExpertiseType.at(*it)]);
+    for(std::vector<int>::const_iterator cit = placeInitialIndustries.at(identity).cbegin(); cit != placeInitialIndustries.at(identity).cend(); ++cit)
+        AddIndustry(*cit, 1 + population[jobExpertiseType.at(*cit)]);
 
     for(unsigned i = IT_MARKER_FIRST; i < IT_MARKER_LAST; i++)
+    {
         maintainenceConsumptionTier[i] = standardOfLiving;
-
-    for(std::map<int,int>::iterator it = consumptionTimer.begin(); it != consumptionTimer.end(); ++it)
-        (*it).second = rand()%economyBaseMaintainenceConsumptionRate.at((*it).first).at(standardOfLiving);
-
-    for(std::map<int,float>::iterator it = consumptionDecimalOwing.begin(); it != consumptionDecimalOwing.end(); ++it)
-        (*it).second = 0;
+        consumptionTimer[i] = rand()% economyBaseMaintainenceConsumptionRate.at(i).at(standardOfLiving);
+        consumptionDecimalOwing[i] = 0;
+    }
 
     AddInitialStock();
 
@@ -39,8 +43,8 @@ Place::~Place()
     //std::cout << "Place deleted." << std::endl;
 
     availableCrew.clear();
-    citizens.clear();
-    visitors.clear();
+    citizenCaravans.clear();
+    visitorCaravans.clear();
 
     for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end();)
     {
@@ -70,19 +74,19 @@ void Place::RemoveAvailableCrew(Being *b)
 
 }
 
-void Place::AddCitizen(Being *b)
+void Place::AddCitizenCaravan(Being *b)
 {
-    citizens.push_back(b);
+    citizenCaravans.push_back(b);
 }
 
-void Place::RemoveCitizen(Being *b)
+void Place::RemoveCitizenCaravan(Being *b)
 {
 
 }
 
 void Place::AddVisitorCaravan(Caravan *c)
 {
-    visitors.push_back(c);
+    visitorCaravans.push_back(c);
     if(overworldCameraCaravan == c)
         UpdateAllBubbles();
     else
@@ -91,10 +95,10 @@ void Place::AddVisitorCaravan(Caravan *c)
 
 void Place::RemoveVisitorCaravan(Caravan *c)
 {
-    for(std::vector<Caravan*>::iterator it = visitors.begin(); it != visitors.end();)
+    for(std::vector<Caravan*>::iterator it = visitorCaravans.begin(); it != visitorCaravans.end();)
     {
         if(*it == c)
-            it = visitors.erase(it);
+            it = visitorCaravans.erase(it);
         else
         {
             (*it)->thresholdTimeAtPlace += removeVisitorCaravanDelay;
@@ -171,10 +175,10 @@ bool Place::CheckJobInputs(Industry *whichIndustry)
     for(std::map<int,float>::iterator jt = whichIndustry->inputs.begin(); jt != whichIndustry->inputs.end(); ++jt)
     {
         //if((inventory[PLACE_INVENTORY_INDUSTRIAL].cargo.count((*jt).first) < 1)) // Is the job's input requirement present in map at all?
-          if((inventory[PLACE_INVENTORY_MARKET].cargo.count((*jt).first) < 1))
+        if((inventory[PLACE_INVENTORY_MARKET].cargo.count((*jt).first) < 1))
             return false;
         //else if((inventory[PLACE_INVENTORY_INDUSTRIAL].cargo[(*jt).first] < (*jt).second)) // Is the quantity in inventory less than the job's input requirement?
-          else if((inventory[PLACE_INVENTORY_MARKET].cargo[(*jt).first] < (*jt).second))
+        else if((inventory[PLACE_INVENTORY_MARKET].cargo[(*jt).first] < (*jt).second))
             return false;
     }
     return true;
@@ -229,29 +233,62 @@ void Place::ProgressConsumption()
 {
     for(std::map<int,int>::iterator it = consumptionTimer.begin(); it != consumptionTimer.end(); ++it)
     {
-        int consumptionTimerThreshold = (*it).second = economyBaseMaintainenceConsumptionRate.at((*it).first).at(standardOfLiving);
+        int consumptionTimerThreshold = economyBaseMaintainenceConsumptionRate.at((*it).first).at(standardOfLiving);
 
-        if(consumptionTimerThreshold != -1)
+        if(consumptionTimerThreshold != (-1))
         {
             (*it).second++;
             if((*it).second >= consumptionTimerThreshold)
             {
                 float consumptionQuantity = 0;
-                consumptionQuantity += consumptionDecimalOwing.at((*it).first);
-                consumptionDecimalOwing.at((*it).first) = 0;
 
-                for(unsigned i = EXP_MARKER_FIRST; i < EXP_MARKER_LAST; i++)
-                    consumptionQuantity += population[i] * economyRoleMaintainenceConsumptionQuantity.at((*it).first).at(i); // Not consumptionRate, mind. Quantity.
+                if(consumptionDecimalOwing.at((*it).first) >= 1)
+                {
+                    consumptionQuantity += consumptionDecimalOwing[(*it).first];
+                    consumptionDecimalOwing.at((*it).first) = 0;
+                }
+
+                for(std::map<int,int>::iterator jt = population.begin(); jt != population.end(); ++jt)
+                    consumptionQuantity += ((*jt).second) * economyRoleMaintainenceConsumptionQuantity.at((*it).first).at((*jt).first); // Not consumptionRate, mind. Quantity.
 
                 float consumptionQuantityInteger;
-                consumptionDecimalOwing.at((*it).first) += std::modf(consumptionQuantity,&consumptionQuantityInteger);
+                consumptionDecimalOwing[(*it).first] += std::modf(consumptionQuantity,&consumptionQuantityInteger);
 
+                if(inventory[PLACE_INVENTORY_MARKET].cargo.count((*it).first) > 0 && consumptionQuantityInteger > 0)
+                {
+                    if(consumptionQuantityInteger <= inventory[PLACE_INVENTORY_MARKET].cargo.at((*it).first))
+                    {
+                        RemoveInventoryStock(PLACE_INVENTORY_MARKET, (*it).first, consumptionQuantityInteger);
+                        QueueDownFlyingText((*it).first, "-" + std::to_string((int)consumptionQuantityInteger), overworldXPosition, overworldYPosition);
+                        std::cout << placeNames.at(identity) << " consumed " << (int)consumptionQuantityInteger << " " << itemNames.at((*it).first) << " ---- ";
+                        if(inventory[PLACE_INVENTORY_MARKET].cargo.count((*it).first) > 0)
+                            std::cout << inventory[PLACE_INVENTORY_MARKET].cargo.at((*it).first);
+                        else
+                            std:: cout << "None";
+                        std::cout << " remains." <<  std::endl;
 
-                // map::count taken care of in inventory.cpp
-                RemoveInventoryStock(PLACE_INVENTORY_MARKET,(*it).first, consumptionQuantityInteger);
+                        /// increase contentment here
 
+                    }
+                    else // consumptionQuantityInteger > inventory[PLACE_INVENTORY_MARKET].at((*it).first))
+                    {
+                        /// consume remainder here and set decimal to zero
+                        std::cout << placeNames.at(identity) <<  " has insufficient " << itemNames.at((*it).first) << " to meet consumption! ---- Need " << consumptionQuantityInteger << "; "<< inventory[PLACE_INVENTORY_MARKET].cargo.at((*it).first) << " in stock! (Debug: con int > stock)" << std::endl;
+                        /// decrease contentment here
+                        /// cout contement increased by so and so.
+
+                    }
+                }
+                else // inventory[PLACE_INVENTORY_MARKET].cargo.count((*it).first) <= 0
+                {
+                    /// consume remainder here and set decimal to zero
+                    std::cout << placeNames.at(identity) <<  " has insufficient " << itemNames.at((*it).first) << " to meet consumption! ---- Need " << consumptionQuantityInteger << "; none in stock! (Debug: Map index not present)" << std::endl;
+                    /// decrease contentment here
+                    /// cout contement increased by so and so.
+                }
 
                 (*it).second = 0;
+
             }
         }
 
@@ -273,6 +310,7 @@ void Place::RemoveInventoryStock(unsigned whichInventory, int a, int b)
 
     if(inventory[whichInventory].cargo.size() != prev)
         UpdateInventoryBubble(whichInventory);
+
 }
 void Place::SetInventoryStock(unsigned whichInventory, int a, int b)
 {
@@ -289,84 +327,77 @@ void Place::TransferInventoryStock(unsigned sourceInv, unsigned destInv, int a, 
     AddInventoryStock(destInv,a,b);
 }
 
-/*
-void Place::SetResourceAllocation(float reserveProportion, float marketProportion, float industrialProportion, float maintainenceProportion)
-{
-    float total = reserveProportion + marketProportion + industrialProportion + maintainenceProportion;
-
-    resourceAllocation[PLACE_INVENTORY_RESERVE] = reserveProportion/total;
-    resourceAllocation[PLACE_INVENTORY_MARKET] = marketProportion/total;
-    resourceAllocation[PLACE_INVENTORY_INDUSTRIAL] = industrialProportion/total;
-    resourceAllocation[PLACE_INVENTORY_MAINTAINENCE] = maintainenceProportion/total;
-}
-*/
-
-/*
-void Place::AllocateReserve(unsigned whichItem)
-{
-    float transferQuantity = inventory[PLACE_INVENTORY_RESERVE].cargo.at(whichItem);
-
-
-/// Should allocate resourceAllocationOwing[] from previous cycles first, before anything else.
-
-    for(unsigned i = PLACE_INVENTORY_MARKER_FIRST; i < PLACE_INVENTORY_MARKER_LAST+1; i++)
-    {
-        float toTransfer = transferQuantity/resourceAllocation[whichItem];
-        float toTransferInteger; // TransferInventoryStock can only accept whole numbers. (float type for modf)
-
-        resourceAllocationOwing[i] = std::modf(toTransfer,&toTransferInteger); // Splits toTransfer into its fractional part(transfer integer) and decimal part(owing).
-
-        std::cout << toTransfer << " --> fractional: " << toTransferInteger << "   decimal: " << resourceAllocation[i] << std::endl;
-
-        TransferInventoryStock(PLACE_INVENTORY_RESERVE,i,whichItem,toTransferInteger);
-
-    }
-}
-*/
-
-
-
 void Place::AddInitialStock()
 {
     for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
     {
         for(std::map<int,float>::iterator jt = (*it)->inputs.begin(); jt != (*it)->inputs.end(); ++jt)
             AddInventoryStock(PLACE_INVENTORY_MARKET, (*jt).first, (*jt).second*2);
-            ///AddInventoryStock(PLACE_INVENTORY_INDUSTRIAL, (*jt).first, (*jt).second*2);
+        ///AddInventoryStock(PLACE_INVENTORY_INDUSTRIAL, (*jt).first, (*jt).second*2);
 
         for(std::map<int,float>::iterator kt = (*it)->outputs.begin(); kt != (*it)->outputs.end(); ++kt)
             AddInventoryStock(PLACE_INVENTORY_MARKET, (*kt).first, (*kt).second*1);
-            ///AddInventoryStock(PLACE_INVENTORY_RESERVE, (*kt).first, (*kt).second*1);
+        ///AddInventoryStock(PLACE_INVENTORY_RESERVE, (*kt).first, (*kt).second*1);
     }
 
-    for(unsigned i = IT_MARKER_FIRST; i < IT_MARKER_LAST; i++)
+    for (unsigned i = IT_MARKER_FIRST; i <= IT_MARKER_LAST; i++)
     {
-        for(unsigned j = EXP_MARKER_FIRST; j < EXP_MARKER_LAST; j++)
+        for (std::map<int, int>::iterator it = population.begin(); it != population.end(); ++it)
         {
-            float toAdd = (economyRoleMaintainenceConsumptionQuantity.at(i).at(standardOfLiving))*population[j]*3;
-            if(toAdd >= 1)
-                AddInventoryStock(PLACE_INVENTORY_MARKET, i, toAdd); // Truncates, of course.
+            if(population.count((*it).second) > 0)
+            {
+                float toAdd = economyRoleMaintainenceConsumptionQuantity.at(i).at((*it).first) * population.at((*it).second) * 1;
+                if (toAdd >= 1)
+                    AddInventoryStock(PLACE_INVENTORY_MARKET, i, toAdd); // Truncates, of course.
 
-            /// Instead of consumption * 3, should give enough consumption for 7 days' maintainence.
+                /// Instead of consumption * 1, should give enough consumption for 30 days' maintainence or something.
+            }
         }
     }
 }
 
 void Place::UpdateAllBubbles()
 {
+    UpdatePopulationBubble();
+    UpdateCitizensBubble();
     UpdateVisitorBubble();
+    UpdateSurplusBubble();
+    UpdateDeficitBubble();
     UpdateInventoryBubbles();
     UpdateIndustriesBubble();
 }
 
+void Place::UpdatePopulationBubble()
+{
+    populationBubbleNumCols = populationBubbleBaseCols;
+
+    if(population.size() > 0)
+    {
+        while(population.size() > populationBubbleNumCols)
+            populationBubbleNumCols++;
+    }
+
+    populationBubbleWidth = TILE_W*populationBubbleNumCols;
+}
+
+void Place::UpdateCitizensBubble()
+{
+    citizensBubbleNumRows = citizensBubbleBaseRows;
+
+    if(citizenCaravans.size() > citizensBubbleNumRows)
+        citizensBubbleNumRows = citizenCaravans.size();
+
+    citizensBubbleHeight = citizensBubbleNumRows*TILE_W;
+}
+
 void Place::UpdateVisitorBubble()
 {
-    if(visitors.size() > 0)
+    if(visitorCaravans.size() > 0)
     {
         visitorBubbleNumCols = 1;
         visitorBubbleNumRows = 1;
 
-        while(visitors.size() > visitorBubbleNumCols*visitorBubbleNumRows)
+        while(visitorCaravans.size() > visitorBubbleNumCols*visitorBubbleNumRows)
         {
             if(visitorBubbleNumCols <= visitorBubbleNumRows)
                 visitorBubbleNumCols++;
@@ -380,6 +411,24 @@ void Place::UpdateVisitorBubble()
     }
     else
         visitorBubbleActive = false;
+}
+
+void Place::UpdateSurplusBubble()
+{
+    surplusBubbleNumCols = surplusBubbleBaseCols;
+    surplusBubbleNumRows = surplusBubbleBaseRows;
+
+    surplusBubbleWidth = surplusBubbleNumCols*TILE_W;
+    surplusBubbleHeight = surplusBubbleNumRows*TILE_H;
+}
+
+void Place::UpdateDeficitBubble()
+{
+    deficitBubbleNumCols = deficitBubbleBaseCols;
+    deficitBubbleNumRows = deficitBubbleBaseRows;
+
+    deficitBubbleWidth = deficitBubbleNumCols*TILE_W;
+    deficitBubbleHeight = deficitBubbleNumRows*TILE_H;
 }
 
 void Place::UpdateInventoryBubbles()
@@ -439,6 +488,68 @@ void Place::DrawSpriteOnOverworld()
     }
 }
 
+void Place::DrawPopulationBubble()
+{
+
+    al_draw_filled_rounded_rectangle(populationBubbleDrawX - bubblePadding,
+                                     populationBubbleDrawY - bubblePadding,
+                                     populationBubbleDrawX + populationBubbleWidth + bubblePadding,
+                                     populationBubbleDrawY + populationBubbleHeight + bubblePadding,
+                                     bubbleCornerRadius, bubbleCornerRadius,
+                                     COL_DARK_WHITE);
+
+    al_draw_rounded_rectangle(populationBubbleDrawX - bubblePadding,
+                              populationBubbleDrawY - bubblePadding,
+                              populationBubbleDrawX + populationBubbleWidth + bubblePadding,
+                              populationBubbleDrawY + populationBubbleHeight + bubblePadding,
+                              bubbleCornerRadius, bubbleCornerRadius,
+                              COL_INDIGO,
+                              4);
+
+    unsigned i = 0;
+    for(std::map<int,int>::iterator it = population.begin(); it != population.end(); ++it)
+    {
+        al_draw_bitmap_region(expertiseIconPng,
+                              ((*it).first)*TILE_W, 0,
+                              TILE_W,TILE_H,
+                              populationBubbleDrawX + i*TILE_W,
+                              populationBubbleDrawY,
+                              0);
+
+        string_al_draw_text(builtin,COL_BLACK, populationBubbleDrawX + i*TILE_W + TILE_W, populationBubbleDrawY+TILE_H,ALLEGRO_ALIGN_RIGHT,std::to_string((*it).second));
+        i++;
+    }
+
+    string_al_draw_text(builtin,COL_BLACK, populationBubbleDrawX, populationBubbleDrawY-bubblePadding-8, ALLEGRO_ALIGN_LEFT, populationBubbleLabel);
+}
+
+void Place::DrawCitizensBubble()
+{
+    al_draw_filled_rounded_rectangle(citizensBubbleDrawX - bubblePadding,
+                                     citizensBubbleDrawY - bubblePadding,
+                                     citizensBubbleDrawX + citizensBubbleWidth + bubblePadding,
+                                     citizensBubbleDrawY + citizensBubbleHeight + bubblePadding,
+                                     bubbleCornerRadius, bubbleCornerRadius,
+                                     COL_DARK_WHITE);
+
+    al_draw_rounded_rectangle(citizensBubbleDrawX - bubblePadding,
+                              citizensBubbleDrawY - bubblePadding,
+                              citizensBubbleDrawX + citizensBubbleWidth + bubblePadding,
+                              citizensBubbleDrawY + citizensBubbleHeight + bubblePadding,
+                              bubbleCornerRadius, bubbleCornerRadius,
+                              COL_INDIGO,
+                              4);
+
+    al_draw_text(builtin,COL_BLACK,citizensBubbleDrawX, citizensBubbleDrawY-bubblePadding-8, ALLEGRO_ALIGN_LEFT, "Citizen Caravans:");
+
+    if(citizenCaravans.size() > 0)
+    {
+
+    }
+    else
+        al_draw_text(builtin, COL_BLACK, citizensBubbleDrawX, citizensBubbleDrawY,ALLEGRO_ALIGN_LEFT,"(None).");
+}
+
 void Place::DrawVisitorBubbleOnOverworld()
 {
     if(visitorBubbleActive)
@@ -453,32 +564,230 @@ void Place::DrawVisitorBubbleOnOverworld()
         {
 
 
-            al_draw_filled_rounded_rectangle(drawX - visitorBubbleWidth/2 - bubbleWidthPadding,
-                                             drawY - visitorBubbleHeight/2 - bubbleHeightPadding,
-                                             drawX + visitorBubbleWidth/2 + bubbleWidthPadding,
-                                             drawY + visitorBubbleHeight/2 + bubbleHeightPadding,
+            al_draw_filled_rounded_rectangle(drawX - visitorBubbleWidth/2 - bubblePadding,
+                                             drawY - visitorBubbleHeight/2 - bubblePadding,
+                                             drawX + visitorBubbleWidth/2 + bubblePadding,
+                                             drawY + visitorBubbleHeight/2 + bubblePadding,
                                              bubbleCornerRadius,
                                              bubbleCornerRadius,
                                              COL_DARK_WHITE);
 
 
-            al_draw_rounded_rectangle(drawX - visitorBubbleWidth/2 - bubbleWidthPadding,
-                                      drawY - visitorBubbleHeight/2 - bubbleHeightPadding,
-                                      drawX + visitorBubbleWidth/2 + bubbleWidthPadding,
-                                      drawY + visitorBubbleHeight/2 + bubbleHeightPadding,
+            al_draw_rounded_rectangle(drawX - visitorBubbleWidth/2 - bubblePadding,
+                                      drawY - visitorBubbleHeight/2 - bubblePadding,
+                                      drawX + visitorBubbleWidth/2 + bubblePadding,
+                                      drawY + visitorBubbleHeight/2 + bubblePadding,
                                       bubbleCornerRadius,
                                       bubbleCornerRadius,
                                       COL_INDIGO,
                                       4);
 
-            for(unsigned i = 0; i < visitors.size(); i++)
+            for(unsigned i = 0; i < visitorCaravans.size(); i++)
             {
-                visitors[i]->DrawActivity(drawX - visitorBubbleWidth/2 + (i%visitorBubbleNumCols*TILE_W) + TILE_W/2,
-                                          drawY - visitorBubbleHeight/2 + (i/visitorBubbleNumCols*TILE_H) + TILE_H/2);
+                visitorCaravans[i]->DrawActivity(drawX - visitorBubbleWidth/2 + (i%visitorBubbleNumCols*TILE_W) + TILE_W/2,
+                                                 drawY - visitorBubbleHeight/2 + (i/visitorBubbleNumCols*TILE_H) + TILE_H/2);
             }
 
         }
     }
+}
+
+void Place::DrawSurplusBubble()
+{
+    al_draw_filled_rounded_rectangle(surplusBubbleDrawX - bubblePadding,
+                                     surplusBubbleDrawY - bubblePadding,
+                                     surplusBubbleDrawX + surplusBubbleWidth + bubblePadding,
+                                     surplusBubbleDrawY + surplusBubbleHeight + bubblePadding,
+                                     bubbleCornerRadius, bubbleCornerRadius,
+                                     COL_DARK_WHITE);
+
+
+    al_draw_rounded_rectangle(surplusBubbleDrawX - bubblePadding,
+                              surplusBubbleDrawY - bubblePadding,
+                              surplusBubbleDrawX + surplusBubbleWidth + bubblePadding,
+                              surplusBubbleDrawY + surplusBubbleHeight + bubblePadding,
+                              bubbleCornerRadius, bubbleCornerRadius,
+                              COL_INDIGO, 4);
+
+    string_al_draw_text(builtin, COL_BLACK, surplusBubbleDrawX, surplusBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, surplusBubbleLabel);
+
+}
+
+void Place::DrawDeficitBubble()
+{
+    al_draw_filled_rounded_rectangle(deficitBubbleDrawX - bubblePadding,
+                                     deficitBubbleDrawY - bubblePadding,
+                                     deficitBubbleDrawX + deficitBubbleWidth + bubblePadding,
+                                     deficitBubbleDrawY + deficitBubbleHeight + bubblePadding,
+                                     bubbleCornerRadius, bubbleCornerRadius,
+                                     COL_DARK_WHITE);
+
+
+    al_draw_rounded_rectangle(deficitBubbleDrawX - bubblePadding,
+                              deficitBubbleDrawY - bubblePadding,
+                              deficitBubbleDrawX + deficitBubbleWidth + bubblePadding,
+                              deficitBubbleDrawY + deficitBubbleHeight + bubblePadding,
+                              bubbleCornerRadius, bubbleCornerRadius,
+                              COL_INDIGO, 4);
+
+    string_al_draw_text(builtin, COL_BLACK, deficitBubbleDrawX, deficitBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, deficitBubbleLabel);
+
+}
+
+void Place::DrawInventoryBubbles()
+{
+
+    for(unsigned i = PLACE_INVENTORY_MARKER_FIRST; i < PLACE_INVENTORY_MARKER_LAST+1; i++)
+    {
+        al_draw_filled_rounded_rectangle(inventoryBubbleDrawX[i] - bubblePadding,
+                                         inventoryBubbleDrawY[i] - bubblePadding,
+                                         inventoryBubbleDrawX[i] + inventoryBubbleWidth[i] + bubblePadding,
+                                         inventoryBubbleDrawY[i] + inventoryBubbleHeight[i] + bubblePadding,
+                                         bubbleCornerRadius,
+                                         bubbleCornerRadius,
+                                         COL_DARK_WHITE);
+
+
+        al_draw_rounded_rectangle(inventoryBubbleDrawX[i] - bubblePadding,
+                                  inventoryBubbleDrawY[i] - bubblePadding,
+                                  inventoryBubbleDrawX[i] + inventoryBubbleWidth[i] + bubblePadding,
+                                  inventoryBubbleDrawY[i] + inventoryBubbleHeight[i] + bubblePadding,
+                                  bubbleCornerRadius,
+                                  bubbleCornerRadius,
+                                  COL_INDIGO,
+                                  4);
+
+        string_al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX[i], inventoryBubbleDrawY[i]-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, inventoryBubbleLabel[i]);
+
+        if(inventory[i].cargo.size() > 0)
+        {
+            unsigned s = 0;
+            for(std::map<int,int>::iterator it = inventory[i].cargo.begin(); it != inventory[i].cargo.end(); ++it)
+            {
+                float drawX = inventoryBubbleDrawX[i] + s%inventoryBubbleNumCols[i]*TILE_W;
+                float drawY = inventoryBubbleDrawY[i] + s/inventoryBubbleNumCols[i]*(TILE_H+inventoryBubbleRowSpacing);
+
+                al_draw_bitmap_region(cargoPng,
+                                      0+((*it).first)*TILE_W, 0,
+                                      TILE_W, TILE_H,
+                                      drawX, drawY,
+                                      0);
+
+                string_al_draw_text(builtin, COL_BLACK, drawX+TILE_W, drawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
+                s++;
+            }
+        }
+        else
+            al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX[i],inventoryBubbleDrawY[i],ALLEGRO_ALIGN_LEFT,"(No cargo).");
+    }
+
+}
+
+void Place::DrawIndustriesBubble()
+{
+    al_draw_filled_rounded_rectangle(industriesBubbleDrawX - bubblePadding,
+                                     industriesBubbleDrawY - bubblePadding,
+                                     industriesBubbleDrawX + industriesBubbleWidth + bubblePadding,
+                                     industriesBubbleDrawY + industriesBubbleHeight + bubblePadding,
+                                     bubbleCornerRadius,
+                                     bubbleCornerRadius,
+                                     COL_DARK_WHITE);
+
+    al_draw_rounded_rectangle(industriesBubbleDrawX - bubblePadding,
+                              industriesBubbleDrawY - bubblePadding,
+                              industriesBubbleDrawX + industriesBubbleWidth + bubblePadding,
+                              industriesBubbleDrawY + industriesBubbleHeight + bubblePadding,
+                              bubbleCornerRadius,
+                              bubbleCornerRadius,
+                              COL_INDIGO,
+                              4);
+
+    string_al_draw_text(builtin,COL_BLACK,industriesBubbleDrawX, industriesBubbleDrawY-bubblePadding-8, ALLEGRO_ALIGN_LEFT, industriesBubbleLabel);
+
+    if(industries.size() > 0)
+    {
+        for(unsigned i = 0; i < industries.size(); i++)
+        {
+            float drawX = industriesBubbleDrawX + industriesBubbleProgressBarOffset;
+            float drawY = industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing + BUILTIN_TEXT_HEIGHT);
+
+/// To do: Animation to fade through input/ouputs in sequence or rotate through them like cards in a stacked deck
+// Draw icon and quantity text for job output
+            al_draw_bitmap_region(cargoPng,
+                                  (industries[i]->outputs.begin()->first)*TILE_W,0,
+                                  TILE_W,TILE_H,
+                                  industriesBubbleDrawX+TILE_W*1.5, drawY,
+                                  0);
+
+            string_al_draw_text(builtin, COL_BLACK,
+                                industriesBubbleDrawX + TILE_W*1.5 +TILE_W,
+                                drawY + TILE_H,
+                                ALLEGRO_ALIGN_RIGHT,
+                                std::to_string((int)industries[i]->outputs.begin()->second));
+
+// Draw icon and quantity text for job inputs (if job has inputs)
+            if(industries[i]->inputs.size() > 0)
+            {
+
+                al_draw_bitmap_region(cargoPng,
+                                      (industries[i]->inputs.begin()->first)*TILE_W,0,
+                                      TILE_W,TILE_H,
+                                      industriesBubbleDrawX, drawY,
+                                      0);
+
+                string_al_draw_text(builtin, COL_BLACK,
+                                    industriesBubbleDrawX + TILE_W,
+                                    drawY + TILE_H,
+                                    ALLEGRO_ALIGN_RIGHT,
+                                    std::to_string((int)industries[i]->inputs.begin()->second));
+
+                al_draw_bitmap(redArrowPng,
+                               industriesBubbleDrawX+TILE_W*0.75,
+                               drawY,
+                               0);
+
+                // Draw red X over inputs, if inputs are insufficient
+                if(industries[i]->jobState == JOB_STATE_INSUFFICIENT_INPUTS)
+                    al_draw_bitmap(redTransparentXPng,
+                                   industriesBubbleDrawX, drawY,
+                                   0);
+            }
+
+// Draw progress bar
+            if(industries[i]->jobState == JOB_STATE_INSUFFICIENT_INPUTS)
+                al_draw_filled_rectangle(drawX, drawY + TILE_H*0.75,
+                                         drawX + industries[i]->pauseProgressBarFill*industriesBubbleProgressBarWidth,
+                                         drawY + TILE_H,
+                                         al_map_rgba(127,0,0,200));
+            else
+                al_draw_filled_rectangle(drawX, drawY,
+                                         drawX + industries[i]->productionProgressBarFill*industriesBubbleProgressBarWidth,
+                                         drawY + TILE_H,
+                                         COL_WHITE);
+// Draw progress bar outline
+            if(industries[i]->jobState == JOB_STATE_INSUFFICIENT_INPUTS)
+                al_draw_rectangle(drawX, drawY,
+                                  drawX+industriesBubbleProgressBarWidth,
+                                  drawY + TILE_H,
+                                  COL_ORANGE,
+                                  1);
+
+            else
+                al_draw_rectangle(drawX, drawY,
+                                  drawX+industriesBubbleProgressBarWidth,
+                                  drawY + TILE_H,
+                                  COL_VIOLET,
+                                  1);
+
+            string_al_draw_text(builtin, COL_BLACK,
+                                industriesBubbleDrawX + 3*TILE_W,
+                                drawY + TILE_H/2-BUILTIN_TEXT_HEIGHT,
+                                ALLEGRO_ALIGN_LEFT, industries[i]->remainingTimeText);
+        }
+    }
+    else
+        string_al_draw_text(builtin, COL_BLACK, industriesBubbleDrawX,industriesBubbleDrawY,ALLEGRO_ALIGN_LEFT, industriesBubbleEmptyText);
+
 }
 
 void Place::QueueUpFlyingText(int ic, std::string t, float x, float y)
@@ -552,156 +861,6 @@ void Place::ProgressFlyingTexts()
     }
 }
 
-void Place::DrawInventoryBubbles()
-{
-
-    for(unsigned i = PLACE_INVENTORY_MARKER_FIRST; i < PLACE_INVENTORY_MARKER_LAST+1; i++)
-    {
-        al_draw_filled_rounded_rectangle(inventoryBubbleDrawX[i] - bubbleWidthPadding,
-                                         inventoryBubbleDrawY[i] - bubbleHeightPadding,
-                                         inventoryBubbleDrawX[i] + inventoryBubbleWidth[i] + bubbleWidthPadding,
-                                         inventoryBubbleDrawY[i] + inventoryBubbleHeight[i] + bubbleHeightPadding,
-                                         bubbleCornerRadius,
-                                         bubbleCornerRadius,
-                                         COL_DARK_WHITE);
-
-
-        al_draw_rounded_rectangle(inventoryBubbleDrawX[i] - bubbleWidthPadding,
-                                  inventoryBubbleDrawY[i] - bubbleHeightPadding,
-                                  inventoryBubbleDrawX[i] + inventoryBubbleWidth[i] + bubbleWidthPadding,
-                                  inventoryBubbleDrawY[i] + inventoryBubbleHeight[i] + bubbleHeightPadding,
-                                  bubbleCornerRadius,
-                                  bubbleCornerRadius,
-                                  COL_INDIGO,
-                                  4);
-
-        string_al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX[i], inventoryBubbleDrawY[i]-bubbleHeightPadding-8, ALLEGRO_ALIGN_LEFT, inventoryBubbleLabel[i]);
-
-        if(inventory[i].cargo.size() > 0)
-        {
-            unsigned s = 0;
-            for(std::map<int,int>::iterator it = inventory[i].cargo.begin(); it != inventory[i].cargo.end(); ++it)
-            {
-                float drawX = inventoryBubbleDrawX[i] + s%inventoryBubbleNumCols[i]*TILE_W;
-                float drawY = inventoryBubbleDrawY[i] + s/inventoryBubbleNumCols[i]*(TILE_H+inventoryBubbleRowSpacing);
-
-                al_draw_bitmap_region(cargoPng,
-                                      0+((*it).first)*TILE_W, 0,
-                                      TILE_W, TILE_H,
-                                      drawX, drawY,
-                                      0);
-
-                string_al_draw_text(builtin, COL_BLACK, drawX+TILE_W, drawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
-                s++;
-            }
-        }
-        else
-            al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX[i],inventoryBubbleDrawY[i],ALLEGRO_ALIGN_LEFT,"(No cargo).");
-    }
-
-}
-
-void Place::DrawIndustriesBubble()
-{
-    al_draw_filled_rounded_rectangle(industriesBubbleDrawX - bubbleWidthPadding,
-                                     industriesBubbleDrawY - bubbleHeightPadding,
-                                     industriesBubbleDrawX + industriesBubbleWidth + bubbleWidthPadding,
-                                     industriesBubbleDrawY + industriesBubbleHeight + bubbleHeightPadding,
-                                     bubbleCornerRadius,
-                                     bubbleCornerRadius,
-                                     COL_DARK_WHITE);
-
-    al_draw_rounded_rectangle(industriesBubbleDrawX - bubbleWidthPadding,
-                              industriesBubbleDrawY - bubbleHeightPadding,
-                              industriesBubbleDrawX + industriesBubbleWidth + bubbleWidthPadding,
-                              industriesBubbleDrawY + industriesBubbleHeight + bubbleHeightPadding,
-                              bubbleCornerRadius,
-                              bubbleCornerRadius,
-                              COL_INDIGO,
-                              4);
-
-    al_draw_text(builtin,COL_BLACK,industriesBubbleDrawX, industriesBubbleDrawY-bubbleHeightPadding-8, ALLEGRO_ALIGN_LEFT, "Local Industries:");
-
-    if(industries.size() > 0)
-    {
-        for(unsigned i = 0; i < industries.size(); i++)
-        {
-            float drawX = industriesBubbleDrawX + industriesBubbleProgressBarOffset;
-            float drawY = industriesBubbleDrawY + i*(TILE_H + industriesBubbleRowSpacing + BUILTIN_TEXT_HEIGHT);
-
-            al_draw_filled_rectangle(drawX, drawY,
-                                     drawX + industries[i]->productionProgressBarFill*industriesBubbleProgressBarWidth,
-                                     drawY + TILE_H,
-                                     COL_WHITE);
-
-            if(industries[i]->jobState == JOB_STATE_INSUFFICIENT_INPUTS)
-            {
-                al_draw_filled_rectangle(drawX, drawY + TILE_H*0.75,
-                                         drawX + industries[i]->pauseProgressBarFill*industriesBubbleProgressBarWidth,
-                                         drawY + TILE_H,
-                                         al_map_rgba(127,0,0,200));
-            }
-
-            if(industries[i]->jobState == JOB_STATE_INSUFFICIENT_INPUTS)
-                al_draw_rectangle(drawX, drawY,
-                                  drawX+industriesBubbleProgressBarWidth,
-                                  drawY + TILE_H,
-                                  COL_ORANGE,
-                                  1);
-
-            else
-                al_draw_rectangle(drawX, drawY,
-                                  drawX+industriesBubbleProgressBarWidth,
-                                  drawY + TILE_H,
-                                  COL_VIOLET,
-                                  1);
-
-/// To do: Animation to fade through input/ouputs in sequence or rotate through them like cards in a stacked deck
-            al_draw_bitmap_region(cargoPng,
-                                  (industries[i]->outputs.begin()->first)*TILE_W,0,
-                                  TILE_W,TILE_H,
-                                  industriesBubbleDrawX+TILE_W*1.5, drawY,
-                                  0);
-
-            string_al_draw_text(builtin, COL_BLACK,
-                                industriesBubbleDrawX + TILE_W*1.5 +TILE_W,
-                                drawY + TILE_H,
-                                ALLEGRO_ALIGN_RIGHT,
-                                std::to_string((int)industries[i]->outputs.begin()->second));
-
-
-            if(industries[i]->inputs.size() > 0)
-            {
-
-                al_draw_bitmap_region(cargoPng,
-                                      (industries[i]->inputs.begin()->first)*TILE_W,0,
-                                      TILE_W,TILE_H,
-                                      industriesBubbleDrawX, drawY,
-                                      0);
-
-                string_al_draw_text(builtin, COL_BLACK,
-                                    industriesBubbleDrawX + TILE_W,
-                                    drawY + TILE_H,
-                                    ALLEGRO_ALIGN_RIGHT,
-                                    std::to_string((int)industries[i]->inputs.begin()->second));
-
-                al_draw_bitmap(redArrowPng,
-                               industriesBubbleDrawX+TILE_W*0.75,
-                               drawY,
-                               0);
-            }
-
-            string_al_draw_text(builtin, COL_BLACK,
-                                industriesBubbleDrawX + 3*TILE_W,
-                                drawY + TILE_H/2-BUILTIN_TEXT_HEIGHT,
-                                ALLEGRO_ALIGN_LEFT, industries[i]->industryName);
-        }
-    }
-    else
-        al_draw_text(builtin, COL_BLACK, industriesBubbleDrawX,industriesBubbleDrawY,ALLEGRO_ALIGN_LEFT,"(No industries here).");
-
-}
-
 void Place::DrawFlyingTexts()
 {
     for(std::vector<FlyingText*>::iterator it = upFlyingTexts.begin(); it != upFlyingTexts.end(); ++it)
@@ -714,3 +873,4 @@ void Place::DrawFlyingTexts()
         (*it)->DrawOnOverworld();
     }
 }
+

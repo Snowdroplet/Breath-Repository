@@ -317,25 +317,25 @@ void Caravan::DrawActivity(float x, float y)
 
 void Caravan::DrawInventoryBubble()
 {
-    al_draw_filled_rounded_rectangle(inventoryBubbleDrawX - bubbleWidthPadding,
-                                     inventoryBubbleDrawY - bubbleHeightPadding,
-                                     inventoryBubbleDrawX + inventoryBubbleWidth + bubbleWidthPadding,
-                                     inventoryBubbleDrawY + inventoryBubbleHeight + bubbleHeightPadding,
+    al_draw_filled_rounded_rectangle(inventoryBubbleDrawX - bubblePadding,
+                                     inventoryBubbleDrawY - bubblePadding,
+                                     inventoryBubbleDrawX + inventoryBubbleWidth + bubblePadding,
+                                     inventoryBubbleDrawY + inventoryBubbleHeight + bubblePadding,
                                      bubbleCornerRadius,
                                      bubbleCornerRadius,
                                      COL_DARK_WHITE);
 
 
-    al_draw_rounded_rectangle(inventoryBubbleDrawX - bubbleWidthPadding,
-                              inventoryBubbleDrawY - bubbleHeightPadding,
-                              inventoryBubbleDrawX + inventoryBubbleWidth + bubbleWidthPadding,
-                              inventoryBubbleDrawY + inventoryBubbleHeight + bubbleHeightPadding,
+    al_draw_rounded_rectangle(inventoryBubbleDrawX - bubblePadding,
+                              inventoryBubbleDrawY - bubblePadding,
+                              inventoryBubbleDrawX + inventoryBubbleWidth + bubblePadding,
+                              inventoryBubbleDrawY + inventoryBubbleHeight + bubblePadding,
                               bubbleCornerRadius,
                               bubbleCornerRadius,
                               COL_INDIGO,
                               4);
 
-    al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX, inventoryBubbleDrawY-bubbleHeightPadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, "Cargo:");
+    al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX, inventoryBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, "Cargo:");
 
     if(inventory.cargo.size() > 0)
     {
@@ -361,18 +361,18 @@ void Caravan::DrawInventoryBubble()
 
 void Caravan::DrawPathfindingBubble()
 {
-    al_draw_filled_rounded_rectangle(pathfindingBubbleDrawX - bubbleWidthPadding,
-                                         pathfindingBubbleDrawY - bubbleHeightPadding,
-                                         pathfindingBubbleDrawX + pathfindingBubbleWidth + bubbleWidthPadding,
-                                         pathfindingBubbleDrawY + pathfindingBubbleHeight + bubbleHeightPadding,
+    al_draw_filled_rounded_rectangle(pathfindingBubbleDrawX - bubblePadding,
+                                         pathfindingBubbleDrawY - bubblePadding,
+                                         pathfindingBubbleDrawX + pathfindingBubbleWidth + bubblePadding,
+                                         pathfindingBubbleDrawY + pathfindingBubbleHeight + bubblePadding,
                                          bubbleCornerRadius,
                                          bubbleCornerRadius,
                                          COL_DARK_WHITE);
 
-        al_draw_rectangle(pathfindingBubbleDrawX - bubbleWidthPadding,
-                          pathfindingBubbleDrawY - bubbleHeightPadding,
-                          pathfindingBubbleDrawX + pathfindingBubbleWidth + bubbleWidthPadding,
-                          pathfindingBubbleDrawY + pathfindingBubbleHeight + bubbleHeightPadding,
+        al_draw_rectangle(pathfindingBubbleDrawX - bubblePadding,
+                          pathfindingBubbleDrawY - bubblePadding,
+                          pathfindingBubbleDrawX + pathfindingBubbleWidth + bubblePadding,
+                          pathfindingBubbleDrawY + pathfindingBubbleHeight + bubblePadding,
                           COL_INDIGO,
                           4);
 
@@ -412,6 +412,6 @@ void Caravan::DrawPathfindingBubble()
     }
     al_draw_text(builtin,COL_BLACK,
                  pathfindingBubbleDrawX,
-                 pathfindingBubbleDrawY-bubbleHeightPadding-BUILTIN_TEXT_HEIGHT,
+                 pathfindingBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT,
                  ALLEGRO_ALIGN_LEFT, "Pathfinding:");
 }

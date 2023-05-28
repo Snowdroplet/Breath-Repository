@@ -32,10 +32,14 @@ extern ALLEGRO_BITMAP *beingPng[NUM_RACES];
 extern ALLEGRO_BITMAP *beingPortraitPng;
 extern ALLEGRO_BITMAP *skillSquarePng;
 */
+
+extern ALLEGRO_BITMAP *expertiseIconPng;
+
 extern ALLEGRO_BITMAP *miniCargoPng;
 extern ALLEGRO_BITMAP *cargoPng;
 
 extern ALLEGRO_BITMAP *redArrowPng;
+extern ALLEGRO_BITMAP *redTransparentXPng;
 
 void LoadResources();
 void UnloadResources();

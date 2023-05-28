@@ -15,6 +15,8 @@ ALLEGRO_BITMAP *UICrewTabPng[2];
 
 ALLEGRO_BITMAP *beingPng[NUM_RACES];
 
+ALLEGRO_BITMAP *expertiseIconPng;
+
 /*
 ALLEGRO_BITMAP *beingPortraitPng;
 
@@ -24,6 +26,7 @@ ALLEGRO_BITMAP *miniCargoPng;
 ALLEGRO_BITMAP *cargoPng;
 
 ALLEGRO_BITMAP *redArrowPng;
+ALLEGRO_BITMAP *redTransparentXPng;
 
 void LoadResources()
 {
@@ -58,10 +61,13 @@ void LoadResources()
 
     skillSquarePng = al_load_bitmap("placeholderSkillSquare.png");
     */
+    expertiseIconPng = al_load_bitmap("placeholderExpertiseIcon.png");
+
     miniCargoPng = al_load_bitmap("placeholderMiniCargo.png");
     cargoPng = al_load_bitmap("placeholderCargo.png");
 
     redArrowPng = al_load_bitmap("placeholderRedArrow.png");
+    redTransparentXPng = al_load_bitmap("placeholderRedTransparentX.png");
 }
 
 void UnloadResources()
@@ -95,9 +101,12 @@ void UnloadResources()
     al_destroy_bitmap(skillSquarePng);
 
     */
+    al_destroy_bitmap(expertiseIconPng);
+
     al_destroy_bitmap(miniCargoPng);
     al_destroy_bitmap(cargoPng);
 
     al_destroy_bitmap(redArrowPng);
+    al_destroy_bitmap(redTransparentXPng);
 
 }

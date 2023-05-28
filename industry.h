@@ -31,6 +31,8 @@ public:
     float jobPauseTicks;
     float jobPauseThreshold;
 
+    std::string remainingTimeText;
+
 /// Job identity
     std::string industryName;
     int expertiseType;

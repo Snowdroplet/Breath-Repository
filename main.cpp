@@ -528,6 +528,10 @@ void DrawUI()
 
         if(overworldCameraPlace != nullptr)
         {
+            overworldCameraPlace->DrawPopulationBubble();
+            overworldCameraPlace->DrawCitizensBubble();
+            overworldCameraPlace->DrawSurplusBubble();
+            overworldCameraPlace->DrawDeficitBubble();
             overworldCameraPlace->DrawInventoryBubbles();
             overworldCameraPlace->DrawIndustriesBubble();
         }
@@ -538,6 +542,10 @@ void DrawUI()
 
             if(overworldCameraCaravan->atPlace)
             {
+                overworldCameraCaravan->whichPlace->DrawPopulationBubble();
+                overworldCameraCaravan->whichPlace->DrawCitizensBubble();
+                overworldCameraCaravan->whichPlace->DrawSurplusBubble();
+                overworldCameraCaravan->whichPlace->DrawDeficitBubble();
                 overworldCameraCaravan->whichPlace->DrawInventoryBubbles();
                 overworldCameraCaravan->whichPlace->DrawIndustriesBubble();
             }

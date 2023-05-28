@@ -67,8 +67,7 @@ public:
     float weight, maxWeight;
 
 /// Bubbles
-    const float bubbleWidthPadding = TILE_W/4;
-    const float bubbleHeightPadding = TILE_H/4;
+    const float bubblePadding = TILE_W/4;
     const float bubbleCornerRadius = 8;
 
     const float inventoryBubbleDrawX = SCREEN_W*8/40;
