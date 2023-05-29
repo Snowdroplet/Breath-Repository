@@ -34,6 +34,7 @@ public:
 /// Objectives: Purchasing
 
 /// Objectives:
+    bool onReturnTrip;
 
 /// Objectives: Investment
 

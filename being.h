@@ -63,6 +63,9 @@ public:
 
     bool IsActive();
 
+/// Progress
+    void Progress();
+
     //void DrawPortrait(float x, float y);
     void DrawName(float x, float y, int flags);
     //void DrawSkills(float x, float y);

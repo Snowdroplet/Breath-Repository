@@ -76,6 +76,11 @@ bool Being::IsActive()
     return active;
 }
 
+void Being::Progress()
+{
+    ProgressAnimation();
+}
+
 /*
 
 void Being::DrawPortrait(float x, float y)
@@ -169,8 +174,6 @@ void Being::DrawActivity(float x, float y)
                           x - (spriteWidth/2),
                           y - (spriteHeight/2),
                           f);
-
-    ProgressAnimation();
 }
 
 void Being::ProgressAnimation()
@@ -185,7 +188,6 @@ void Being::ProgressAnimation()
             if(currentFrame > maxFrame)
                 currentFrame = 0;
         }
-
     }
 }
 

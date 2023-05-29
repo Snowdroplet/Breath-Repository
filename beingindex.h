@@ -3,7 +3,6 @@
 
 #include <map>
 
-const int NUM_RACES = 7;
 enum enumRace
 {
     RACE_VERIT = 0,   // Hares of Verus
@@ -12,8 +11,11 @@ enum enumRace
     RACE_BEYU = 3,    // Catfish of the thousand isles
     RACE_HAPHAE = 4,  // Birds of Haphaedee
     RACE_MESERA = 5,  // Plants of Hathsera
-    RACE_ORDON = 6,   // Salamanders of Ordozaal
+    RACE_ORDON = 6   // Salamanders of Ordozaal
 };
+const int RACE_MARKER_FIRST = RACE_VERIT;
+const int RACE_MARKER_LAST = RACE_ORDON;
+const int NUM_RACES = RACE_MARKER_LAST+1;
 
 const std::map<int,std::string>raceNames
 {

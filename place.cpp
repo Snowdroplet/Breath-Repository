@@ -4,38 +4,44 @@ std::map<int, Place*> Place::places;
 
 Place::Place(int id)
 {
-    identity = id;
+    placeIdentity = id;
     //std::cout << "Place created with ID " << id << std::endl;
 
-    name = placeNames.at(identity);
+    name = placeNames.at(placeIdentity);
 
-    overworldXPosition = placeOverworldXYCells.at(identity)[0] *TILE_W;
-    overworldYPosition = placeOverworldXYCells.at(identity)[1] *TILE_H;
-
-    //population = placeInitialPopulation.at(identity);
+    overworldXPosition = placeOverworldXYCells.at(placeIdentity)[0] *TILE_W;
+    overworldYPosition = placeOverworldXYCells.at(placeIdentity)[1] *TILE_H;
 
     for(unsigned i = EXP_MARKER_FIRST; i <= EXP_MARKER_LAST; i++)
     {
-        if(placeInitialPopulation.at(identity).at(i) > 0)
-            population[i] = placeInitialPopulation.at(identity).at(i);
+        if(placeInitialPopulation.at(placeIdentity).at(i) > 0)
+            population[i] = placeInitialPopulation.at(placeIdentity).at(i);
     }
 
+    resourceSecurityFactor = 3;
     standardOfLiving = LIVING_COMFORTABLE;
 
     //const int d/*ebug production quantity*/ = 6;
-    for(std::vector<int>::const_iterator cit = placeInitialIndustries.at(identity).cbegin(); cit != placeInitialIndustries.at(identity).cend(); ++cit)
-        AddIndustry(*cit, 1 + population[jobExpertiseType.at(*cit)]);
+    for(std::vector<int>::const_iterator cit = placeInitialIndustries.at(placeIdentity).cbegin(); cit != placeInitialIndustries.at(placeIdentity).cend(); ++cit)
+        AddIndustry(*cit);
 
-    for(unsigned i = IT_MARKER_FIRST; i < IT_MARKER_LAST; i++)
+
+    for(unsigned i = IT_MARKER_FIRST; i <= IT_MARKER_LAST; i++)
     {
-        maintainenceConsumptionTier[i] = standardOfLiving;
-        consumptionTimer[i] = rand()% economyBaseMaintainenceConsumptionRate.at(i).at(standardOfLiving);
-        consumptionDecimalOwing[i] = 0;
-    }
+        maintainenceConsumptionTier.at(i) = standardOfLiving;
+        consumptionTimer.at(i) = rand()% economyBaseMaintainenceConsumptionRate.at(i).at(standardOfLiving);
+        consumptionTimerThreshold.at(i) = economyBaseMaintainenceConsumptionRate.at(i).at(standardOfLiving);
 
+        UpdateConsumptionQuantity(i);
+        consumptionDecimalOwing.at(i) = 0;
+
+        surplusRatio.at(i) = 0;
+        deficitRatio.at(i) = 0;
+        //surplusDeficitRatio.at(i) = 0;
+    }
     AddInitialStock();
 
-    visitorBubbleActive = false;
+    caravanseraiBubbleActive = false;
 }
 
 Place::~Place()
@@ -44,7 +50,7 @@ Place::~Place()
 
     availableCrew.clear();
     citizenCaravans.clear();
-    visitorCaravans.clear();
+    caravanserai.clear();
 
     for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end();)
     {
@@ -64,60 +70,83 @@ Place::~Place()
 
 }
 
-void Place::AddAvailableCrew(Being *b)
+void Place::NewCitizenCaravan()
 {
-    availableCrew.push_back(b);
+    // Construct the leader of the Caravan
+    Being*newCaravanLeader = new Being();
+    newCaravanLeader->SetHometown(placeIdentity);
+    newCaravanLeader->SetRace(std::rand()%(RACE_MARKER_LAST-RACE_MARKER_FIRST+1));
+    newCaravanLeader->SetName(raceNames.at(newCaravanLeader->race) + " " + std::to_string(std::rand()%999));
+
+    Being::people.push_back(newCaravanLeader);
+
+
+// Construct Caravan
+    Caravan*newCaravan = new Caravan();
+    newCaravan->AddMember(newCaravanLeader);
+    newCaravan->MoveToPlace(this);
+
+    citizenCaravans.push_back(newCaravan);
+    Caravan::caravans.push_back(newCaravan);
+
+    UpdateCitizensBubble();
 }
 
-void Place::RemoveAvailableCrew(Being *b)
+void Place::DeleteCitizenCaravan(Caravan *c)
 {
+    // code here
 
+    UpdateCitizensBubble();
 }
 
-void Place::AddCitizenCaravan(Being *b)
+void Place::GenerateCitizenCaravans()
 {
-    citizenCaravans.push_back(b);
+    unsigned numberToGenerate = 1;
+
+    if(population.count(EXP_COMMON) > 0)
+        numberToGenerate += population.at(EXP_COMMON)/2;
+
+    for(unsigned i = 0; i < numberToGenerate; i++)
+        NewCitizenCaravan();
 }
 
-void Place::RemoveCitizenCaravan(Being *b)
+void Place::AddToCaravanserai(Caravan *c)
 {
-
-}
-
-void Place::AddVisitorCaravan(Caravan *c)
-{
-    visitorCaravans.push_back(c);
+    caravanserai.push_back(c);
     if(overworldCameraCaravan == c)
         UpdateAllBubbles();
     else
-        UpdateVisitorBubble();
+        UpdateCaravanseraiBubble();
 }
 
-void Place::RemoveVisitorCaravan(Caravan *c)
+void Place::RemoveFromCaravanserai(Caravan *c)
 {
-    for(std::vector<Caravan*>::iterator it = visitorCaravans.begin(); it != visitorCaravans.end();)
+    //std::cout << "Debug: Attempting removal from caravanserai" << std::endl;
+    for(std::vector<Caravan*>::iterator it = caravanserai.begin(); it != caravanserai.end();)
     {
         if(*it == c)
-            it = visitorCaravans.erase(it);
+            it = caravanserai.erase(it);
         else
         {
-            (*it)->thresholdTimeAtPlace += removeVisitorCaravanDelay;
+            (*it)->thresholdTimeAtPlace += removeFromCaravanseraiDelay;
             ++it;
         }
     }
 
+    UpdateCaravanseraiBubble();
+    //std::cout << "Removed" << std::endl;
 
-
-    UpdateVisitorBubble();
 }
 
+/*
 void Place::UpdateEconomyData()
 {
     UpdateConsumptionData();
     UpdateProductionData();
 }
+*/
 
-
+/*
 void Place::UpdateConsumptionData()
 {
     dailyConsumption.clear();
@@ -137,7 +166,7 @@ void Place::UpdateConsumptionData()
 
 /// Maintainence demand (city health/happiness demand)
 
-    /*
+
         for(std::map<int, std::array<float,5>>::const_iterator it = economyBaseMaintainenceConsumptionRate.cbegin(); it != economyBaseMaintainenceConsumptionRate.cend(); ++it)
         {
             if(dailyConsumption.count((*jt).first) < 1) // Not sure if this is necessary.
@@ -145,9 +174,11 @@ void Place::UpdateConsumptionData()
 
             dailyConsumption[(*jt).first] +=
         }
-    */
-}
 
+}
+*/
+
+/*
 void Place::UpdateProductionData()
 {
     for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
@@ -163,10 +194,18 @@ void Place::UpdateProductionData()
         }
     }
 }
+*/
 
 
-void Place::AddIndustry(int whichIndustry, float baseProdPerTick)
+void Place::AddIndustry(int whichIndustry)
 {
+    float baseProdPerTick = 1;
+    if(population.count(jobExpertiseType.at(whichIndustry)) > 0)
+        baseProdPerTick += population[jobExpertiseType.at(whichIndustry)];
+
+    if(population.count(jobExpertiseType.at(EXP_COMMON)) > 0)
+        baseProdPerTick += population[EXP_COMMON]*0.25;
+
     industries.push_back(new Industry(whichIndustry, baseProdPerTick));
 }
 
@@ -229,40 +268,50 @@ void Place::ProgressProduction()
     }
 }
 
+float Place::CalculateConsumptionQuantity(unsigned whichItem)
+{
+    float result = 0;
+
+    for(std::map<int,unsigned>::iterator jt = population.begin(); jt != population.end(); ++jt)
+        result += ((*jt).second) * economyRoleMaintainenceConsumptionQuantity.at(whichItem).at((*jt).first); // Not consumptionRate, mind. Quantity.
+
+    return result;
+}
+
+void Place::UpdateConsumptionQuantity(unsigned whichItem)
+{
+    consumptionQuantity.at(whichItem) = CalculateConsumptionQuantity(whichItem);
+}
+
 void Place::ProgressConsumption()
 {
-    for(std::map<int,int>::iterator it = consumptionTimer.begin(); it != consumptionTimer.end(); ++it)
+    for(unsigned i = IT_MARKER_FIRST; i <= IT_MARKER_LAST; i++)
     {
-        int consumptionTimerThreshold = economyBaseMaintainenceConsumptionRate.at((*it).first).at(standardOfLiving);
-
-        if(consumptionTimerThreshold != (-1))
+        if(consumptionTimerThreshold.at(i) != (-1)) // Don't update timer if there is no consumption rate.
         {
-            (*it).second++;
-            if((*it).second >= consumptionTimerThreshold)
+            consumptionTimer.at(i)++;
+            if(consumptionTimer.at(i) >= consumptionTimerThreshold.at(i))
             {
-                float consumptionQuantity = 0;
+                float consumptionQuantityInteger; // Yes, float. To store the decimal portion using std::modf before it is truncated anyway.
 
-                if(consumptionDecimalOwing.at((*it).first) >= 1)
+                // ConsumptionDecimalOwing represents partial units of items. Only integer quantities of items can be consumed.
+                consumptionDecimalOwing.at(i) += std::modf(consumptionQuantity.at(i),&consumptionQuantityInteger);
+                if(consumptionDecimalOwing.at(i) >= 1)
                 {
-                    consumptionQuantity += consumptionDecimalOwing[(*it).first];
-                    consumptionDecimalOwing.at((*it).first) = 0;
+                    consumptionQuantityInteger++;
+                    consumptionDecimalOwing.at(i) -= 1;
                 }
 
-                for(std::map<int,int>::iterator jt = population.begin(); jt != population.end(); ++jt)
-                    consumptionQuantity += ((*jt).second) * economyRoleMaintainenceConsumptionQuantity.at((*it).first).at((*jt).first); // Not consumptionRate, mind. Quantity.
-
-                float consumptionQuantityInteger;
-                consumptionDecimalOwing[(*it).first] += std::modf(consumptionQuantity,&consumptionQuantityInteger);
-
-                if(inventory[PLACE_INVENTORY_MARKET].cargo.count((*it).first) > 0 && consumptionQuantityInteger > 0)
+                if(inventory[PLACE_INVENTORY_MARKET].cargo.count(i) > 0 && consumptionQuantityInteger > 0) // Check if key exists in map && Check if integer is worth bothering with.
                 {
-                    if(consumptionQuantityInteger <= inventory[PLACE_INVENTORY_MARKET].cargo.at((*it).first))
+                    if(consumptionQuantityInteger <= inventory[PLACE_INVENTORY_MARKET].cargo.at(i))
                     {
-                        RemoveInventoryStock(PLACE_INVENTORY_MARKET, (*it).first, consumptionQuantityInteger);
-                        QueueDownFlyingText((*it).first, "-" + std::to_string((int)consumptionQuantityInteger), overworldXPosition, overworldYPosition);
-                        std::cout << placeNames.at(identity) << " consumed " << (int)consumptionQuantityInteger << " " << itemNames.at((*it).first) << " ---- ";
-                        if(inventory[PLACE_INVENTORY_MARKET].cargo.count((*it).first) > 0)
-                            std::cout << inventory[PLACE_INVENTORY_MARKET].cargo.at((*it).first);
+                        RemoveInventoryStock(PLACE_INVENTORY_MARKET, i, consumptionQuantityInteger);
+                        QueueDownFlyingText(i, "-" + std::to_string((int)consumptionQuantityInteger), overworldXPosition, overworldYPosition);
+
+                        std::cout << placeNames.at(placeIdentity) << " consumed " << (int)consumptionQuantityInteger << " " << itemNames.at(i) << " ---- ";
+                        if(inventory[PLACE_INVENTORY_MARKET].cargo.count(i) > 0)
+                            std::cout << inventory[PLACE_INVENTORY_MARKET].cargo.at(i);
                         else
                             std:: cout << "None";
                         std::cout << " remains." <<  std::endl;
@@ -273,7 +322,7 @@ void Place::ProgressConsumption()
                     else // consumptionQuantityInteger > inventory[PLACE_INVENTORY_MARKET].at((*it).first))
                     {
                         /// consume remainder here and set decimal to zero
-                        std::cout << placeNames.at(identity) <<  " has insufficient " << itemNames.at((*it).first) << " to meet consumption! ---- Need " << consumptionQuantityInteger << "; "<< inventory[PLACE_INVENTORY_MARKET].cargo.at((*it).first) << " in stock! (Debug: con int > stock)" << std::endl;
+                        std::cout << placeNames.at(placeIdentity) <<  " has insufficient " << itemNames.at(i) << " to meet consumption! ---- Need " << consumptionQuantityInteger << "; "<< inventory[PLACE_INVENTORY_MARKET].cargo.at(i) << " in stock! (Debug: con int > stock)" << std::endl;
                         /// decrease contentment here
                         /// cout contement increased by so and so.
 
@@ -282,17 +331,94 @@ void Place::ProgressConsumption()
                 else // inventory[PLACE_INVENTORY_MARKET].cargo.count((*it).first) <= 0
                 {
                     /// consume remainder here and set decimal to zero
-                    std::cout << placeNames.at(identity) <<  " has insufficient " << itemNames.at((*it).first) << " to meet consumption! ---- Need " << consumptionQuantityInteger << "; none in stock! (Debug: Map index not present)" << std::endl;
+                    std::cout << placeNames.at(placeIdentity) <<  " has insufficient " << itemNames.at(i) << " to meet consumption! ---- Need " << consumptionQuantityInteger << "; none in stock! (Debug: Map index not present)" << std::endl;
                     /// decrease contentment here
                     /// cout contement increased by so and so.
                 }
 
-                (*it).second = 0;
+                consumptionTimer.at(i) = 0;
 
             }
         }
-
     }
+}
+
+void Place::UpdateSurplusRatio(unsigned whichItem)
+{
+    if(inventory[PLACE_INVENTORY_MARKET].cargo.count(whichItem) > 0)
+        surplusRatio.at(whichItem) = inventory[PLACE_INVENTORY_MARKET].cargo.at(whichItem) / (CalculateConsumptionQuantity(whichItem)*resourceSecurityFactor);
+    else
+        surplusRatio.at(whichItem) = 0;
+}
+
+void Place::UpdateDeficitRatio(unsigned whichItem)
+{
+    if(inventory[PLACE_INVENTORY_MARKET].cargo.count(whichItem) > 0)
+    {
+        if(consumptionQuantity.at(whichItem) == (-1))
+            deficitRatio.at(whichItem) = 0;
+        else
+            deficitRatio.at(whichItem) = (CalculateConsumptionQuantity(whichItem)*resourceSecurityFactor) / inventory[PLACE_INVENTORY_MARKET].cargo.at(whichItem);
+    }
+    else
+        deficitRatio.at(whichItem) = resourceSecurityFactor;
+}
+
+void Place::UpdateSurplusAndDeficitRatios(unsigned whichItem)
+{
+    UpdateSurplusRatio(whichItem);
+    UpdateDeficitRatio(whichItem);
+}
+
+
+void Place::UpdateSurplusesTopSeven()
+{
+    surplusesTopSeven.clear();
+
+    std::vector<int> indices(surplusRatio.size());
+    for (unsigned i = 0; i <= surplusRatio.size()-1; i++)
+        indices[i] = i;
+
+    // Sort indices based on the values in surplusRatio (in descending order)
+    std::stable_sort(indices.begin(), indices.end(), [&](int a, int b)
+    {
+        return surplusRatio[a] > surplusRatio[b];
+    });
+
+    // Store the indices of the seven highest values (or fewer if there are fewer than seven)
+    for (int i = 0; i < std::min(static_cast<int>(surplusRatio.size()-1), 7); i++)
+    {
+        // Don't store surpluses less than 1. Those are deficits.
+        if(surplusRatio[indices[i]] > 1)
+            surplusesTopSeven.push_back(indices[i]);
+    }
+
+    UpdateSurplusBubble();
+}
+
+void Place::UpdateDeficitsTopSeven()
+{
+    deficitsTopSeven.clear();
+
+    std::vector<int> indices(deficitRatio.size());
+    for(unsigned i = 0; i <= deficitRatio.size()-1; i++)
+        indices[i] = i;
+
+    // Sort the indices based on the values in deficitRatio (in descending order)
+    std::stable_sort(indices.begin(), indices.end(), [&](int a, int b)
+    {
+        return deficitRatio[a] > deficitRatio[b];
+    });
+
+    // Store the indices of the seven highest values (or fewer if there are fewer than seven)
+    for (int i = 0; i < std::min(static_cast<int>(deficitRatio.size()-1), 7); i++)
+    {
+        // Don't store deficits less than 1. Those are surpluses.
+        if(deficitRatio[indices[i]] > 1)
+            deficitsTopSeven.push_back(indices[i]);
+    }
+
+    UpdateDeficitBubble();
 }
 
 void Place::AddInventoryStock(unsigned whichInventory, int a, int b)
@@ -302,6 +428,8 @@ void Place::AddInventoryStock(unsigned whichInventory, int a, int b)
 
     if(inventory[whichInventory].cargo.size() != prev)
         UpdateInventoryBubble(whichInventory);
+
+    UpdateSurplusAndDeficitRatios(a);
 }
 void Place::RemoveInventoryStock(unsigned whichInventory, int a, int b)
 {
@@ -311,6 +439,8 @@ void Place::RemoveInventoryStock(unsigned whichInventory, int a, int b)
     if(inventory[whichInventory].cargo.size() != prev)
         UpdateInventoryBubble(whichInventory);
 
+    UpdateSurplusAndDeficitRatios(a);
+
 }
 void Place::SetInventoryStock(unsigned whichInventory, int a, int b)
 {
@@ -319,12 +449,17 @@ void Place::SetInventoryStock(unsigned whichInventory, int a, int b)
 
     if(inventory[whichInventory].cargo.size() != prev)
         UpdateInventoryBubble(whichInventory);
+
+    UpdateSurplusAndDeficitRatios(a);
 }
 
 void Place::TransferInventoryStock(unsigned sourceInv, unsigned destInv, int a, int b)
 {
     RemoveInventoryStock(sourceInv,a,b);
     AddInventoryStock(destInv,a,b);
+
+    UpdateSurplusAndDeficitRatios(a);
+    UpdateSurplusAndDeficitRatios(b);
 }
 
 void Place::AddInitialStock()
@@ -342,15 +477,13 @@ void Place::AddInitialStock()
 
     for (unsigned i = IT_MARKER_FIRST; i <= IT_MARKER_LAST; i++)
     {
-        for (std::map<int, int>::iterator it = population.begin(); it != population.end(); ++it)
+        for (std::map<int, unsigned>::iterator it = population.begin(); it != population.end(); ++it)
         {
             if(population.count((*it).second) > 0)
             {
-                float toAdd = economyRoleMaintainenceConsumptionQuantity.at(i).at((*it).first) * population.at((*it).second) * 1;
+                float toAdd = economyRoleMaintainenceConsumptionQuantity.at(i).at((*it).first) * population.at((*it).second) * 4; /// Instead of consumption * 4, should give enough consumption for 30 days' maintainence or something.
                 if (toAdd >= 1)
                     AddInventoryStock(PLACE_INVENTORY_MARKET, i, toAdd); // Truncates, of course.
-
-                /// Instead of consumption * 1, should give enough consumption for 30 days' maintainence or something.
             }
         }
     }
@@ -360,7 +493,7 @@ void Place::UpdateAllBubbles()
 {
     UpdatePopulationBubble();
     UpdateCitizensBubble();
-    UpdateVisitorBubble();
+    UpdateCaravanseraiBubble();
     UpdateSurplusBubble();
     UpdateDeficitBubble();
     UpdateInventoryBubbles();
@@ -390,44 +523,52 @@ void Place::UpdateCitizensBubble()
     citizensBubbleHeight = citizensBubbleNumRows*TILE_W;
 }
 
-void Place::UpdateVisitorBubble()
+void Place::UpdateCaravanseraiBubble()
 {
-    if(visitorCaravans.size() > 0)
+    if(caravanserai.size() > 0)
     {
-        visitorBubbleNumCols = 1;
-        visitorBubbleNumRows = 1;
+        caravanseraiBubbleNumCols = 1;
+        caravanseraiBubbleNumRows = 1;
 
-        while(visitorCaravans.size() > visitorBubbleNumCols*visitorBubbleNumRows)
+        while(caravanserai.size() > caravanseraiBubbleNumCols*caravanseraiBubbleNumRows)
         {
-            if(visitorBubbleNumCols <= visitorBubbleNumRows)
-                visitorBubbleNumCols++;
+            if(caravanseraiBubbleNumCols <= caravanseraiBubbleNumRows)
+                caravanseraiBubbleNumCols++;
             else
-                visitorBubbleNumRows++;
+                caravanseraiBubbleNumRows++;
         }
 
-        visitorBubbleActive = true;
-        visitorBubbleWidth = visitorBubbleNumCols*TILE_W;
-        visitorBubbleHeight = visitorBubbleNumRows*TILE_H;
+        caravanseraiBubbleActive = true;
+        caravanseraiBubbleWidth = caravanseraiBubbleNumCols*TILE_W;
+        caravanseraiBubbleHeight = caravanseraiBubbleNumRows*TILE_H;
     }
     else
-        visitorBubbleActive = false;
+        caravanseraiBubbleActive = false;
 }
 
 void Place::UpdateSurplusBubble()
 {
     surplusBubbleNumCols = surplusBubbleBaseCols;
-    surplusBubbleNumRows = surplusBubbleBaseRows;
 
-    surplusBubbleWidth = surplusBubbleNumCols*TILE_W;
+    if(surplusesTopSeven.size() > 0)
+        surplusBubbleNumRows = surplusesTopSeven.size();
+    else
+        surplusBubbleNumRows = 1;
+
+    surplusBubbleWidth = surplusBubbleNumCols*TILE_W + TILE_W*1.5; // inelegantly extended by TILE_W*1.5
     surplusBubbleHeight = surplusBubbleNumRows*TILE_H;
 }
 
 void Place::UpdateDeficitBubble()
 {
     deficitBubbleNumCols = deficitBubbleBaseCols;
-    deficitBubbleNumRows = deficitBubbleBaseRows;
 
-    deficitBubbleWidth = deficitBubbleNumCols*TILE_W;
+    if(deficitsTopSeven.size() > 0)
+        deficitBubbleNumRows = deficitsTopSeven.size();
+    else
+        deficitBubbleNumRows = 1;
+
+    deficitBubbleWidth = deficitBubbleNumCols*TILE_W + TILE_W*1.5; // inelegantly extended by TILE_W*1.5
     deficitBubbleHeight = deficitBubbleNumRows*TILE_H;
 }
 
@@ -478,7 +619,7 @@ void Place::DrawSpriteOnOverworld()
         float nameDrawY = overworldYPosition - overworldCameraYPosition + OVERWORLD_SPRITE_H/2;
 
         al_draw_bitmap_region(overworldPlacePng,
-                              0 + identity*64, 0,
+                              0 + placeIdentity*64, 0,
                               64,64,
                               drawX,
                               drawY,
@@ -507,7 +648,7 @@ void Place::DrawPopulationBubble()
                               4);
 
     unsigned i = 0;
-    for(std::map<int,int>::iterator it = population.begin(); it != population.end(); ++it)
+    for(std::map<int, unsigned>::iterator it = population.begin(); it != population.end(); ++it)
     {
         al_draw_bitmap_region(expertiseIconPng,
                               ((*it).first)*TILE_W, 0,
@@ -544,15 +685,38 @@ void Place::DrawCitizensBubble()
 
     if(citizenCaravans.size() > 0)
     {
+        for(unsigned i = 0; i < citizenCaravans.size(); i++)
+        {
+            // DrawActivity is centered on draw coordinate -- must offset
+            citizenCaravans[i]->DrawActivity(citizensBubbleDrawX + TILE_W/2,
+                                             citizensBubbleDrawY + TILE_W*i  + TILE_H/2);
 
+            string_al_draw_text(builtin, COL_BLACK,
+                                citizensBubbleDrawX + TILE_W + TILE_W/4,
+                                citizensBubbleDrawY + TILE_H*i,
+                                ALLEGRO_ALIGN_LEFT, citizenCaravans[i]->caravanLeader->name);
+
+            if(citizenCaravans[i]->atPlace)
+                string_al_draw_text(builtin, COL_BLACK,
+                                    citizensBubbleDrawX + TILE_W + TILE_W/4,
+                                    citizensBubbleDrawY + TILE_H*i + BUILTIN_TEXT_HEIGHT,
+                                    ALLEGRO_ALIGN_LEFT, citizenCaravans[i]->whichPlace->name);
+            else if(citizenCaravans[i]->onRoad)
+                string_al_draw_multiline_text(builtin, COL_BLACK,
+                                              citizensBubbleDrawX + TILE_W + TILE_W/4,
+                                              citizensBubbleDrawY + TILE_H*i + BUILTIN_TEXT_HEIGHT,
+                                              citizensBubbleWidth - TILE_W - TILE_W/4,                   // max width of multiline text
+                                              BUILTIN_TEXT_HEIGHT,
+                                              ALLEGRO_ALIGN_LEFT, citizenCaravans[i]->whichRoad->name);
+        }
     }
     else
         al_draw_text(builtin, COL_BLACK, citizensBubbleDrawX, citizensBubbleDrawY,ALLEGRO_ALIGN_LEFT,"(None).");
 }
 
-void Place::DrawVisitorBubbleOnOverworld()
+void Place::DrawCaravanseraiBubbleOnOverworld()
 {
-    if(visitorBubbleActive)
+    if(caravanseraiBubbleActive)
     {
         /// To do: Adjust for sprites that are not TILE_W in size.
 
@@ -564,28 +728,28 @@ void Place::DrawVisitorBubbleOnOverworld()
         {
 
 
-            al_draw_filled_rounded_rectangle(drawX - visitorBubbleWidth/2 - bubblePadding,
-                                             drawY - visitorBubbleHeight/2 - bubblePadding,
-                                             drawX + visitorBubbleWidth/2 + bubblePadding,
-                                             drawY + visitorBubbleHeight/2 + bubblePadding,
+            al_draw_filled_rounded_rectangle(drawX - caravanseraiBubbleWidth/2 - bubblePadding,
+                                             drawY - caravanseraiBubbleHeight/2 - bubblePadding,
+                                             drawX + caravanseraiBubbleWidth/2 + bubblePadding,
+                                             drawY + caravanseraiBubbleHeight/2 + bubblePadding,
                                              bubbleCornerRadius,
                                              bubbleCornerRadius,
                                              COL_DARK_WHITE);
 
 
-            al_draw_rounded_rectangle(drawX - visitorBubbleWidth/2 - bubblePadding,
-                                      drawY - visitorBubbleHeight/2 - bubblePadding,
-                                      drawX + visitorBubbleWidth/2 + bubblePadding,
-                                      drawY + visitorBubbleHeight/2 + bubblePadding,
+            al_draw_rounded_rectangle(drawX - caravanseraiBubbleWidth/2 - bubblePadding,
+                                      drawY - caravanseraiBubbleHeight/2 - bubblePadding,
+                                      drawX + caravanseraiBubbleWidth/2 + bubblePadding,
+                                      drawY + caravanseraiBubbleHeight/2 + bubblePadding,
                                       bubbleCornerRadius,
                                       bubbleCornerRadius,
                                       COL_INDIGO,
                                       4);
 
-            for(unsigned i = 0; i < visitorCaravans.size(); i++)
+            for(unsigned i = 0; i < caravanserai.size(); i++)
             {
-                visitorCaravans[i]->DrawActivity(drawX - visitorBubbleWidth/2 + (i%visitorBubbleNumCols*TILE_W) + TILE_W/2,
-                                                 drawY - visitorBubbleHeight/2 + (i/visitorBubbleNumCols*TILE_H) + TILE_H/2);
+                caravanserai[i]->DrawActivity(drawX - caravanseraiBubbleWidth/2 + (i%caravanseraiBubbleNumCols*TILE_W) + TILE_W/2,
+                                              drawY - caravanseraiBubbleHeight/2 + (i/caravanseraiBubbleNumCols*TILE_H) + TILE_H/2);
             }
 
         }
@@ -609,6 +773,26 @@ void Place::DrawSurplusBubble()
                               bubbleCornerRadius, bubbleCornerRadius,
                               COL_INDIGO, 4);
 
+    unsigned j = 0;
+    for(std::vector<int>::iterator it = surplusesTopSeven.begin(); it != surplusesTopSeven.end(); ++it)
+    {
+
+            al_draw_bitmap_region(cargoPng,
+                                  (*it)*TILE_W, 0,
+                                  TILE_W,TILE_H,
+                                  surplusBubbleDrawX,surplusBubbleDrawY + TILE_H*j, 0);
+
+            std::stringstream roundedText;
+            roundedText << std::fixed << std::setprecision(3) << surplusRatio.at(*it); // Rounded to 4 decimal places
+
+            string_al_draw_text(builtin,COL_GREEN,
+                                surplusBubbleDrawX + TILE_W*1.125,
+                                surplusBubbleDrawY + TILE_H*j + TILE_H/2 - BUILTIN_TEXT_HEIGHT/2,
+                                ALLEGRO_ALIGN_LEFT,roundedText.str());
+
+            j++;
+    }
+
     string_al_draw_text(builtin, COL_BLACK, surplusBubbleDrawX, surplusBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, surplusBubbleLabel);
 
 }
@@ -622,7 +806,6 @@ void Place::DrawDeficitBubble()
                                      bubbleCornerRadius, bubbleCornerRadius,
                                      COL_DARK_WHITE);
 
-
     al_draw_rounded_rectangle(deficitBubbleDrawX - bubblePadding,
                               deficitBubbleDrawY - bubblePadding,
                               deficitBubbleDrawX + deficitBubbleWidth + bubblePadding,
@@ -630,13 +813,33 @@ void Place::DrawDeficitBubble()
                               bubbleCornerRadius, bubbleCornerRadius,
                               COL_INDIGO, 4);
 
+    unsigned drawRow = 0;
+    for(std::vector<int>::iterator it = deficitsTopSeven.begin(); it != deficitsTopSeven.end(); ++it)
+    {
+
+            al_draw_bitmap_region(cargoPng,
+                                  (*it)*TILE_W, 0,
+                                  TILE_W,TILE_H,
+                                  deficitBubbleDrawX, deficitBubbleDrawY + TILE_H*drawRow, 0);
+
+            std::stringstream roundedText;
+            roundedText << std::fixed << std::setprecision(3) << deficitRatio.at(*it); // Rounded to 4 decimal places
+
+            string_al_draw_text(builtin,COL_RED,
+                                deficitBubbleDrawX + TILE_W*1.125,
+                                deficitBubbleDrawY + TILE_H*drawRow + TILE_W/2 - BUILTIN_TEXT_HEIGHT/2,
+                                ALLEGRO_ALIGN_LEFT, roundedText.str());
+
+            drawRow++;
+
+    }
+
     string_al_draw_text(builtin, COL_BLACK, deficitBubbleDrawX, deficitBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, deficitBubbleLabel);
 
 }
 
 void Place::DrawInventoryBubbles()
 {
-
     for(unsigned i = PLACE_INVENTORY_MARKER_FIRST; i < PLACE_INVENTORY_MARKER_LAST+1; i++)
     {
         al_draw_filled_rounded_rectangle(inventoryBubbleDrawX[i] - bubblePadding,

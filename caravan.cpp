@@ -8,6 +8,8 @@ Caravan::Caravan()
 
     worldGraph.SetToBaseGraph();
 
+    onReturnTrip = false;
+
     atPlace = false;
     onRoad = false;
     whichPlace = nullptr;
@@ -73,9 +75,7 @@ void Caravan::OverworldLogic()
     if(onRoad)
     {
         if(atRoadsEnd)
-        {
             MoveToPlace(Place::places[roadDestination]);
-        }
         else
         {
             distanceFromNextWaypoint -= travelSpeed;
@@ -92,13 +92,16 @@ void Caravan::OverworldLogic()
 #ifdef debug_output_worldgraph_dijkstra
                 std::cout << "Worldgraph path empty. " << std::endl;
 #endif
-                pathfindingDestination = rand()%(PL_MARKER_LAST-PL_MARKER_FIRST +1) + PL_MARKER_FIRST;
+                if(onReturnTrip)
+                    pathfindingDestination = caravanLeader->hometown;
+                else // not onReturnTrip
+                    pathfindingDestination = rand()%(PL_MARKER_LAST-PL_MARKER_FIRST +1) + PL_MARKER_FIRST;
 #ifdef debug_output_worldgraph_dijkstra
                 std::cout << "Random destination set to " << placeNames.at(pathfindingDestination) << std::endl;
 #endif
-                if(pathfindingDestination != whichPlace->identity)
+                if(pathfindingDestination != whichPlace->placeIdentity)
                 {
-                    worldGraph.Dijkstra(whichPlace->identity,pathfindingDestination);
+                    worldGraph.Dijkstra(whichPlace->placeIdentity,pathfindingDestination);
 #ifdef debug_output_worldgraph_dijkstra
                     std::cout << std::endl;
 #endif
@@ -152,7 +155,12 @@ void Caravan::MoveToPlace(Place *p)
 {
     atPlace = true;
     whichPlace = p;
-    p->AddVisitorCaravan(this);
+    p->AddToCaravanserai(this);
+
+    if(whichPlace->placeIdentity == caravanLeader->hometown)
+        onReturnTrip = false;
+    else if(whichPlace->placeIdentity == pathfindingDestination)
+        onReturnTrip = true;
 
     onRoad = false;
     atRoadsEnd = false;
@@ -165,23 +173,13 @@ void Caravan::MoveToPlace(Place *p)
 
     caravanLeader->facingLeft = false;
 
-    /*
-    if(!worldGraph.path.empty())
-    {
-        worldGraph.path.erase(worldGraph.path.begin());
-        UpdatePathfindingBubble();
-    }
-    */
-
-
 }
 
 void Caravan::MoveToRoad(Road *r, bool isReverseRoad)
 {
+
     if(atPlace)
-    {
-        whichPlace->RemoveVisitorCaravan(this);
-    }
+        whichPlace->RemoveFromCaravanserai(this);
 
     atPlace = false;
 

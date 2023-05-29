@@ -104,8 +104,8 @@ const std::map<int, std::map<int,float>>baseJobOutputs =
     {IND_MINE_SILVER,       { { IT_SILVER,       5.0 } /*,{ IT_X, 0.0 }*/ } },
     {IND_CRAFT_JEWELRY,     { { IT_JEWELRY,      1.0 } /*,{ IT_X, 0.0 }*/ } },
     {IND_MINE_LEYSTONE,     { { IT_LEYSTONE,     6.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_MACHINE_CLOCKWORK,   { { IT_CLOCKWORK,   10.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_MACHINE_AUTOMATON,   { { IT_AUTOMATON,    1.0 } /*,{ IT_X, 0.0 }*/ } }
+    {IND_MACHINE_CLOCKWORK, { { IT_CLOCKWORK,   10.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_MACHINE_AUTOMATON, { { IT_AUTOMATON,    1.0 } /*,{ IT_X, 0.0 }*/ } }
 };
 
 const std::map<int, int>jobExpertiseType =
@@ -122,7 +122,7 @@ const std::map<int, int>jobExpertiseType =
     {IND_FARM_SPICE, EXP_FARM},
     {IND_MINE_CLAY, EXP_MINE},
     {IND_CRAFT_POTTERY, EXP_CRAFT},
-    {IND_MINE_SILVER, EXP_CRAFT},
+    {IND_MINE_SILVER, EXP_MINE},
     {IND_CRAFT_JEWELRY, EXP_CRAFT},
     {IND_MINE_LEYSTONE, EXP_MINE},
     {IND_MACHINE_CLOCKWORK, EXP_MECHANICS},

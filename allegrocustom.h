@@ -46,6 +46,8 @@ void AllegroCustomColours();
 int string_al_get_text_width(const ALLEGRO_FONT *f, std::string str);
 void string_al_draw_text(const ALLEGRO_FONT *font, ALLEGRO_COLOR color, float x, float y, int flags, std::string text);
 
+void string_al_draw_multiline_text(const ALLEGRO_FONT *font, ALLEGRO_COLOR color, float x, float y, float max_width, float line_height, int flags, std::string text);
+
 /*
 int s_al_show_native_message_box(ALLEGRO_DISPLAY *display,
                                  std::string title, std::string heading, std::string text,

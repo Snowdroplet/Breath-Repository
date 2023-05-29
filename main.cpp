@@ -19,27 +19,7 @@
 #include "calendar.h"
 
 //Place *playerLocationPtr = nullptr;
-
 //Caravan *playerCrew = nullptr;
-Caravan *testCrew1 = nullptr;
-Caravan *testCrew2 = nullptr;
-Caravan *testCrew3 = nullptr;
-Caravan *testCrew4 = nullptr;
-Caravan *testCrew5 = nullptr;
-Caravan *testCrew6 = nullptr;
-Caravan *testCrew7 = nullptr;
-
-Being *crewDetailPtr = nullptr;
-Being *player = nullptr;
-Being *crewZynes = nullptr;
-Being *crewPurp = nullptr;
-Being *crewWindow = nullptr;
-Being *crewRukhran = nullptr;
-Being *crewYubi = nullptr;
-Being *crewEmily = nullptr;
-Being *crewBel = nullptr;
-Being *crewPaul = nullptr;
-Being *crewLala = nullptr;
 
 void InterpretInput();
 void ProgressWorld();
@@ -413,6 +393,9 @@ void ProgressWorld()
             {
                 ((*it).second)->ProgressProduction();
                 ((*it).second)->ProgressConsumption();
+
+                ((*it).second)->UpdateSurplusesTopSeven();
+                ((*it).second)->UpdateDeficitsTopSeven();
             }
 
             /*
@@ -432,6 +415,7 @@ void ProgressWorld()
 
         for(std::vector<Being*>::iterator it = Being::people.begin(); it != Being::people.end(); ++it)
         {
+            (*it)->Progress();
 
         }
 
@@ -521,7 +505,7 @@ void DrawUI()
             Caravan::caravans[i]->DrawSpriteOnOverworld();
 
         for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
-            (*it).second->DrawVisitorBubbleOnOverworld();
+            (*it).second->DrawCaravanseraiBubbleOnOverworld();
 
         for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
             (*it).second->DrawFlyingTexts();
@@ -688,9 +672,7 @@ void DrawUI()
 void InitObjects()
 {
     for(unsigned i = PL_MARKER_FIRST; i <= PL_MARKER_LAST; i++)
-    {
         Place::places[i] = new Place(i);
-    }
 
     for(unsigned i = ROAD_MARKER_FIRST; i <= ROAD_MARKER_LAST; i++)
     {
@@ -703,8 +685,12 @@ void InitObjects()
         Place::places[r->endpointA]->connections.push_back(r);
         Place::places[r->endpointB]->connections.push_back(r);
 
+    }
 
-        //std::cout << "Testing road length for negatives: " << Road::roads[i]->length << std::endl;
+    for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
+    {
+
+        ((*it).second)->GenerateCitizenCaravans();
     }
 
 
@@ -712,14 +698,6 @@ void InitObjects()
     playerCrew = new Caravan;
     Caravan::caravans.push_back(playerCrew);
     */
-
-    testCrew1 = new Caravan;
-    testCrew2 = new Caravan;
-    testCrew3 = new Caravan;
-    testCrew4 = new Caravan;
-    testCrew5 = new Caravan;
-    testCrew6 = new Caravan;
-    testCrew7 = new Caravan;
 
     /*
     player = new Being;
@@ -729,96 +707,6 @@ void InitObjects()
     Being::people.push_back(player);
     */
 
-    crewZynes = new Being;
-    crewZynes->SetName("Test Verit Zynes");
-    crewZynes->SetRace(RACE_VERIT);
-    //crewZynes->SetPortrait(RACE_VERIT,0);
-    Being::people.push_back(crewZynes);
-
-    crewPurp = new Being;
-    crewPurp->SetName("Test Verit Purp");
-    crewPurp->SetRace(RACE_YETI);
-    //crewPurp->SetPortrait(RACE_YETI,2);
-    Being::people.push_back(crewPurp);
-
-    crewWindow = new Being;
-    crewWindow->SetName ("Test Makhi Window");
-    crewWindow->SetRace (RACE_MAKHI);
-    //crewWindow->SetPortrait(RACE_MAKHI,0);
-    //crewWindow->SetSkill(SK_MECHANIC, 1);
-    Being::people.push_back(crewWindow);
-
-    crewYubi = new Being;
-    crewYubi->SetName("Test Beyu Yubi");
-    crewYubi->SetRace(RACE_BEYU);
-    //crewYubi->SetPortrait(RACE_BEYU,2);
-    Being::people.push_back(crewYubi);
-
-    crewRukhran = new Being;
-    crewRukhran->SetName("Test Haphae Rukhra");
-    crewRukhran->SetRace(RACE_HAPHAE);
-    //crewRukhra->SetPortrait(RACE_HAPHAE,0);
-    Being::people.push_back(crewRukhran);
-
-    crewEmily = new Being;
-    crewEmily->SetName("Test Yeti Emily");
-    crewEmily->SetRace(RACE_MESERA);
-    //crewEmily->SetPortrait(RACE_MESERA,1);
-    Being::people.push_back(crewEmily);
-
-    crewBel = new Being;
-    crewBel->SetName ("Test Ordon Bel");
-    crewBel->SetRace (RACE_ORDON);
-    //crewBel->SetPortrait(RACE_ORDON,2);
-    Being::people.push_back(crewBel);
-
-    crewPaul = new Being;
-    crewPaul->SetName("Test Makhi Paul");
-    crewPaul->SetRace(RACE_MAKHI);
-    //crewPaul->SetPortrait(RACE_MAKHI,2);
-    Being::people.push_back(crewPaul);
-
-    crewLala = new Being;
-    crewLala->SetName("Test Beyu Lala");
-    crewLala->SetRace(RACE_BEYU);
-    //crewLala->SetPortrait(RACE_BEYU,1);
-    Being::people.push_back(crewLala);
-
-
-    //playerCrew->AddMember(player);
-
-    testCrew1->AddMember(crewZynes);
-    testCrew1->AddMember(crewPaul);
-    Caravan::caravans.push_back(testCrew1);
-
-
-    testCrew2->AddMember(crewPurp);
-    testCrew2->AddMember(crewLala);
-    Caravan::caravans.push_back(testCrew2);
-
-    testCrew3->AddMember(crewWindow);
-    Caravan::caravans.push_back(testCrew3);
-
-    testCrew4->AddMember(crewRukhran);
-    Caravan::caravans.push_back(testCrew4);
-
-    testCrew5->AddMember(crewYubi);
-    Caravan::caravans.push_back(testCrew5);
-
-    testCrew6->AddMember(crewEmily);
-    Caravan::caravans.push_back(testCrew6);
-
-    testCrew7->AddMember(crewBel);
-    Caravan::caravans.push_back(testCrew7);
-
-    testCrew1->MoveToPlace(Place::places[PL_ERICENNES]);
-    testCrew2->MoveToPlace(Place::places[PL_ERICENNES]);
-    testCrew3->MoveToPlace(Place::places[PL_ERICENNES]);
-    testCrew4->MoveToRoad(Road::roads[ROAD_ERICENNES_CHORAS],false);
-    testCrew5->MoveToRoad(Road::roads[ROAD_ERICENNES_KETH_KETHER],false);
-    testCrew6->MoveToRoad(Road::roads[ROAD_ERICENNES_KETH_ENTWEIR],false);
-    testCrew7->MoveToRoad(Road::roads[ROAD_ERICENNES_ROSKANEL],false);
-
     for(unsigned i = 0; i < Caravan::caravans.size(); i++)
     {
         for(unsigned j = 0; j < rand()%((unsigned)3+1); j++)
@@ -827,15 +715,9 @@ void InitObjects()
             unsigned quanitity = rand()%9 + 1;
             Caravan::caravans[i]->AddInventoryStock(item,quanitity);
         }
+
+
     }
-
-    //ericennes->AddAvailableCrew(crewLala);
-
-    //playerCrew->SetInventoryStock(IT_RICE, 10);
-    //playerCrew->SetInventoryStock(IT_WAYBREAD, 2);
-
-    //ericennes->SetInventoryStock(IT_RICE, 10);
-    //ericennes->SetInventoryStock(IT_BEAST_FLESH, 4);
 
 }
 

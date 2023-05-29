@@ -93,6 +93,12 @@ void string_al_draw_text(const ALLEGRO_FONT *font, ALLEGRO_COLOR color, float x,
     al_draw_text(font, color, x, y, flags, c);
 }
 
+void string_al_draw_multiline_text(const ALLEGRO_FONT *font, ALLEGRO_COLOR color, float x, float y, float max_width, float line_height, int flags, std::string text)
+{
+    const char *c = text.c_str();
+    al_draw_multiline_text(font, color, x, y, max_width, line_height, flags, c);
+}
+
 /*
 int s_al_show_native_message_box(ALLEGRO_DISPLAY *display,
                                  std::string title, std::string heading, std::string text,
