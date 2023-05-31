@@ -1,6 +1,9 @@
 #ifndef PLACE_H_INCLUDED
 #define PLACE_H_INCLUDED
 
+//#define debug_output_place_progress_maintainence_consumption
+#define debug_output_place_calculate_and_draw_consumption
+
 #include <string>
 #include <sstream>
 #include <vector>
@@ -57,10 +60,13 @@ public:
     const int removeFromCaravanseraiDelay = 50; // Todo: Tie to advancement of calendar time instead of arbitrary number
 
 /// Economy - Main
-    float resourceSecurityFactor; /// The lynchpin of a city's economy, affecting supply and demand. How many multiples of its consumption must a city be overstocked for in order to alter its standard of living.
+    float maintainenceSecurityFactor; /// Security factor is the lynchpin of a city's economy, affecting supply and demand. How many multiples of its consumption must a city be overstocked for in order to consider itself at a resource surplus for its consumption tier.
+    float industrialSecurityFactor;   /// As above, but for industrial inputs. Based on daily average, so a security factory of 7 means that the city wants to have enough inputs to cover 7 days' production at any time.
+    /// To do: split maintainence security factor into array with indexes for five thresholds - corresponding to consumption tiers (destitute, poor, comfortable, wealthy, profligate)
+
     int resourceSecurityReevaluationTime;
     int resourceSecurityReevaluationThreshold;
-    int standardOfLiving;
+    int standardOfLiving; /// It is important to note that changing SoL only affects maintainence consumption rate (not consumption quantity), through the updatemaintainenceconsumptionquantity function
 
     std::array<float, IT_MARKER_LAST+1>surplusRatio;
     std::array<float, IT_MARKER_LAST+1>deficitRatio;
@@ -73,18 +79,22 @@ public:
 /// Economy - Industries
     std::vector<Industry*>industries;
 
-/// Economy - Production
-    std::map<int,float>dailyProduction;
+/// Economy - Industrial Production
+    //std::map<int,float>dailyProduction;
 
-/// Economy - Consumption
-    std::array<int,IT_MARKER_LAST+1>consumptionLevel; // Standard of living, as applied to individual items.
-    std::array<int,IT_MARKER_LAST+1>consumptionTimer;
-    std::array<int,IT_MARKER_LAST+1>consumptionTimerThreshold;
-    std::array<int,IT_MARKER_LAST+1>consumptionQuantity;
-    std::array<int,IT_MARKER_LAST+1>consumptionDecimalOwing;
+/// Economy - Maintainence Consumption --- Maintainence consumption roughly corresponds to "household consumption" in economics, as opposed to "industrial consumption".
+    std::array<int,IT_MARKER_LAST+1>maintainenceConsumptionLevel; // Standard of living, as applied to individual items.
+    std::array<int,IT_MARKER_LAST+1>maintainenceConsumptionTimer; // When this increases to threshold, it's time for a consumption tick
+    std::array<int,IT_MARKER_LAST+1>maintainenceConsumptionTimerThreshold;
+    std::array<float,IT_MARKER_LAST+1>maintainenceConsumptionQuantityOnTick; // How much of a resource is consumed during a consumption tick
+    std::array<float,IT_MARKER_LAST+1>maintainenceConsumptionDecimalOwing; // The decimal remainder of consumption quantity, to be carried over to the next tick. (Can only consume whole units)
 
-    std::array<int, IT_MARKER_LAST+1>maintainenceConsumptionTier; // Maintainence consumption refers to "household consumption," as opposed to industrial consumption.
+    const std::array<unsigned, LIVING_MARKER_LAST+1>maintainenceConsumptionTierSecurityThreshold = { /*Destitute:*/ 0, /*Poor*/ 1, /*confortable*/ 3, /*wealthy*/ 5, /*profligate*/ 10};
+    std::array<int, IT_MARKER_LAST+1>maintainenceConsumptionTier;
     std::map<int,float>dailyConsumption;
+
+/// Economy - Industrial Consumption --- As opposed to maintainence consumption above.
+    std::array<float,IT_MARKER_LAST+1>industrialConsumptionQuantityDaily; // How much of a resource is consumed by industries on average **per day**.
 
 /// Location
     int overworldXPosition, overworldYPosition; // Absolute position on the overworld.
@@ -106,6 +116,7 @@ public:
     unsigned populationBubbleNumCols;
 
 /// Bubbles -- Citizen Caravans
+    const std::string citizensBubbleLabel = "Associated Caravans";
     const float citizensBubbleDrawX = SCREEN_W*33/40;
     const float citizensBubbleDrawY = SCREEN_H*24/40;
     const float citizensBubbleWidth = TILE_W*6; // + bubblePadding;
@@ -138,7 +149,7 @@ public:
     float deficitBubbleWidth, deficitBubbleHeight; // Width extended by TILE_W*1.5 in UpdateDeficitBubble()
 
 /// Bubbles -- Inventory
-                                                                                     //  MARKET,            RESERVE,       INDUSTRIAL,    MAINTAINENCE
+                                                                                     //  MARKET,              RESERVE,       INDUSTRIAL,    MAINTAINENCE
     const std::array<std::string, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleLabel = {"Market"};       /*", Reserves",    "Industrial",  "Maintainence"};*/
     const std::string inventoryBubbleEmptyText                                       = "<No inventory>";
     const std::array<float, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleDrawX       = {SCREEN_W*26/40}; /*, SCREEN_W*28/40, SCREEN_W*28/40, SCREEN_W*34/40};*/
@@ -171,7 +182,6 @@ public:
     ~Place();
 
 /// Population functions
-
     void NewCitizenCaravan();
     void DeleteCitizenCaravan(Caravan *c);
     void GenerateCitizenCaravans();
@@ -179,39 +189,45 @@ public:
     void AddToCaravanserai(Caravan *c);
     void RemoveFromCaravanserai(Caravan *c);
 
-/// Economy functions
-    //void AdjustConsumption(int a, float b);
-
-    //void UpdateEconomyData();
-    //void UpdateProductionData();
-    //void UpdateConsumptionData();
-
-    void AddIndustry(int whichIndustry);
-
-    bool CheckJobInputs(Industry* whichIndustry);
-    void DeductJobInputs(Industry* whichIndustry);
-
-    float CalculateConsumptionQuantity(unsigned whichItem);
-    void UpdateConsumptionQuantity(unsigned whichItem);
-    void ProgressProduction();
-    void ProgressConsumption();
-
-    void UpdateSurplusRatio(unsigned whichItem);
-    void UpdateDeficitRatio(unsigned whichItem);
+/// Economy functions -- Main functions
     void UpdateSurplusAndDeficitRatios(unsigned whichItem);
     void UpdateSurplusesTopSeven();
     void UpdateDeficitsTopSeven();
 
+/// Economy functions -- Maintainence consumption
+private:
+    float CalculateMaintainenceConsumptionQuantityOnTick(unsigned whichItem);
+    void UpdateMaintainenceConsumptionQuantityOnTick(unsigned whichItem);
+
+    void UpdateMaintainenceConsumptionTier();
+public:
+    void ProgressMaintainenceConsumption();
+
+/// Economy functions -- Industrial consumption
+private:
+    float CalculateIndustrialConsumptionQuantityDaily(unsigned whichItem); // Daily average
+    void UpdateIndustrialConsumptionQuantityDaily(unsigned whichItem);
+
+/// Industry functions
+private:
+    void AddIndustry(int whichIndustry);
+    bool CheckJobInputs(Industry* whichIndustry);
+    void DeductJobInputs(Industry* whichIndustry);
+public:
+    void ProgressProduction();
+
 /// Inventory functions
+private:
     void AddInventoryStock(unsigned whichInventory, int a, int b);
     void RemoveInventoryStock(unsigned whichInventory, int a, int b);
     void SetInventoryStock(unsigned whichInventory, int a, int b);
     void TransferInventoryStock(unsigned sourceInv, unsigned destInv, int a, int b);
-
     void AddInitialStock();
 
 /// Bubble functions
+public:
     void UpdateAllBubbles();
+private:
     void UpdatePopulationBubble();
     void UpdateCitizensBubble();
     void UpdateCaravanseraiBubble();
@@ -220,11 +236,14 @@ public:
     void UpdateInventoryBubbles();
     void UpdateInventoryBubble(unsigned whichBubble);
     void UpdateIndustriesBubble(); // Only called when industrial activity updated
+public:
     void ProgressIndustriesBubbleProgressBars(); // Called on timer tick
 
 /// Flying text functions
+private:
     void QueueUpFlyingText(int icon, std::string text, float x, float y);
     void QueueDownFlyingText(int icon, std::string text, float x, float y);
+public:
     void ProgressFlyingTexts();
 
 /// Overworld drawing functions

@@ -39,8 +39,8 @@ public:
     float expertiseLevelRequired;
 
 /// Inputs and outputs
-    std::map<int,float>inputs;
-    std::map<int,float>outputs;
+    std::map<unsigned,float>inputs;
+    std::map<unsigned,float>outputs;
 
     float inputMultiplier;
     float outputMultiplier;

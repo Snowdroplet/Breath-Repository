@@ -18,8 +18,10 @@ Place::Place(int id)
             population[i] = placeInitialPopulation.at(placeIdentity).at(i);
     }
 
-    resourceSecurityFactor = 3;
     standardOfLiving = LIVING_COMFORTABLE;
+
+    maintainenceSecurityFactor = maintainenceConsumptionTierSecurityThreshold.at(standardOfLiving); // Wants to have enough resources to live on for 3 days
+    industrialSecurityFactor = 3; // Wants to have enough inputs for 3 days of industry
 
     //const int d/*ebug production quantity*/ = 6;
     for(std::vector<int>::const_iterator cit = placeInitialIndustries.at(placeIdentity).cbegin(); cit != placeInitialIndustries.at(placeIdentity).cend(); ++cit)
@@ -29,15 +31,14 @@ Place::Place(int id)
     for(unsigned i = IT_MARKER_FIRST; i <= IT_MARKER_LAST; i++)
     {
         maintainenceConsumptionTier.at(i) = standardOfLiving;
-        consumptionTimer.at(i) = rand()% economyBaseMaintainenceConsumptionRate.at(i).at(standardOfLiving);
-        consumptionTimerThreshold.at(i) = economyBaseMaintainenceConsumptionRate.at(i).at(standardOfLiving);
+        maintainenceConsumptionTimer.at(i) = rand()% economyBaseMaintainenceConsumptionRate.at(i).at(standardOfLiving);
+        maintainenceConsumptionTimerThreshold.at(i) = economyBaseMaintainenceConsumptionRate.at(i).at(standardOfLiving);
+        UpdateMaintainenceConsumptionQuantityOnTick(i); /// To do: Put in the upcoming threshold checking function for updating consumption tier
+        maintainenceConsumptionDecimalOwing.at(i) = 0;
 
-        UpdateConsumptionQuantity(i);
-        consumptionDecimalOwing.at(i) = 0;
+        UpdateIndustrialConsumptionQuantityDaily(i); /// To do: Put at the end of AddIndustry in a loop that checks inputs of all industries
 
-        surplusRatio.at(i) = 0;
-        deficitRatio.at(i) = 0;
-        //surplusDeficitRatio.at(i) = 0;
+        UpdateSurplusAndDeficitRatios(i);
     }
     AddInitialStock();
 
@@ -138,65 +139,6 @@ void Place::RemoveFromCaravanserai(Caravan *c)
 
 }
 
-/*
-void Place::UpdateEconomyData()
-{
-    UpdateConsumptionData();
-    UpdateProductionData();
-}
-*/
-
-/*
-void Place::UpdateConsumptionData()
-{
-    dailyConsumption.clear();
-/// Industrial demand
-    for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
-    {
-        for(std::map<int,float>::iterator jt = (*it)->inputs.begin(); jt != (*it)->inputs.end(); ++jt)
-        {
-            if(dailyConsumption.count((*jt).first) < 1) // Not sure if this is necessary.
-                dailyConsumption[(*jt).first] = 0;
-
-            dailyConsumption[(*jt).first] += (*it)->CalculateAverageInput((*jt).first, 24);
-
-            //std::cout << this->name << ": Daily consumption of " << itemNames.at((*jt).first) << " += " << dailyConsumption[(*jt).first] << std::endl;
-        }
-    }
-
-/// Maintainence demand (city health/happiness demand)
-
-
-        for(std::map<int, std::array<float,5>>::const_iterator it = economyBaseMaintainenceConsumptionRate.cbegin(); it != economyBaseMaintainenceConsumptionRate.cend(); ++it)
-        {
-            if(dailyConsumption.count((*jt).first) < 1) // Not sure if this is necessary.
-                    dailyConsumption[(*jt).first] = 0;
-
-            dailyConsumption[(*jt).first] +=
-        }
-
-}
-*/
-
-/*
-void Place::UpdateProductionData()
-{
-    for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
-    {
-        for(std::map<int,float>::iterator jt = (*it)->inputs.begin(); jt != (*it)->inputs.end(); ++jt)
-        {
-            if(dailyConsumption.count((*jt).first) < 1) // Not sure if this is necessary.
-                dailyConsumption[(*jt).first] = 0;
-
-            dailyConsumption[(*jt).first] += (*it)->CalculateAverageInput((*jt).first, 24);
-
-            //std::cout << this->name << ": Daily consumption of " << itemNames.at((*jt).first) << " += " << dailyConsumption[(*jt).first] << std::endl;
-        }
-    }
-}
-*/
-
-
 void Place::AddIndustry(int whichIndustry)
 {
     float baseProdPerTick = 1;
@@ -211,13 +153,12 @@ void Place::AddIndustry(int whichIndustry)
 
 bool Place::CheckJobInputs(Industry *whichIndustry)
 {
-    for(std::map<int,float>::iterator jt = whichIndustry->inputs.begin(); jt != whichIndustry->inputs.end(); ++jt)
+    for(std::map<unsigned,float>::iterator jt = whichIndustry->inputs.begin(); jt != whichIndustry->inputs.end(); ++jt)
     {
-        //if((inventory[PLACE_INVENTORY_INDUSTRIAL].cargo.count((*jt).first) < 1)) // Is the job's input requirement present in map at all?
-        if((inventory[PLACE_INVENTORY_MARKET].cargo.count((*jt).first) < 1))
+        if((inventory[PLACE_INVENTORY_MARKET].cargo.count((*jt).first) < 1)) // Is the job's input requirement present in map at all?
             return false;
-        //else if((inventory[PLACE_INVENTORY_INDUSTRIAL].cargo[(*jt).first] < (*jt).second)) // Is the quantity in inventory less than the job's input requirement?
-        else if((inventory[PLACE_INVENTORY_MARKET].cargo[(*jt).first] < (*jt).second))
+
+        else if((inventory[PLACE_INVENTORY_MARKET].cargo[(*jt).first] < (*jt).second)) // Is the quantity in inventory less than the job's input requirement?
             return false;
     }
     return true;
@@ -225,9 +166,8 @@ bool Place::CheckJobInputs(Industry *whichIndustry)
 
 void Place::DeductJobInputs(Industry* whichIndustry)
 {
-    for(std::map<int,float>::iterator it = whichIndustry->inputs.begin(); it != whichIndustry->inputs.end(); ++it)
+    for(std::map<unsigned,float>::iterator it = whichIndustry->inputs.begin(); it != whichIndustry->inputs.end(); ++it)
     {
-        //RemoveInventoryStock(PLACE_INVENTORY_INDUSTRIAL, (*it).first, (*it).second);
         RemoveInventoryStock(PLACE_INVENTORY_MARKET, (*it).first, (*it).second);
         QueueDownFlyingText((*it).first, "-" + std::to_string((int)(*it).second), overworldXPosition, overworldYPosition);
     }
@@ -256,9 +196,8 @@ void Place::ProgressProduction()
 
         if((*it)->jobState == JOB_STATE_HARVEST_READY)
         {
-            for(std::map<int,float>::iterator jt = (*it)->outputs.begin(); jt != (*it)->outputs.end(); ++jt)
+            for(std::map<unsigned,float>::iterator jt = (*it)->outputs.begin(); jt != (*it)->outputs.end(); ++jt)
             {
-                //AddInventoryStock(PLACE_INVENTORY_RESERVE, (*jt).first, (*jt).second);
                 AddInventoryStock(PLACE_INVENTORY_MARKET, (*jt).first, (*jt).second);
                 QueueUpFlyingText((*jt).first, "+" + std::to_string((int)(*jt).second), overworldXPosition, overworldYPosition);
             }
@@ -268,61 +207,73 @@ void Place::ProgressProduction()
     }
 }
 
-float Place::CalculateConsumptionQuantity(unsigned whichItem)
+float Place::CalculateMaintainenceConsumptionQuantityOnTick(unsigned whichItem)
 {
     float result = 0;
 
     for(std::map<int,unsigned>::iterator jt = population.begin(); jt != population.end(); ++jt)
         result += ((*jt).second) * economyRoleMaintainenceConsumptionQuantity.at(whichItem).at((*jt).first); // Not consumptionRate, mind. Quantity.
 
+#ifdef debug_output_place_calculate_and_draw_consumption
+    std::cout << "Maintainence consumption of " << itemNames.at(whichItem) << " at " << placeNames.at(placeIdentity) << ": " << result << " per tick." << std::endl;
+#endif
+
     return result;
 }
 
-void Place::UpdateConsumptionQuantity(unsigned whichItem)
+void Place::UpdateMaintainenceConsumptionQuantityOnTick(unsigned whichItem)
 {
-    consumptionQuantity.at(whichItem) = CalculateConsumptionQuantity(whichItem);
+    maintainenceConsumptionQuantityOnTick.at(whichItem) = CalculateMaintainenceConsumptionQuantityOnTick(whichItem);
 }
 
-void Place::ProgressConsumption()
+void Place::ProgressMaintainenceConsumption()
 {
     for(unsigned i = IT_MARKER_FIRST; i <= IT_MARKER_LAST; i++)
     {
-        if(consumptionTimerThreshold.at(i) != (-1)) // Don't update timer if there is no consumption rate.
+        if(maintainenceConsumptionTimerThreshold.at(i) != (-1)) // Don't update timer if there is no consumption rate.
         {
-            consumptionTimer.at(i)++;
-            if(consumptionTimer.at(i) >= consumptionTimerThreshold.at(i))
+            maintainenceConsumptionTimer.at(i)++;
+            if(maintainenceConsumptionTimer.at(i) >= maintainenceConsumptionTimerThreshold.at(i))
             {
-                float consumptionQuantityInteger; // Yes, float. To store the decimal portion using std::modf before it is truncated anyway.
+                float maintainenceConsumptionQuantityOnTickInteger; // Yes, float. To store the decimal portion using std::modf before it is truncated anyway.
 
-                // ConsumptionDecimalOwing represents partial units of items. Only integer quantities of items can be consumed.
-                consumptionDecimalOwing.at(i) += std::modf(consumptionQuantity.at(i),&consumptionQuantityInteger);
-                if(consumptionDecimalOwing.at(i) >= 1)
+                // ConsumptionDecimalOwing represents partial units of items. Only integer quantities of items can be consumed - the decimal portion must be carried over to next consumption tick.
+                maintainenceConsumptionDecimalOwing.at(i) += std::modf(maintainenceConsumptionQuantityOnTick.at(i),&maintainenceConsumptionQuantityOnTickInteger);
+                if(maintainenceConsumptionDecimalOwing.at(i) >= 1)
                 {
-                    consumptionQuantityInteger++;
-                    consumptionDecimalOwing.at(i) -= 1;
+                    maintainenceConsumptionQuantityOnTickInteger++;
+                    maintainenceConsumptionDecimalOwing.at(i) -= 1;
                 }
 
-                if(inventory[PLACE_INVENTORY_MARKET].cargo.count(i) > 0 && consumptionQuantityInteger > 0) // Check if key exists in map && Check if integer is worth bothering with.
+                if(inventory[PLACE_INVENTORY_MARKET].cargo.count(i) > 0 && maintainenceConsumptionQuantityOnTickInteger > 0) // Check if key exists in map && Check if integer is worth bothering with.
                 {
-                    if(consumptionQuantityInteger <= inventory[PLACE_INVENTORY_MARKET].cargo.at(i))
+                    if(maintainenceConsumptionQuantityOnTickInteger <= inventory[PLACE_INVENTORY_MARKET].cargo.at(i))
                     {
-                        RemoveInventoryStock(PLACE_INVENTORY_MARKET, i, consumptionQuantityInteger);
-                        QueueDownFlyingText(i, "-" + std::to_string((int)consumptionQuantityInteger), overworldXPosition, overworldYPosition);
+                        RemoveInventoryStock(PLACE_INVENTORY_MARKET, i, maintainenceConsumptionQuantityOnTickInteger);
+                        QueueDownFlyingText(i, "-" + std::to_string((int)maintainenceConsumptionQuantityOnTickInteger), overworldXPosition, overworldYPosition);
 
-                        std::cout << placeNames.at(placeIdentity) << " consumed " << (int)consumptionQuantityInteger << " " << itemNames.at(i) << " ---- ";
+#ifdef debug_output_place_progress_maintainence_consumption
+                        std::cout << placeNames.at(placeIdentity) << " consumed " << (int)maintainenceConsumptionQuantityInteger << " ";
+                        if(maintainenceConsumptionDecimalOwing.at(i) > 0)
+                            std::cout << "(" << maintainenceConsumptionDecimalOwing.at(i) << " owing) ";
+                        std::cout << itemNames.at(i) << " ---- ";
                         if(inventory[PLACE_INVENTORY_MARKET].cargo.count(i) > 0)
                             std::cout << inventory[PLACE_INVENTORY_MARKET].cargo.at(i);
                         else
                             std:: cout << "None";
                         std::cout << " remains." <<  std::endl;
-
+#endif
                         /// increase contentment here
 
                     }
-                    else // consumptionQuantityInteger > inventory[PLACE_INVENTORY_MARKET].at((*it).first))
+                    else // maintainenceComsumptionQuantityInteger > inventory[PLACE_INVENTORY_MARKET].at((*it).first))
                     {
                         /// consume remainder here and set decimal to zero
-                        std::cout << placeNames.at(placeIdentity) <<  " has insufficient " << itemNames.at(i) << " to meet consumption! ---- Need " << consumptionQuantityInteger << "; "<< inventory[PLACE_INVENTORY_MARKET].cargo.at(i) << " in stock! (Debug: con int > stock)" << std::endl;
+#ifdef debug_output_place_progress_maintainence_consumption
+                        std::cout << placeNames.at(placeIdentity) <<  " has insufficient " << itemNames.at(i) << " to meet consumption! ---- Need ";
+                        std::cout << << maintainenceConsumptionQuantityInteger << "; ";
+                        std::cout << inventory[PLACE_INVENTORY_MARKET].cargo.at(i) << " in stock! (Debug: con int > stock)" << std::endl;
+#endif
                         /// decrease contentment here
                         /// cout contement increased by so and so.
 
@@ -331,45 +282,83 @@ void Place::ProgressConsumption()
                 else // inventory[PLACE_INVENTORY_MARKET].cargo.count((*it).first) <= 0
                 {
                     /// consume remainder here and set decimal to zero
-                    std::cout << placeNames.at(placeIdentity) <<  " has insufficient " << itemNames.at(i) << " to meet consumption! ---- Need " << consumptionQuantityInteger << "; none in stock! (Debug: Map index not present)" << std::endl;
+#ifdef debug_output_place_progress_maintainence_consumption
+                    std::cout << placeNames.at(placeIdentity) <<  " has insufficient " << itemNames.at(i) << " to meet consumption! ---- Need ";
+                    std::cout << maintainenceConsumptionQuantityInteger << "; none in stock! (Debug: Map index not present)" << std::endl;
+#endif
                     /// decrease contentment here
                     /// cout contement increased by so and so.
                 }
 
-                consumptionTimer.at(i) = 0;
+                maintainenceConsumptionTimer.at(i) = 0;
 
             }
         }
     }
 }
 
-void Place::UpdateSurplusRatio(unsigned whichItem)
+float Place::CalculateIndustrialConsumptionQuantityDaily(unsigned whichItem)
 {
-    if(inventory[PLACE_INVENTORY_MARKET].cargo.count(whichItem) > 0)
-        surplusRatio.at(whichItem) = inventory[PLACE_INVENTORY_MARKET].cargo.at(whichItem) / (CalculateConsumptionQuantity(whichItem)*resourceSecurityFactor);
-    else
-        surplusRatio.at(whichItem) = 0;
+    float result = 0; // Warning: This must not be zero, or surplus ratio will become infinite through division by zero
+
+    for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
+    {
+        for(std::map<unsigned,float>::iterator jt = (*it)->inputs.begin(); jt != (*it)->inputs.end(); ++jt)
+        {
+            if((*jt).first == whichItem)
+                result += (*it)->productionPerTick*HOURS_PER_DAY/(*it)->productionToComplete * (*jt).second;
+        }
+    }
+
+#ifdef debug_output_place_calculate_and_draw_consumption
+    if(result > 0)
+        std::cout << "Daily industrial consumption of " << itemNames.at(whichItem) << " at " << placeNames.at(placeIdentity) << ": " << result << " per day." << std::endl;
+#endif
+
+    return result;
 }
 
-void Place::UpdateDeficitRatio(unsigned whichItem)
+void Place::UpdateIndustrialConsumptionQuantityDaily(unsigned whichItem)
 {
-    if(inventory[PLACE_INVENTORY_MARKET].cargo.count(whichItem) > 0)
-    {
-        if(consumptionQuantity.at(whichItem) == (-1))
-            deficitRatio.at(whichItem) = 0;
-        else
-            deficitRatio.at(whichItem) = (CalculateConsumptionQuantity(whichItem)*resourceSecurityFactor) / inventory[PLACE_INVENTORY_MARKET].cargo.at(whichItem);
-    }
-    else
-        deficitRatio.at(whichItem) = resourceSecurityFactor;
+    industrialConsumptionQuantityDaily.at(whichItem) = CalculateIndustrialConsumptionQuantityDaily(whichItem);
 }
+
 
 void Place::UpdateSurplusAndDeficitRatios(unsigned whichItem)
 {
-    UpdateSurplusRatio(whichItem);
-    UpdateDeficitRatio(whichItem);
-}
+    float result = 0.0;
+    float dailyMC = maintainenceConsumptionQuantityOnTick.at(whichItem) * (HOURS_PER_DAY / maintainenceConsumptionTimerThreshold.at(whichItem));
+    float dailyIC = industrialConsumptionQuantityDaily.at(whichItem);
+    if(inventory[PLACE_INVENTORY_MARKET].cargo.count(whichItem) > 0)
+    {
+        /// buggy af - revise
+        if(dailyMC > 0) // prevents division by zero
+        {
+            result += inventory[PLACE_INVENTORY_MARKET].cargo.at(whichItem) / dailyMC;
+            result -= maintainenceSecurityFactor;
+        }
 
+        if(dailyIC > 0) // prevents division by zero
+        {
+            result += inventory[PLACE_INVENTORY_MARKET].cargo.at(whichItem) / dailyIC;
+            result -= industrialSecurityFactor;
+        }
+
+
+    }
+    else // ! (inventory[PLACE_INVENTORY_MARKET].cargo.count(whichItem) > 0)
+    {
+        /// Buggy af - revise
+        if(dailyMC > 0) // Prevents a situation where result is reduced by maintainence security on an item that nobody even cares to consume.
+            result -= maintainenceSecurityFactor;
+
+        if(dailyIC > 0)
+            result -= industrialSecurityFactor;
+    }
+
+    surplusRatio.at(whichItem) = result;
+    deficitRatio.at(whichItem) = surplusRatio.at(whichItem) * (-1);
+}
 
 void Place::UpdateSurplusesTopSeven()
 {
@@ -388,8 +377,8 @@ void Place::UpdateSurplusesTopSeven()
     // Store the indices of the seven highest values (or fewer if there are fewer than seven)
     for (int i = 0; i < std::min(static_cast<int>(surplusRatio.size()-1), 7); i++)
     {
-        // Don't store surpluses less than 1. Those are deficits.
-        if(surplusRatio[indices[i]] > 1)
+        // Don't store surpluses less than 0. Those are deficits.
+        if(surplusRatio[indices[i]] > 0)
             surplusesTopSeven.push_back(indices[i]);
     }
 
@@ -413,8 +402,8 @@ void Place::UpdateDeficitsTopSeven()
     // Store the indices of the seven highest values (or fewer if there are fewer than seven)
     for (int i = 0; i < std::min(static_cast<int>(deficitRatio.size()-1), 7); i++)
     {
-        // Don't store deficits less than 1. Those are surpluses.
-        if(deficitRatio[indices[i]] > 1)
+        // Don't store deficits less than 0. Those are surpluses.
+        if(deficitRatio[indices[i]] > 0)
             deficitsTopSeven.push_back(indices[i]);
     }
 
@@ -464,28 +453,26 @@ void Place::TransferInventoryStock(unsigned sourceInv, unsigned destInv, int a, 
 
 void Place::AddInitialStock()
 {
-    for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
-    {
-        for(std::map<int,float>::iterator jt = (*it)->inputs.begin(); jt != (*it)->inputs.end(); ++jt)
-            AddInventoryStock(PLACE_INVENTORY_MARKET, (*jt).first, (*jt).second*2);
-        ///AddInventoryStock(PLACE_INVENTORY_INDUSTRIAL, (*jt).first, (*jt).second*2);
-
-        for(std::map<int,float>::iterator kt = (*it)->outputs.begin(); kt != (*it)->outputs.end(); ++kt)
-            AddInventoryStock(PLACE_INVENTORY_MARKET, (*kt).first, (*kt).second*1);
-        ///AddInventoryStock(PLACE_INVENTORY_RESERVE, (*kt).first, (*kt).second*1);
-    }
-
     for (unsigned i = IT_MARKER_FIRST; i <= IT_MARKER_LAST; i++)
     {
         for (std::map<int, unsigned>::iterator it = population.begin(); it != population.end(); ++it)
         {
             if(population.count((*it).second) > 0)
             {
-                float toAdd = economyRoleMaintainenceConsumptionQuantity.at(i).at((*it).first) * population.at((*it).second) * 4; /// Instead of consumption * 4, should give enough consumption for 30 days' maintainence or something.
+                float toAdd = economyRoleMaintainenceConsumptionQuantity.at(i).at((*it).first) * population.at((*it).second) * 2; // Arbitrary 1 here.
                 if (toAdd >= 1)
                     AddInventoryStock(PLACE_INVENTORY_MARKET, i, toAdd); // Truncates, of course.
             }
         }
+    }
+
+    for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
+    {
+        for(std::map<unsigned,float>::iterator jt = (*it)->inputs.begin(); jt != (*it)->inputs.end(); ++jt)
+            AddInventoryStock(PLACE_INVENTORY_MARKET, (*jt).first, (*jt).second* 2);
+
+        for(std::map<unsigned,float>::iterator kt = (*it)->outputs.begin(); kt != (*it)->outputs.end(); ++kt)
+            AddInventoryStock(PLACE_INVENTORY_MARKET, (*kt).first, (*kt).second* 2); // The multiplier here is just arbitrary. It could be, say, 2.
     }
 }
 
@@ -681,7 +668,7 @@ void Place::DrawCitizensBubble()
                               COL_INDIGO,
                               4);
 
-    al_draw_text(builtin,COL_BLACK,citizensBubbleDrawX, citizensBubbleDrawY-bubblePadding-8, ALLEGRO_ALIGN_LEFT, "Citizen Caravans:");
+    string_al_draw_text(builtin,COL_BLACK,citizensBubbleDrawX, citizensBubbleDrawY-bubblePadding-8, ALLEGRO_ALIGN_LEFT, citizensBubbleLabel);
 
     if(citizenCaravans.size() > 0)
     {
@@ -773,24 +760,48 @@ void Place::DrawSurplusBubble()
                               bubbleCornerRadius, bubbleCornerRadius,
                               COL_INDIGO, 4);
 
-    unsigned j = 0;
+    unsigned drawRow = 0;
     for(std::vector<int>::iterator it = surplusesTopSeven.begin(); it != surplusesTopSeven.end(); ++it)
     {
 
-            al_draw_bitmap_region(cargoPng,
-                                  (*it)*TILE_W, 0,
-                                  TILE_W,TILE_H,
-                                  surplusBubbleDrawX,surplusBubbleDrawY + TILE_H*j, 0);
+        al_draw_bitmap_region(cargoPng,
+                              (*it)*TILE_W, 0,
+                              TILE_W,TILE_H,
+                              surplusBubbleDrawX,surplusBubbleDrawY + TILE_H*drawRow, 0);
 
-            std::stringstream roundedText;
-            roundedText << std::fixed << std::setprecision(3) << surplusRatio.at(*it); // Rounded to 4 decimal places
+        std::stringstream roundedSurplusRatio;
+        roundedSurplusRatio << std::fixed << std::setprecision(2) << surplusRatio.at(*it); // Rounded to 2 decimal places
 
-            string_al_draw_text(builtin,COL_GREEN,
-                                surplusBubbleDrawX + TILE_W*1.125,
-                                surplusBubbleDrawY + TILE_H*j + TILE_H/2 - BUILTIN_TEXT_HEIGHT/2,
-                                ALLEGRO_ALIGN_LEFT,roundedText.str());
 
-            j++;
+#ifdef debug_output_place_calculate_and_draw_consumption
+        string_al_draw_text(builtin,COL_GREEN,
+                            surplusBubbleDrawX + TILE_W*1.125,
+                            surplusBubbleDrawY + TILE_H*drawRow,
+                            ALLEGRO_ALIGN_LEFT,roundedSurplusRatio.str());
+
+        float dailyMC = maintainenceConsumptionQuantityOnTick.at(*it) * (HOURS_PER_DAY / maintainenceConsumptionTimerThreshold.at(*it));
+        std::stringstream roundedDailyMC;
+        roundedDailyMC << std::fixed << std::setprecision(2) << dailyMC;
+        string_al_draw_text(builtin,COL_GREEN,
+                            surplusBubbleDrawX + TILE_W*1.125,
+                            surplusBubbleDrawY + TILE_H*drawRow + BUILTIN_TEXT_HEIGHT,
+                            ALLEGRO_ALIGN_LEFT, "MC " + roundedDailyMC.str());
+
+        float dailyIC = industrialConsumptionQuantityDaily.at(*it);
+        std::stringstream roundedDailyIC;
+        roundedDailyIC << std::fixed << std::setprecision(2) << dailyIC;
+        string_al_draw_text(builtin,COL_GREEN,
+                            surplusBubbleDrawX + TILE_W*1.125,
+                            surplusBubbleDrawY + TILE_H*drawRow + BUILTIN_TEXT_HEIGHT*2,
+                            ALLEGRO_ALIGN_LEFT, "IC " + roundedDailyIC.str());
+#else
+        string_al_draw_text(builtin,COL_GREEN,
+                            surplusBubbleDrawX + TILE_W*1.125,
+                            surplusBubbleDrawY + TILE_H*drawRow + TILE_H/2 - BUILTIN_TEXT_HEIGHT/2,
+                            ALLEGRO_ALIGN_LEFT,roundedText.str());
+
+#endif
+        drawRow++;
     }
 
     string_al_draw_text(builtin, COL_BLACK, surplusBubbleDrawX, surplusBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, surplusBubbleLabel);
@@ -817,20 +828,43 @@ void Place::DrawDeficitBubble()
     for(std::vector<int>::iterator it = deficitsTopSeven.begin(); it != deficitsTopSeven.end(); ++it)
     {
 
-            al_draw_bitmap_region(cargoPng,
-                                  (*it)*TILE_W, 0,
-                                  TILE_W,TILE_H,
-                                  deficitBubbleDrawX, deficitBubbleDrawY + TILE_H*drawRow, 0);
+        al_draw_bitmap_region(cargoPng,
+                              (*it)*TILE_W, 0,
+                              TILE_W,TILE_H,
+                              deficitBubbleDrawX, deficitBubbleDrawY + TILE_H*drawRow, 0);
 
-            std::stringstream roundedText;
-            roundedText << std::fixed << std::setprecision(3) << deficitRatio.at(*it); // Rounded to 4 decimal places
+        std::stringstream roundedSurplusRatio;
+        roundedSurplusRatio << std::fixed << std::setprecision(2) << surplusRatio.at(*it); // Rounded to 2 decimal places
 
-            string_al_draw_text(builtin,COL_RED,
-                                deficitBubbleDrawX + TILE_W*1.125,
-                                deficitBubbleDrawY + TILE_H*drawRow + TILE_W/2 - BUILTIN_TEXT_HEIGHT/2,
-                                ALLEGRO_ALIGN_LEFT, roundedText.str());
 
-            drawRow++;
+#ifdef debug_output_place_calculate_and_draw_consumption
+        string_al_draw_text(builtin,COL_RED,
+                            deficitBubbleDrawX + TILE_W*1.125,
+                            deficitBubbleDrawY + TILE_H*drawRow,
+                            ALLEGRO_ALIGN_LEFT, roundedSurplusRatio.str());
+
+        std::stringstream roundedDailyMC;
+        roundedDailyMC << std::fixed << std::setprecision(2) << maintainenceConsumptionQuantityOnTick.at(*it) * (HOURS_PER_DAY / maintainenceConsumptionTimerThreshold.at(*it));
+        string_al_draw_text(builtin,COL_RED,
+                            deficitBubbleDrawX + TILE_W*1.125,
+                            deficitBubbleDrawY + TILE_H*drawRow + BUILTIN_TEXT_HEIGHT,
+                            ALLEGRO_ALIGN_LEFT, "MC " + roundedDailyMC.str());
+
+        float dailyIC = industrialConsumptionQuantityDaily.at(*it);
+        std::stringstream roundedDailyIC;
+        roundedDailyIC << std::fixed << std::setprecision(2) << dailyIC;
+        string_al_draw_text(builtin,COL_RED,
+                            deficitBubbleDrawX + TILE_W*1.125,
+                            deficitBubbleDrawY + TILE_H*drawRow + BUILTIN_TEXT_HEIGHT*2,
+                            ALLEGRO_ALIGN_LEFT, "IC " + roundedDailyIC.str());
+#else
+        string_al_draw_text(builtin,COL_RED,
+                            deficitBubbleDrawX + TILE_W*1.125,
+                            deficitBubbleDrawY + TILE_H*drawRow + TILE_W/2 - BUILTIN_TEXT_HEIGHT/2,
+                            ALLEGRO_ALIGN_LEFT, roundedText.str());
+
+#endif
+        drawRow++;
 
     }
 

@@ -392,7 +392,7 @@ void ProgressWorld()
             if(hourChangeTick)
             {
                 ((*it).second)->ProgressProduction();
-                ((*it).second)->ProgressConsumption();
+                ((*it).second)->ProgressMaintainenceConsumption();
 
                 ((*it).second)->UpdateSurplusesTopSeven();
                 ((*it).second)->UpdateDeficitsTopSeven();
