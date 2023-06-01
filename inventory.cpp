@@ -10,7 +10,7 @@ Inventory::~Inventory()
 
 }
 
-void Inventory::SetStock(int a, int b)
+void Inventory::SetStock(int a, float b)
 {
     cargo[a] = b;
 
@@ -18,7 +18,7 @@ void Inventory::SetStock(int a, int b)
         cargo.erase(a);
 }
 
-void Inventory::AddStock(int a, int b)
+void Inventory::AddStock(int a, float b)
 {
     if(cargo.count(a) == 0) // Probably unnecessary, but whatever
         cargo[a] = 0;
@@ -26,7 +26,7 @@ void Inventory::AddStock(int a, int b)
     cargo[a] += b;
 }
 
-void Inventory::RemoveStock(int a, int b)
+void Inventory::RemoveStock(int a, float b)
 {
 // It doesn't check if b is more than cargo[a], so do your checking before calling RemoveStock
 

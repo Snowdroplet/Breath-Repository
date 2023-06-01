@@ -70,8 +70,8 @@ public:
 
     std::array<float, IT_MARKER_LAST+1>surplusRatio;
     std::array<float, IT_MARKER_LAST+1>deficitRatio;
-    std::vector<int>surplusesTopSeven;
-    std::vector<int>deficitsTopSeven;
+    std::vector<int>surplusesTopTen;
+    std::vector<int>deficitsTopTen;
 
 /// Economy - Inventory
     std::array<Inventory, PLACE_INVENTORY_MARKER_LAST+1>inventory;
@@ -87,7 +87,9 @@ public:
     std::array<int,IT_MARKER_LAST+1>maintainenceConsumptionTimer; // When this increases to threshold, it's time for a consumption tick
     std::array<int,IT_MARKER_LAST+1>maintainenceConsumptionTimerThreshold;
     std::array<float,IT_MARKER_LAST+1>maintainenceConsumptionQuantityOnTick; // How much of a resource is consumed during a consumption tick
-    std::array<float,IT_MARKER_LAST+1>maintainenceConsumptionDecimalOwing; // The decimal remainder of consumption quantity, to be carried over to the next tick. (Can only consume whole units)
+    //std::array<float,IT_MARKER_LAST+1>maintainenceConsumptionDecimalOwing; // The decimal remainder of consumption quantity, to be carried over to the next tick. (Can only consume whole units)
+
+    std::array<float,IT_MARKER_LAST+1>maintainenceConsumptionQuantityDaily;
 
     const std::array<unsigned, LIVING_MARKER_LAST+1>maintainenceConsumptionTierSecurityThreshold = { /*Destitute:*/ 0, /*Poor*/ 1, /*confortable*/ 3, /*wealthy*/ 5, /*profligate*/ 10};
     std::array<int, IT_MARKER_LAST+1>maintainenceConsumptionTier;
@@ -118,7 +120,7 @@ public:
 /// Bubbles -- Citizen Caravans
     const std::string citizensBubbleLabel = "Associated Caravans";
     const float citizensBubbleDrawX = SCREEN_W*33/40;
-    const float citizensBubbleDrawY = SCREEN_H*24/40;
+    const float citizensBubbleDrawY = SCREEN_H*28/40;
     const float citizensBubbleWidth = TILE_W*6; // + bubblePadding;
     const unsigned citizensBubbleBaseRows = 1;
     unsigned citizensBubbleNumRows;
@@ -166,7 +168,7 @@ public:
     const std::string industriesBubbleLabel = "Local Industries";
     const std::string industriesBubbleEmptyText = "<No industries>";
     const float industriesBubbleDrawX = SCREEN_W*26/40;
-    const float industriesBubbleDrawY = SCREEN_H*24/40;
+    const float industriesBubbleDrawY = SCREEN_H*28/40;
     const float industriesBubbleRowSpacing = 4; // Arbitrary gap
     const float industriesBubbleWidth = TILE_W*6; //+ bubblePadding;
     float industriesBubbleHeight;
@@ -191,13 +193,16 @@ public:
 
 /// Economy functions -- Main functions
     void UpdateSurplusAndDeficitRatios(unsigned whichItem);
-    void UpdateSurplusesTopSeven();
-    void UpdateDeficitsTopSeven();
+    void UpdateSurplusesTopTen();
+    void UpdateDeficitsTopTen();
 
 /// Economy functions -- Maintainence consumption
 private:
     float CalculateMaintainenceConsumptionQuantityOnTick(unsigned whichItem);
     void UpdateMaintainenceConsumptionQuantityOnTick(unsigned whichItem);
+
+    float CalculateMaintainenceConsumptionQuantityDaily(unsigned whichItem);
+    void UpdateMaintainenceConsumptionQuantityDaily(unsigned whichItem);
 
     void UpdateMaintainenceConsumptionTier();
 public:
@@ -218,10 +223,10 @@ public:
 
 /// Inventory functions
 private:
-    void AddInventoryStock(unsigned whichInventory, int a, int b);
-    void RemoveInventoryStock(unsigned whichInventory, int a, int b);
-    void SetInventoryStock(unsigned whichInventory, int a, int b);
-    void TransferInventoryStock(unsigned sourceInv, unsigned destInv, int a, int b);
+    void AddInventoryStock(unsigned whichInventory, int a, float b);
+    void RemoveInventoryStock(unsigned whichInventory, int a, float b);
+    void SetInventoryStock(unsigned whichInventory, int a, float b);
+    void TransferInventoryStock(unsigned sourceInv, unsigned destInv, int a, float b);
     void AddInitialStock();
 
 /// Bubble functions
