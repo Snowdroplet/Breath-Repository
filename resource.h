@@ -38,6 +38,8 @@ extern ALLEGRO_BITMAP *expertiseIconPng;
 extern ALLEGRO_BITMAP *miniCargoPng;
 extern ALLEGRO_BITMAP *cargoPng;
 
+extern ALLEGRO_BITMAP *consumptionTierIcon;
+
 extern ALLEGRO_BITMAP *redArrowPng;
 extern ALLEGRO_BITMAP *redTransparentXPng;
 

@@ -5,15 +5,15 @@
 #include "inventoryindex.h"
 #include "industryindex.h"
 
-/// Components of value:
-//std::map<int,float>inputValue;
-//std::map<int,float>labourValue;
+class Economy
+{
+public:
 
-//std::map<int,float>value;
 
-//void EvaluateInputValue();
-//void EvaluateLabourValue();
-//void EvaluateValue();
+    Economy();
+    ~Economy();
+};
+
 
 
 

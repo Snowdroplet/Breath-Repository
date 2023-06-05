@@ -5,17 +5,23 @@ std::vector<Caravan*> Caravan::caravans;
 Caravan::Caravan()
 {
     SetActive(true);
+    caravanLeader = nullptr;
+    hometownPointer = nullptr;
 
     worldGraph.SetToBaseGraph();
 
-    onReturnTrip = false;
-
     atPlace = false;
+    atHome = false;
     onRoad = false;
+
     whichPlace = nullptr;
     whichRoad = nullptr;
 
+    cargoWeight = 0;
+    cargoWeightMax = 100;
+
     UpdateInventoryBubble();
+
 }
 
 Caravan::~Caravan()
@@ -32,6 +38,12 @@ Caravan::~Caravan()
 void Caravan::SetActive(bool a)
 {
     active = a;
+}
+
+void Caravan::SetHometown(int id)
+{
+    hometownID = id;
+    hometownPointer = Place::places.at(id);
 }
 
 void Caravan::UpdateOverworldPosition()
@@ -89,38 +101,29 @@ void Caravan::OverworldLogic()
         {
             if(worldGraph.path.size() <= 1) // The last remaining node will be the destination - I can't call clear() worldGraph.path prematurely, but whatever.
             {
-#ifdef debug_output_worldgraph_dijkstra
-                std::cout << "Worldgraph path empty. " << std::endl;
-#endif
-                if(onReturnTrip)
-                    pathfindingDestination = caravanLeader->hometown;
-                else // not onReturnTrip
-                    pathfindingDestination = rand()%(PL_MARKER_LAST-PL_MARKER_FIRST +1) + PL_MARKER_FIRST;
-#ifdef debug_output_worldgraph_dijkstra
-                std::cout << "Random destination set to " << placeNames.at(pathfindingDestination) << std::endl;
-#endif
+                //std::cout << "Worldgraph path empty. " << std::endl;
+
+                if(tradeMission.onReturnTrip)
+                    pathfindingDestination = hometownID;
+                else // not onReturnTrip -- i.e. leaving hometown on a mission
+                {
+                    pathfindingDestination = tradeMission.tradeDestination;
+                    //std::cout << "Random destination set to " << placeNames.at(pathfindingDestination) << std::endl;
+                }
+
                 if(pathfindingDestination != whichPlace->placeIdentity)
                 {
-                    worldGraph.Dijkstra(whichPlace->placeIdentity,pathfindingDestination);
-#ifdef debug_output_worldgraph_dijkstra
-                    std::cout << std::endl;
-#endif
+                    worldGraph.Dijkstra(whichPlace->placeIdentity,pathfindingDestination); // This also overwrites the path with that last remaining element at index 0.
+                    //std::cout << std::endl;
                 }
-                else
-                {
-#ifdef debug_output_worldgraph_dijkstra
-                    std::cout << "No need to pathfind." << std::endl;
-#endif
-                }
+
             }
             else // !worldGraph.path.empty()
             {
                 worldGraph.path.erase(worldGraph.path.begin());
 
                 int nextPlaceOnPath = worldGraph.path[0];
-#ifdef debug_output_worldgraph_dijkstra
-                std::cout << "NextPlaceOnPath is " << placeNames.at(worldGraph.path[0]) << std::endl;
-#endif
+                //std::cout << "NextPlaceOnPath is " << placeNames.at(worldGraph.path[0]) << std::endl;
 
                 for(std::vector<Road*>::iterator it = whichPlace->connections.begin(); it != whichPlace->connections.end(); ++it)
                 {
@@ -157,12 +160,20 @@ void Caravan::MoveToPlace(Place *p)
     whichPlace = p;
     p->AddToCaravanserai(this);
 
-    if(whichPlace->placeIdentity == caravanLeader->hometown)
-        onReturnTrip = false;
-    else if(whichPlace->placeIdentity == pathfindingDestination)
-        onReturnTrip = true;
+    if(whichPlace == hometownPointer)
+    {
+        if(tradeMission.onReturnTrip) // prevents Caravan from being instantly unloaded after first mission after generation is issued
+            tradeMission.missionComplete = true;
+
+        tradeMission.onReturnTrip = false;
+        atHome = true;
+    }
+    else
+        if(whichPlace->placeIdentity == pathfindingDestination)
+            tradeMission.onReturnTrip = true;
 
     onRoad = false;
+    whichRoad = nullptr;
     atRoadsEnd = false;
 
     currentTimeAtPlace = 0;
@@ -171,7 +182,8 @@ void Caravan::MoveToPlace(Place *p)
     overworldXPosition = p->overworldXPosition;
     overworldYPosition = p->overworldYPosition;
 
-    caravanLeader->facingLeft = false;
+    if(caravanLeader != nullptr)
+        caravanLeader->facingLeft = false;
 
 }
 
@@ -182,6 +194,9 @@ void Caravan::MoveToRoad(Road *r, bool isReverseRoad)
         whichPlace->RemoveFromCaravanserai(this);
 
     atPlace = false;
+    // Do *not* whichPlace = nullptr; as it will cause a crash when iterating through whichPlace->connections in OverworldLogic()
+
+    atHome = false;
 
     onRoad = true;
     whichRoad = r;
@@ -360,19 +375,19 @@ void Caravan::DrawInventoryBubble()
 void Caravan::DrawPathfindingBubble()
 {
     al_draw_filled_rounded_rectangle(pathfindingBubbleDrawX - bubblePadding,
-                                         pathfindingBubbleDrawY - bubblePadding,
-                                         pathfindingBubbleDrawX + pathfindingBubbleWidth + bubblePadding,
-                                         pathfindingBubbleDrawY + pathfindingBubbleHeight + bubblePadding,
-                                         bubbleCornerRadius,
-                                         bubbleCornerRadius,
-                                         COL_DARK_WHITE);
+                                     pathfindingBubbleDrawY - bubblePadding,
+                                     pathfindingBubbleDrawX + pathfindingBubbleWidth + bubblePadding,
+                                     pathfindingBubbleDrawY + pathfindingBubbleHeight + bubblePadding,
+                                     bubbleCornerRadius,
+                                     bubbleCornerRadius,
+                                     COL_DARK_WHITE);
 
-        al_draw_rectangle(pathfindingBubbleDrawX - bubblePadding,
-                          pathfindingBubbleDrawY - bubblePadding,
-                          pathfindingBubbleDrawX + pathfindingBubbleWidth + bubblePadding,
-                          pathfindingBubbleDrawY + pathfindingBubbleHeight + bubblePadding,
-                          COL_INDIGO,
-                          4);
+    al_draw_rectangle(pathfindingBubbleDrawX - bubblePadding,
+                      pathfindingBubbleDrawY - bubblePadding,
+                      pathfindingBubbleDrawX + pathfindingBubbleWidth + bubblePadding,
+                      pathfindingBubbleDrawY + pathfindingBubbleHeight + bubblePadding,
+                      COL_INDIGO,
+                      4);
 
     if(!worldGraph.path.empty())
     {

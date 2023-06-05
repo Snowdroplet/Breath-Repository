@@ -396,6 +396,7 @@ void ProgressWorld()
 
                 ((*it).second)->UpdateSurplusesTopTen();
                 ((*it).second)->UpdateDeficitsTopTen();
+                ((*it).second)->ProgressTradeMissions();
             }
 
             /*
@@ -707,6 +708,7 @@ void InitObjects()
     Being::people.push_back(player);
     */
 
+    /*
     for(unsigned i = 0; i < Caravan::caravans.size(); i++)
     {
         for(unsigned j = 0; j < rand()%((unsigned)3+1); j++)
@@ -715,9 +717,8 @@ void InitObjects()
             unsigned quanitity = rand()%9 + 1;
             Caravan::caravans[i]->AddInventoryStock(item,quanitity);
         }
-
-
     }
+    */
 
 }
 

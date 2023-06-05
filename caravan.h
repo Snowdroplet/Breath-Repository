@@ -11,6 +11,7 @@
 #include "road.h"
 #include "place.h"
 #include "worldgraph.h"
+#include "tradeMission.h"
 
 /// Dependencies
 class Place; // Circular
@@ -22,6 +23,9 @@ public:
 
 /// State
     bool active;
+    int hometownID;
+    Place*hometownPointer;
+
 /// Roster
     std::vector<Being*>members;
     Being*caravanLeader;
@@ -30,17 +34,14 @@ public:
     WorldGraph worldGraph;
     int pathfindingDestination; /// Later modify to support multiple objectives in a priority queue.
 /// Objectives: Recruiting
-    std::map<int,int>recruitingQualifications;
-/// Objectives: Purchasing
-
-/// Objectives:
-    bool onReturnTrip;
-
-/// Objectives: Investment
+    //RecruitingMission recruitingMission;
+/// Objectives: Trading
+    TradeMission tradeMission;
 
 /// Location
     bool atPlace;
     Place *whichPlace;
+    bool atHome;
     bool onRoad; // As opposed to at a city or other landmark, for overworld drawing purposes.
     Road *whichRoad;
     bool reverseRoad;
@@ -65,7 +66,7 @@ public:
 
 /// Inventory
     Inventory inventory;
-    float weight, maxWeight;
+    float cargoWeight, cargoWeightMax; // Just have everything weigh 1 for now.
 
 /// Bubbles
     const float bubblePadding = TILE_W/4;
@@ -100,6 +101,11 @@ public:
     //void SwapLeader(Being *b);
 /// State functions
     void SetActive(bool a);
+    void SetHometown(int which);
+
+/// Mission, trade and movement
+    void OverworldLogic();
+
 /// Location functions
     void UpdateTravelSpeed();
     void MoveToPlace(Place *p);
@@ -108,7 +114,6 @@ public:
 
     void UpdateOverworldPosition();
 
-    void OverworldLogic();
 /// Inventory functions
     void AddInventoryStock(int a, float b);
     void RemoveInventoryStock(int a, float b);

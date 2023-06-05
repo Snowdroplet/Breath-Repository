@@ -25,6 +25,8 @@ ALLEGRO_BITMAP *skillSquarePng;
 ALLEGRO_BITMAP *miniCargoPng;
 ALLEGRO_BITMAP *cargoPng;
 
+ALLEGRO_BITMAP *consumptionTierIcon;
+
 ALLEGRO_BITMAP *redArrowPng;
 ALLEGRO_BITMAP *redTransparentXPng;
 
@@ -66,6 +68,8 @@ void LoadResources()
     miniCargoPng = al_load_bitmap("placeholderMiniCargo.png");
     cargoPng = al_load_bitmap("placeholderCargo.png");
 
+    consumptionTierIcon = al_load_bitmap("placeholderConsumptionTierIcon.png");
+
     redArrowPng = al_load_bitmap("placeholderRedArrow.png");
     redTransparentXPng = al_load_bitmap("placeholderRedTransparentX.png");
 }
@@ -105,6 +109,8 @@ void UnloadResources()
 
     al_destroy_bitmap(miniCargoPng);
     al_destroy_bitmap(cargoPng);
+
+    al_destroy_bitmap(consumptionTierIcon);
 
     al_destroy_bitmap(redArrowPng);
     al_destroy_bitmap(redTransparentXPng);

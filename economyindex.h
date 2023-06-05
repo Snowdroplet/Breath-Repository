@@ -48,7 +48,6 @@ const std::map<int, std::array<float, EXP_MARKER_LAST+1>>economyRoleMaintainence
 {
 //EXP_COMMON = 0, EXP_HUNT = 1, EXP_FARM = 2, EXP_MINE = 3, EXP_ALCHEMY = 4, EXP_SORCERY = 5, EXP_CRAFT = 6, EXP_MECHANICS = 7
 //                      Com  Hunt  Farm  Mine  Alch   Sorc  Cra   Mech
-/// Beware that entries cannot be less than 1.
     {IT_MEAT,        {   1,  1.5,  1.5,  1.5,    1,    1,    1,    1}},
     {IT_COLD_BREATH, {0.01,    1, 0.01, 0.01, 0.01,    1, 0.01, 0.01}},
     {IT_CONTRACT,    {0.01,  0.5, 0.01, 0.01,    1,    2,  0.5,  0.5}},

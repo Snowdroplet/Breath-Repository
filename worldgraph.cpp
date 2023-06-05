@@ -45,6 +45,7 @@ void WorldGraph::Dijkstra(int source, int destination)
 {
     path.clear();
 
+  //std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<>> priorityQueue;
     std::priority_queue<std::pair<int,float>, std::vector<std::pair<int,float>>, std::greater<>> priorityQueue;
     std::map<int,float> distances;
     std::map<int,int> previous;
@@ -69,12 +70,7 @@ void WorldGraph::Dijkstra(int source, int destination)
         }
 
         visitedVertices.insert(currentVertex);
-/*
-        if (currentVertex == destination)
-        {
-            break;
-        }
-*/
+
         for (const auto& neighbor : graph.at(currentVertex))
         {
             int neighborVertex = neighbor.first;
