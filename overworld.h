@@ -28,8 +28,8 @@ extern float overworldCameraYPosition;
 extern int overworldCameraXSensitivity;
 extern int overworldCameraYSensitivity;
 
-const float OVERWORLD_W = 1280;
-const float OVERWORLD_H = 1280;
+const float OVERWORLD_W = 10240;
+const float OVERWORLD_H = 10240;
 
 const int OVERWORLD_MIN_DRAW_X = 0 - TILE_W*2;
 const int OVERWORLD_MIN_DRAW_Y = 0 - TILE_H*2;

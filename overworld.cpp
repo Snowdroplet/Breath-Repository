@@ -6,8 +6,8 @@ Place *overworldCameraPlace = nullptr;
 bool overworldCameraLockedOnCaravan = false;
 Caravan *overworldCameraCaravan = nullptr;
 
-float overworldCameraXPosition = OVERWORLD_W/2 - SCREEN_W/2;
-float overworldCameraYPosition = OVERWORLD_H/2 - SCREEN_H/2;
+float overworldCameraXPosition = 0;
+float overworldCameraYPosition = 0;
 
 int overworldCameraXSensitivity = 4;
 int overworldCameraYSensitivity = 4;
@@ -15,6 +15,7 @@ int overworldCameraYSensitivity = 4;
 void OverworldDrawGridUnderlay()
 {
 
+/*
     for(int i = 0; i <= OVERWORLD_W; i+= TILE_W) //Columns
     {
                 al_draw_line(i                -overworldCameraXPosition,
@@ -32,6 +33,32 @@ void OverworldDrawGridUnderlay()
                              i              -overworldCameraYPosition,
                              COL_DARK_GRAY,1);
     }
+*/
+
+    for(int x = 0; x <= SCREEN_W/TILE_W; x++) //Columns
+    {
+        int owcxp = overworldCameraXPosition;
+        int tw = TILE_W;
+
+                al_draw_line(x*TILE_W - owcxp%tw,
+                             0,
+                             x*TILE_W - owcxp%tw,
+                             SCREEN_H,
+                             COL_DARK_GRAY,1);
+    }
+
+    for(int y = 0; y <= SCREEN_H/TILE_W; y++) //Rows
+    {
+        int owcyp = overworldCameraYPosition;
+        int th = TILE_H;
+
+                al_draw_line(0,
+                             y*TILE_H - owcyp%th,
+                             SCREEN_W,
+                             y*TILE_H - owcyp%th,
+                             COL_DARK_GRAY,1);
+    }
+
 
     int crosshairXPosition = overworldCameraXPosition+SCREEN_W/2;
     int crosshairYPosition = overworldCameraYPosition+SCREEN_H/2;

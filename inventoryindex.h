@@ -9,9 +9,9 @@ const int IT_NONE = -1;
 enum enumItems
 {
     IT_MEAT = 0,
-    IT_COLD_BREATH = 1, IT_CONTRACT = 2, IT_SPELLBOOK = 3,
+    IT_ECTOPLASM = 1, IT_CONTRACT = 2, IT_SPELLBOOK = 3,
     IT_RICE = 4, IT_ALCOHOL = 5,
-    IT_MUSHROOMS = 6,
+    IT_CANDLECAP = 6,
     IT_HERBS = 7, IT_MEDICINE = 8,
     IT_SPICE = 9,
     IT_CLAY = 10, IT_POTTERY = 11,
@@ -23,10 +23,10 @@ const unsigned IT_MARKER_LAST = IT_AUTOMATON;
 
 const std::map<int,std::string>itemNames =
 {
-    {IT_MEAT, "Meat"},
-    {IT_COLD_BREATH, "Cold Breath"}, {IT_CONTRACT, "Contract"}, {IT_SPELLBOOK, "Spellbook"},
+    {IT_MEAT, "Beast Flesh"},
+    {IT_ECTOPLASM, "Ectoplasm"}, {IT_CONTRACT, "Contract"}, {IT_SPELLBOOK, "Spellbook"},
     {IT_RICE, "Rice"}, {IT_ALCOHOL, "Alcohol"},
-    {IT_MUSHROOMS, "Mushrooms"},
+    {IT_CANDLECAP, "Candlecap"},
     {IT_HERBS, "Herbs"}, {IT_MEDICINE, "Medicine"},
     {IT_SPICE, "Spice"},
     {IT_CLAY, "Clay"}, {IT_POTTERY, "Pottery"},
@@ -38,7 +38,7 @@ const std::map<int,std::string>itemNames =
 enum enumItems
 {
     // Plant Materials
-    IT_RICE, IT_ROOTS, IT_MUSHROOMS, IT_BERRIES, IT_NUTS, IT_HONEY,
+    IT_RICE, IT_ROOTS, IT_CANDLECAP, IT_BERRIES, IT_NUTS, IT_HONEY,
     IT_PAPYRUS, IT_JUTE, IT_RESIN, IT_ANCIENT_WOOD, IT_SPICE, IT_ETHER,
 
     // Mineral Materials
@@ -47,7 +47,7 @@ enum enumItems
     IT_OPAL, IT_METEORITE,
 
     // Beast Materials
-    IT_BEAST_BLOOD, IT_BEAST_FLESH, IT_BEAST_EGG,
+    IT_BEAST_BLOOD, IT_MEAT, IT_BEAST_EGG,
     IT_FEATHERS, IT_ECTOPLASM, IT_COLD_OIL,
     IT_PEARL, IT_IVORY, IT_SILK,
     IT_FUR, IT_SCALES, IT_CHITIN,

@@ -11,7 +11,8 @@
 #include "road.h"
 #include "place.h"
 #include "worldgraph.h"
-#include "tradeMission.h"
+#include "trademission.h"
+#include "traderecord.h"
 
 /// Dependencies
 class Place; // Circular
@@ -68,23 +69,35 @@ public:
     Inventory inventory;
     float cargoWeight, cargoWeightMax; // Just have everything weigh 1 for now.
 
+/// Trade records
+    std::vector<TradeRecord*>tradeRecords;
+    const unsigned tradeRecordsMaxElements = 9;
+
 /// Bubbles
     const float bubblePadding = TILE_W/4;
     const float bubbleCornerRadius = 8;
 
-    const float inventoryBubbleDrawX = SCREEN_W*8/40;
-    const float inventoryBubbleDrawY = SCREEN_H*10/40;
+    const float inventoryBubbleDrawX = SCREEN_W*1/40;
+    const float inventoryBubbleDrawY = SCREEN_H*9/40;
     const float inventoryBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
-    const float inventoryBubbleBaseCols = 5;
+    const float inventoryBubbleBaseCols = 6;
     const float inventoryBubbleBaseRows = 1;
     unsigned inventoryBubbleNumCols;
     unsigned inventoryBubbleNumRows;
     float inventoryBubbleWidth, inventoryBubbleHeight;
 
+    const float tradeRecordsBubbleDrawX = SCREEN_W*1/40;
+    const float tradeRecordsBubbleDrawY = SCREEN_H*15/40;
+    const float tradeRecordsBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
+    const float tradeRecordsBubbleBaseRows = 1;
+    const float tradeRecordsBubbleWidth = TILE_W*6;
+    unsigned tradeRecordsBubbleNumRows;
+    float tradeRecordsBubbleHeight;
+
     const float pathfindingBubbleColSpacing = TILE_W;
     const float pathfindingBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
-    const float pathfindingBubbleDrawX = TILE_W;
-    const float pathfindingBubbleDrawY = SCREEN_H - 2*TILE_H - 2*pathfindingBubbleRowSpacing - TILE_H;
+    const float pathfindingBubbleDrawX = SCREEN_W*1/40;
+    const float pathfindingBubbleDrawY = SCREEN_H*35/40;
     const float pathfindingBubbleBaseCols = 1;
     const float pathfindingBubbleBaseRows = 1;
     unsigned pathfindingBubbleNumCols;
@@ -103,8 +116,10 @@ public:
     void SetActive(bool a);
     void SetHometown(int which);
 
-/// Mission, trade and movement
+/// Mission, trade and movement functions
     void OverworldLogic();
+    void SellCargo();
+    void BuyCargo();
 
 /// Location functions
     void UpdateTravelSpeed();
@@ -115,18 +130,26 @@ public:
     void UpdateOverworldPosition();
 
 /// Inventory functions
+    void UpdateCargoWeight();
+    void UpdateCargoWeightMax();
+
     void AddInventoryStock(int a, float b);
     void RemoveInventoryStock(int a, float b);
     void SetInventoryStock(int a, float b);
 
+/// Trade record functions
+    void AddTradeRecord(int il, float ilq, int ig, float igq, int loc);
+
 /// Bubble functions
     void UpdateInventoryBubble();
     void UpdatePathfindingBubble();
+    void UpdateTradeRecordsBubble();
 
 /// Drawing functions
     void DrawSpriteOnOverworld();
     void DrawActivity(float x, float y);
     void DrawInventoryBubble();
+    void DrawTradeRecordsBubble();
     void DrawPathfindingBubble();
 };
 

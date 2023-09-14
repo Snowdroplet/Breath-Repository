@@ -523,6 +523,7 @@ void DrawUI()
         else if(overworldCameraCaravan != nullptr)
         {
             overworldCameraCaravan->DrawInventoryBubble();
+            overworldCameraCaravan->DrawTradeRecordsBubble();
             overworldCameraCaravan->DrawPathfindingBubble();
 
             if(overworldCameraCaravan->atPlace)

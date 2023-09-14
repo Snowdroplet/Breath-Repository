@@ -162,66 +162,79 @@ void Place::ProgressTradeMissions()
 
 void Place::LoadGenericTradeMission(Caravan *c)
 {
+    /// Generic trade mission loads caravan with the city's full breadth of surplus goods.
+    /// The quantity of each good is directly proportional to surplusRatio.
+
     //std::cout << "Debug: Loading generic trade mission to " << c->caravanLeader->name << std::endl;
+
+    c->tradeMission.SetMissionType(TRADE_MISSION_TYPE_GENERIC);
 
     c->tradeMission.sellingItems.clear();
     c->tradeMission.buyingItems.clear();
 
-    unsigned varietyOfSellItems = surplusesTopTen.size(); // How many different types of commodities to sell
-    unsigned varietyOfBuyItems = deficitsTopTen.size();
-
-    const unsigned maxVarietyOfSellItems = 3;
-    const unsigned maxVarietyOfBuyItems = 5;
-
-    if(varietyOfSellItems > maxVarietyOfSellItems)
-        varietyOfSellItems = maxVarietyOfSellItems;
-
-    if(varietyOfBuyItems > maxVarietyOfBuyItems)
-        varietyOfBuyItems = maxVarietyOfBuyItems;
-
-    if(varietyOfSellItems > 0)
+    if(surplusesTopTen.size() > 0)
     {
-        float surplusSum = 0;
+        float surplusSum = 0; // To tally up the total quantity of surplus goods across all items.
 
-        for (std::vector<int>::iterator it = surplusesTopTen.begin(); std::distance(surplusesTopTen.begin(), it) < varietyOfSellItems; ++it)
+        for(std::vector<int>::iterator it = surplusesTopTen.begin(); it != surplusesTopTen.end(); ++it)
         {
             c->tradeMission.sellingItems[*it] = 0;
             surplusSum += surplusRatio.at(*it);
         }
 
-        float cargoLimit = c->cargoWeightMax; // Assumes empty cargo after UnloadTradeMission
+        float cargoLimit = c->cargoWeightMax; // Assumes current weight of 0 after UnloadTradeMission
 
         /// revise loop to take into account the amount of surplus city is willing to sell (less than amount that would put it at low consumption tier... but how low?)
-        /// maybe compare production to consumption rate?
         for(std::map<int,float>::iterator it = c->tradeMission.sellingItems.begin(); it != c->tradeMission.sellingItems.end(); ++it)
         {
-            float transferQuantity = (surplusRatio.at((*it).first) / surplusSum ) * cargoLimit; // Proportion of caravan's cargo to be filled up with each item
-            float transferLimit = 0;
-            if(inventory[PLACE_INVENTORY_MARKET].cargo.count((*it).first) > 0) /// Check if key exists in inventory map... which it should, since there is a surplus - however, program crashes without this line, so investigate
-                transferLimit = inventory[PLACE_INVENTORY_MARKET].cargo.at((*it).first); // Cannot transfer more stock than is present in city inventory
+            float transferQuantity = (surplusRatio.at((*it).first) / surplusSum ) * cargoLimit; // Proportion of caravan's cargo hold to be filled up with each item
 
-            if(transferQuantity > transferLimit)
-                transferQuantity = transferLimit;
+            if(transferQuantity >= 1) // Don't bother transferring less than 1. It'll get drawn as a zero in cargo and be confusing.
+            {
+                float transferLimit = 0; //Cannot transfer more stock than is present in city inventory
+                if(inventory[PLACE_INVENTORY_MARKET].cargo.count((*it).first) > 0) /// Check if key exists in inventory map... which it should, since there is a surplus - however, program crashes without this line, so investigate
+                    transferLimit = inventory[PLACE_INVENTORY_MARKET].cargo.at((*it).first);
 
-            TransferInventoryStockToCaravan(PLACE_INVENTORY_MARKET, c, (*it).first, transferQuantity);
+                if(transferQuantity > transferLimit)
+                    transferQuantity = transferLimit;
+
+                // Must record transaction before transfering items out of city inventory or it'll record quantity as zero.
+                c->AddTradeRecord(TRADE_RECORD_LOST_NOTHING,0,
+                                  (*it).first, transferQuantity,
+                                  placeIdentity);
+
+                TransferInventoryStockToCaravan(PLACE_INVENTORY_MARKET, c, (*it).first, transferQuantity);
+
+            }
         }
-
     }
+
+
 }
 
 void Place::UnloadTradeMission(Caravan *c)
 {
-    std::cout<< "debug: Unloading trade mission of " << c->caravanLeader->name << std::endl;
+    //std::cout<< "debug: Unloading trade mission of " << c->caravanLeader->name << std::endl;
 
     // Transfer entire contents of caravan to inventory
 
     if(c->inventory.cargo.size() > 0)
     {
         for(std::map<int,float>::iterator it = c->inventory.cargo.begin(); it != c->inventory.cargo.end(); ++it)
+        {
+            // Must record transaction before transfering to city inventory or it'll record quantity as zero.
+             c->AddTradeRecord((*it).first, (*it).second,
+                              TRADE_RECORD_GAINED_NOTHING, 0,
+                                  placeIdentity);
+
             TransferInventoryStockFromCaravan(PLACE_INVENTORY_MARKET, c, (*it).first, (*it).second);
+        }
+
+
     }
     else
         std::cout << "Tried to unload, but cargo of inventory is size 0" << std::endl;
+
 }
 
 
@@ -573,6 +586,8 @@ void Place::AddInventoryStock(unsigned whichInventory, int a, float b)
         UpdateInventoryBubble(whichInventory);
 
     UpdateSurplusAndDeficitRatios(a);
+    UpdateSurplusesTopTen();
+    UpdateDeficitsTopTen();
     //UpdateMaintainenceConsumptionTier(a);
 }
 void Place::RemoveInventoryStock(unsigned whichInventory, int a, float b)
@@ -584,6 +599,8 @@ void Place::RemoveInventoryStock(unsigned whichInventory, int a, float b)
         UpdateInventoryBubble(whichInventory);
 
     UpdateSurplusAndDeficitRatios(a);
+    UpdateSurplusesTopTen();
+    UpdateDeficitsTopTen();
     //UpdateMaintainenceConsumptionTier(a);
 
 }
@@ -596,6 +613,8 @@ void Place::SetInventoryStock(unsigned whichInventory, int a, float b)
         UpdateInventoryBubble(whichInventory);
 
     UpdateSurplusAndDeficitRatios(a);
+    UpdateSurplusesTopTen();
+    UpdateDeficitsTopTen();
     //UpdateMaintainenceConsumptionTier(a);
 }
 

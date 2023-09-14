@@ -17,9 +17,6 @@ Caravan::Caravan()
     whichPlace = nullptr;
     whichRoad = nullptr;
 
-    cargoWeight = 0;
-    cargoWeightMax = 100;
-
     UpdateInventoryBubble();
 
 }
@@ -31,6 +28,12 @@ Caravan::~Caravan()
     for(std::vector<Being*>::iterator it = members.begin(); it != members.end();) // Not meant to delete the Beings.
     {
         members.erase(it);
+    }
+
+    for(std::vector<TradeRecord*>::iterator it = tradeRecords.begin(); it != tradeRecords.end();)
+    {
+        delete *it;
+        tradeRecords.erase(it);
     }
 
 }
@@ -140,6 +143,66 @@ void Caravan::OverworldLogic()
     }
 }
 
+void Caravan::SellCargo()
+{
+    if(tradeMission.missionType == TRADE_MISSION_TYPE_GENERIC)
+    {
+        //exponential time complexity
+        //produce a two-dimensional array that compares every item in caravan's cargo with every item in city market.
+        //List the best deal for each cargo item (the one that eliminates the most deficit in the home city while promoting the most surplus)
+        //Trade if the deal passes both parties' willingness to pay. Move on to the second, third, fourth... best deal until no possible deals remain. Break loop early if less than 1 full unit of cargo remains to sell.
+
+        std::vector<float>tradeBenefit; // flattened 2d array ---  row index * numColumns  + column index;
+
+        int rows = inventory.cargo.size();
+        int cols = whichPlace->inventory[PLACE_INVENTORY_MARKET].cargo.size();
+
+        /*
+        /// populate grid
+        for(int y = 0; y < rows; y++)
+        {
+            for(int x = 0; x < cols; x++)
+            {
+                tradeBenefit.push_back(
+                                        // home city's deficit
+                                        // city's buy price
+
+                                                 );
+
+
+            }
+        }
+
+        /// list best deals
+        for(int y = 0; y < rows; y++)
+        {
+            for(int x = 0; x < cols; x++)
+            {
+                int bestDealIndex = -1;
+                if(bestDealIndex > -1 && )
+                {
+
+                }
+            }
+        }
+        */
+
+    }
+    else if(tradeMission.missionType == TRADE_MISSION_TYPE_PICKUP_ORDER)
+    {
+
+    }
+    else if(tradeMission.missionType == TRADE_MISSION_TYPE_DROPOFF_ORDER)
+    {
+
+    }
+}
+
+void Caravan::BuyCargo()
+{
+
+}
+
 void Caravan::UpdateTravelSpeed()
 {
     if(members.size() > 0)
@@ -168,9 +231,8 @@ void Caravan::MoveToPlace(Place *p)
         tradeMission.onReturnTrip = false;
         atHome = true;
     }
-    else
-        if(whichPlace->placeIdentity == pathfindingDestination)
-            tradeMission.onReturnTrip = true;
+    else if(whichPlace->placeIdentity == pathfindingDestination)
+        tradeMission.onReturnTrip = true;
 
     onRoad = false;
     whichRoad = nullptr;
@@ -263,22 +325,58 @@ void Caravan::AddMember(Being *b)
 
     UpdateTravelSpeed();
     //std::cout << travelSpeed << std::endl;
+
+    UpdateCargoWeightMax();
+    UpdateCargoWeight();
+}
+
+void Caravan::UpdateCargoWeight()
+{
+    float result = 0;
+
+    for(std::map<int,float>::iterator it = inventory.cargo.begin(); it != inventory.cargo.end(); ++it)
+        result += (*it).second;
+
+    cargoWeight = result;
+
+}
+
+void Caravan::UpdateCargoWeightMax()
+{
+    cargoWeightMax = 100;
 }
 
 void Caravan::AddInventoryStock(int a, float b)
 {
     inventory.AddStock(a,b);
+    UpdateCargoWeight();
     UpdateInventoryBubble();
 }
 void Caravan::RemoveInventoryStock(int a, float b)
 {
     inventory.RemoveStock(a,b);
+    UpdateCargoWeight();
     UpdateInventoryBubble();
 }
 void Caravan::SetInventoryStock(int a, float b)
 {
     inventory.SetStock(a,b);
+    UpdateCargoWeight();
     UpdateInventoryBubble();
+}
+
+void Caravan::AddTradeRecord(int il, float ilq, int ig, float igq, int loc)
+{
+    if(tradeRecords.size() >= tradeRecordsMaxElements)
+    {
+        delete tradeRecords.front();
+        tradeRecords.erase(tradeRecords.begin()); // Infamously inefficient to remove elements from a vector this way, but who cares?
+    }
+
+    TradeRecord *newTradeRecord = new TradeRecord(il, ilq, ig, igq, loc);
+    tradeRecords.push_back(newTradeRecord);
+
+    UpdateTradeRecordsBubble();
 }
 
 void Caravan::UpdateInventoryBubble()
@@ -296,6 +394,16 @@ void Caravan::UpdateInventoryBubble()
 
     inventoryBubbleWidth = inventoryBubbleNumCols*TILE_W;
     inventoryBubbleHeight = inventoryBubbleNumRows*(TILE_H+inventoryBubbleRowSpacing);
+}
+
+void Caravan::UpdateTradeRecordsBubble()
+{
+    tradeRecordsBubbleNumRows = tradeRecordsBubbleBaseRows;
+
+    if(tradeRecords.size() > tradeRecordsBubbleBaseRows)
+        tradeRecordsBubbleNumRows = tradeRecords.size();
+
+    tradeRecordsBubbleHeight = tradeRecordsBubbleNumRows*(TILE_H+tradeRecordsBubbleRowSpacing);
 }
 
 void Caravan::UpdatePathfindingBubble()
@@ -370,6 +478,79 @@ void Caravan::DrawInventoryBubble()
     }
     else
         al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX,inventoryBubbleDrawY,ALLEGRO_ALIGN_LEFT,"(No cargo carried).");
+
+    string_al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX,
+                        inventoryBubbleDrawY+inventoryBubbleHeight + BUILTIN_TEXT_HEIGHT,
+                        ALLEGRO_ALIGN_LEFT,
+                        "Weight: " + std::to_string((int)cargoWeight) + " / " + std::to_string((int)cargoWeightMax) );
+
+}
+
+void Caravan::DrawTradeRecordsBubble()
+{
+    al_draw_filled_rounded_rectangle(tradeRecordsBubbleDrawX - bubblePadding,
+                                     tradeRecordsBubbleDrawY - bubblePadding,
+                                     tradeRecordsBubbleDrawX + tradeRecordsBubbleWidth + bubblePadding,
+                                     tradeRecordsBubbleDrawY + tradeRecordsBubbleHeight + bubblePadding,
+                                     bubbleCornerRadius,
+                                     bubbleCornerRadius,
+                                     COL_DARK_WHITE);
+
+    al_draw_rounded_rectangle(tradeRecordsBubbleDrawX - bubblePadding,
+                              tradeRecordsBubbleDrawY - bubblePadding,
+                              tradeRecordsBubbleDrawX + tradeRecordsBubbleWidth + bubblePadding,
+                              tradeRecordsBubbleDrawY + tradeRecordsBubbleHeight + bubblePadding,
+                              bubbleCornerRadius,
+                              bubbleCornerRadius,
+                              COL_INDIGO,
+                              4);
+
+    al_draw_text(builtin, COL_BLACK, tradeRecordsBubbleDrawX, tradeRecordsBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, "Trade Records:");
+
+    if(tradeRecords.size() > 0)
+    {
+        unsigned i = 0;
+        for(std::vector<TradeRecord*>::iterator it = tradeRecords.begin(); it != tradeRecords.end(); ++it)
+        {
+            float drawX = tradeRecordsBubbleDrawX;
+            float drawY = tradeRecordsBubbleDrawY + i*(TILE_H + tradeRecordsBubbleRowSpacing);
+
+            if((*it)->itemLost != TRADE_RECORD_LOST_NOTHING)
+            {
+                al_draw_bitmap_region(cargoPng,
+                                  ((*it)->itemLost)*TILE_W, 0,
+                                  TILE_W, TILE_H,
+                                  drawX, drawY,
+                                  0);
+
+                string_al_draw_text(builtin, COL_BLACK, drawX+TILE_W, drawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it)->itemLostQuantity));
+            }
+
+            al_draw_bitmap(redArrowPng, drawX + TILE_W, drawY, 0);
+
+            if((*it)->itemGained != TRADE_RECORD_GAINED_NOTHING)
+            {
+                al_draw_bitmap_region(cargoPng,
+                                 ((*it)->itemGained)*TILE_W, 0,
+                                  TILE_W, TILE_H,
+                                  drawX + 2*TILE_W, drawY,
+                                  0);
+
+                string_al_draw_text(builtin, COL_BLACK,
+                                    drawX + 3*TILE_W,
+                                    drawY+TILE_H,
+                                    ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it)->itemGainedQuantity));
+            }
+
+            string_al_draw_text(builtin, COL_BLACK,
+                                drawX + 3.5*TILE_W,
+                                drawY + TILE_H/2 - tradeRecordsBubbleRowSpacing/2,
+                                ALLEGRO_ALIGN_LEFT, placeNames.at((*it)->tradeLocation));
+            i++;
+        }
+    }
+    else
+        al_draw_text(builtin,COL_BLACK,tradeRecordsBubbleDrawX, tradeRecordsBubbleDrawY, ALLEGRO_ALIGN_LEFT, "(No recent trades).");
 }
 
 void Caravan::DrawPathfindingBubble()
