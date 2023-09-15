@@ -46,8 +46,6 @@ Place::Place(int id)
     }
 
     AddInitialStock();
-
-    caravanseraiBubbleActive = false;
 }
 
 Place::~Place()
@@ -96,15 +94,14 @@ void Place::NewCitizenCaravan()
     newCaravan->AddMember(newCaravanLeader);
     newCaravan->MoveToPlace(this);
 
-
-    UpdateCitizensBubble();
+    //UpdateCitizensBubble();
 }
 
 void Place::DeleteCitizenCaravan(Caravan *c)
 {
     // code here
 
-    UpdateCitizensBubble();
+    //UpdateCitizensBubble();
 }
 
 void Place::GenerateCitizenCaravans()
@@ -117,126 +114,6 @@ void Place::GenerateCitizenCaravans()
     for(unsigned i = 0; i < numberToGenerate; i++)
         NewCitizenCaravan();
 }
-
-int Place::DetermineMostSuitableTradeDestination()
-{
-
-    /// placeholder
-    int result = rand()%(PL_MARKER_LAST-PL_MARKER_FIRST +1) + PL_MARKER_FIRST;
-
-    /// list destinations within range
-    /// score each destination by their sum deficits in sellingItems + sum surpluses in buyingItems
-
-    //std::cout << "Most suitable trade destination set to " << placeNames.at(result) << std::endl;
-
-    return result;
-}
-
-
-void Place::ProgressTradeMissions()
-{
-    for(std::vector<Caravan*>::iterator it = citizenCaravans.begin(); it != citizenCaravans.end(); ++it)
-    {
-        if((*it)->atHome)
-        {
-            //
-            if((*it)->tradeMission.missionComplete)
-            {
-                (*it)->tradeMission.missionActive = false;
-                (*it)->tradeMission.missionComplete = false;
-
-                UnloadTradeMission(*it);
-            }
-
-            if(! (*it)->tradeMission.missionActive /**&& c->missionCooldown <= 0*/)
-            {
-                //std::cout << "debug: Caravan activated" << std::endl;
-                (*it)->tradeMission.missionActive = true;
-                LoadGenericTradeMission(*it);
-                (*it)->tradeMission.SetTradeDestination(DetermineMostSuitableTradeDestination());
-            }
-
-        }
-    }
-}
-
-void Place::LoadGenericTradeMission(Caravan *c)
-{
-    /// Generic trade mission loads caravan with the city's full breadth of surplus goods.
-    /// The quantity of each good is directly proportional to surplusRatio.
-
-    //std::cout << "Debug: Loading generic trade mission to " << c->caravanLeader->name << std::endl;
-
-    c->tradeMission.SetMissionType(TRADE_MISSION_TYPE_GENERIC);
-
-    c->tradeMission.sellingItems.clear();
-    c->tradeMission.buyingItems.clear();
-
-    if(surplusesTopTen.size() > 0)
-    {
-        float surplusSum = 0; // To tally up the total quantity of surplus goods across all items.
-
-        for(std::vector<int>::iterator it = surplusesTopTen.begin(); it != surplusesTopTen.end(); ++it)
-        {
-            c->tradeMission.sellingItems[*it] = 0;
-            surplusSum += surplusRatio.at(*it);
-        }
-
-        float cargoLimit = c->cargoWeightMax; // Assumes current weight of 0 after UnloadTradeMission
-
-        /// revise loop to take into account the amount of surplus city is willing to sell (less than amount that would put it at low consumption tier... but how low?)
-        for(std::map<int,float>::iterator it = c->tradeMission.sellingItems.begin(); it != c->tradeMission.sellingItems.end(); ++it)
-        {
-            float transferQuantity = (surplusRatio.at((*it).first) / surplusSum ) * cargoLimit; // Proportion of caravan's cargo hold to be filled up with each item
-
-            if(transferQuantity >= 1) // Don't bother transferring less than 1. It'll get drawn as a zero in cargo and be confusing.
-            {
-                float transferLimit = 0; //Cannot transfer more stock than is present in city inventory
-                if(inventory[PLACE_INVENTORY_MARKET].cargo.count((*it).first) > 0) /// Check if key exists in inventory map... which it should, since there is a surplus - however, program crashes without this line, so investigate
-                    transferLimit = inventory[PLACE_INVENTORY_MARKET].cargo.at((*it).first);
-
-                if(transferQuantity > transferLimit)
-                    transferQuantity = transferLimit;
-
-                // Must record transaction before transfering items out of city inventory or it'll record quantity as zero.
-                c->AddTradeRecord(TRADE_RECORD_LOST_NOTHING,0,
-                                  (*it).first, transferQuantity,
-                                  placeIdentity);
-
-                TransferInventoryStockToCaravan(PLACE_INVENTORY_MARKET, c, (*it).first, transferQuantity);
-
-            }
-        }
-    }
-
-
-}
-
-void Place::UnloadTradeMission(Caravan *c)
-{
-    //std::cout<< "debug: Unloading trade mission of " << c->caravanLeader->name << std::endl;
-
-    // Transfer entire contents of caravan to inventory
-
-    if(c->inventory.cargo.size() > 0)
-    {
-        for(std::map<int,float>::iterator it = c->inventory.cargo.begin(); it != c->inventory.cargo.end(); ++it)
-        {
-            // Must record transaction before transfering to city inventory or it'll record quantity as zero.
-             c->AddTradeRecord((*it).first, (*it).second,
-                              TRADE_RECORD_GAINED_NOTHING, 0,
-                                  placeIdentity);
-
-            TransferInventoryStockFromCaravan(PLACE_INVENTORY_MARKET, c, (*it).first, (*it).second);
-        }
-
-
-    }
-    else
-        std::cout << "Tried to unload, but cargo of inventory is size 0" << std::endl;
-
-}
-
 
 void Place::AddToCaravanserai(Caravan *c)
 {
@@ -663,7 +540,7 @@ void Place::AddInitialStock()
 void Place::UpdateAllBubbles()
 {
     UpdatePopulationBubble();
-    UpdateCitizensBubble();
+    //UpdateCitizensBubble();
     UpdateCaravanseraiBubble();
     UpdateSurplusBubble();
     UpdateDeficitBubble();
@@ -684,6 +561,7 @@ void Place::UpdatePopulationBubble()
     populationBubbleWidth = TILE_W*populationBubbleNumCols;
 }
 
+/*
 void Place::UpdateCitizensBubble()
 {
     citizensBubbleNumRows = citizensBubbleBaseRows;
@@ -693,9 +571,12 @@ void Place::UpdateCitizensBubble()
 
     citizensBubbleHeight = citizensBubbleNumRows*TILE_W;
 }
+*/
 
 void Place::UpdateCaravanseraiBubble()
 {
+    /*
+
     if(caravanserai.size() > 0)
     {
         caravanseraiBubbleNumCols = 1;
@@ -715,6 +596,22 @@ void Place::UpdateCaravanseraiBubble()
     }
     else
         caravanseraiBubbleActive = false;
+
+    */
+
+    caravanseraiBubbleNumCols = caravanseraiBubbleBaseCols;
+    caravanseraiBubbleNumRows = caravanseraiBubbleBaseRows;
+
+    while(caravanserai.size() > caravanseraiBubbleNumCols*caravanseraiBubbleNumRows)
+    {
+        if(caravanseraiBubbleNumCols <= caravanseraiBubbleNumRows)
+            caravanseraiBubbleNumCols++;
+        else
+            caravanseraiBubbleNumRows++;
+    }
+
+    caravanseraiBubbleWidth = caravanseraiBubbleNumCols*TILE_W;
+    caravanseraiBubbleHeight = caravanseraiBubbleNumRows*TILE_H;
 }
 
 void Place::UpdateSurplusBubble()
@@ -835,6 +732,7 @@ void Place::DrawPopulationBubble()
     string_al_draw_text(builtin,COL_BLACK, populationBubbleDrawX, populationBubbleDrawY-bubblePadding-8, ALLEGRO_ALIGN_LEFT, populationBubbleLabel);
 }
 
+/*
 void Place::DrawCitizensBubble()
 {
     al_draw_filled_rounded_rectangle(citizensBubbleDrawX - bubblePadding,
@@ -852,7 +750,7 @@ void Place::DrawCitizensBubble()
                               COL_INDIGO,
                               4);
 
-    string_al_draw_text(builtin,COL_BLACK,citizensBubbleDrawX, citizensBubbleDrawY-bubblePadding-8, ALLEGRO_ALIGN_LEFT, citizensBubbleLabel);
+    string_al_draw_text(builtin,COL_BLACK,citizensBubbleDrawX, citizensBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, citizensBubbleLabel);
 
     if(citizenCaravans.size() > 0)
     {
@@ -884,47 +782,45 @@ void Place::DrawCitizensBubble()
     else
         al_draw_text(builtin, COL_BLACK, citizensBubbleDrawX, citizensBubbleDrawY,ALLEGRO_ALIGN_LEFT,"(None).");
 }
+*/
 
-void Place::DrawCaravanseraiBubbleOnOverworld()
+
+void Place::DrawCaravanseraiBubble()
 {
-    if(caravanseraiBubbleActive)
+    /// To do: Adjust for sprites that are not TILE_W in size.
+
+    al_draw_filled_rounded_rectangle(caravanseraiBubbleDrawX - bubblePadding,
+                                     caravanseraiBubbleDrawY - bubblePadding,
+                                     caravanseraiBubbleDrawX + caravanseraiBubbleWidth + bubblePadding,
+                                     caravanseraiBubbleDrawY + caravanseraiBubbleHeight + bubblePadding,
+                                     bubbleCornerRadius, bubbleCornerRadius,
+                                     COL_DARK_WHITE);
+
+
+    al_draw_rounded_rectangle(caravanseraiBubbleDrawX - bubblePadding,
+                              caravanseraiBubbleDrawY - bubblePadding,
+                              caravanseraiBubbleDrawX + caravanseraiBubbleWidth + bubblePadding,
+                              caravanseraiBubbleDrawY + caravanseraiBubbleHeight + bubblePadding,
+                              bubbleCornerRadius, bubbleCornerRadius,
+                              COL_INDIGO, 4);
+
+    string_al_draw_text(builtin,COL_BLACK,caravanseraiBubbleDrawX, caravanseraiBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, caravanseraiBubbleLabel);
+
+    if(caravanserai.size() > 0)
     {
-        /// To do: Adjust for sprites that are not TILE_W in size.
-
-        float drawX = overworldXPosition - overworldCameraXPosition;
-        float drawY = overworldYPosition - overworldCameraYPosition - OVERWORLD_SPRITE_H;
-
-        if(drawX > OVERWORLD_MIN_DRAW_X && drawX < OVERWORLD_MAX_DRAW_X
-                && drawY > OVERWORLD_MIN_DRAW_Y && drawY < OVERWORLD_MAX_DRAW_Y)
+        unsigned s = 0;
+        for(std::vector<Caravan*>::iterator it = caravanserai.begin(); it != caravanserai.end(); ++it)
         {
+            float drawX = caravanseraiBubbleDrawX + s%caravanseraiBubbleNumCols*TILE_W;
+            float drawY = caravanseraiBubbleDrawY + s/caravanseraiBubbleNumCols*TILE_H;
 
-
-            al_draw_filled_rounded_rectangle(drawX - caravanseraiBubbleWidth/2 - bubblePadding,
-                                             drawY - caravanseraiBubbleHeight/2 - bubblePadding,
-                                             drawX + caravanseraiBubbleWidth/2 + bubblePadding,
-                                             drawY + caravanseraiBubbleHeight/2 + bubblePadding,
-                                             bubbleCornerRadius,
-                                             bubbleCornerRadius,
-                                             COL_DARK_WHITE);
-
-
-            al_draw_rounded_rectangle(drawX - caravanseraiBubbleWidth/2 - bubblePadding,
-                                      drawY - caravanseraiBubbleHeight/2 - bubblePadding,
-                                      drawX + caravanseraiBubbleWidth/2 + bubblePadding,
-                                      drawY + caravanseraiBubbleHeight/2 + bubblePadding,
-                                      bubbleCornerRadius,
-                                      bubbleCornerRadius,
-                                      COL_INDIGO,
-                                      4);
-
-            for(unsigned i = 0; i < caravanserai.size(); i++)
-            {
-                caravanserai[i]->DrawActivity(drawX - caravanseraiBubbleWidth/2 + (i%caravanseraiBubbleNumCols*TILE_W) + TILE_W/2,
-                                              drawY - caravanseraiBubbleHeight/2 + (i/caravanseraiBubbleNumCols*TILE_H) + TILE_H/2);
-            }
-
+            (*it)->DrawActivity(drawX + TILE_W/2,
+                                drawY + TILE_H/2);
+            s++;
         }
     }
+    else
+        string_al_draw_text(builtin,COL_BLACK,caravanseraiBubbleDrawX,caravanseraiBubbleDrawY,ALLEGRO_ALIGN_LEFT,caravanseraiBubbleEmptyText);
 }
 
 void Place::DrawSurplusBubble()
@@ -1077,8 +973,7 @@ void Place::DrawInventoryBubbles()
                                          inventoryBubbleDrawY[i] - bubblePadding,
                                          inventoryBubbleDrawX[i] + inventoryBubbleWidth[i] + bubblePadding,
                                          inventoryBubbleDrawY[i] + inventoryBubbleHeight[i] + bubblePadding,
-                                         bubbleCornerRadius,
-                                         bubbleCornerRadius,
+                                         bubbleCornerRadius, bubbleCornerRadius,
                                          COL_DARK_WHITE);
 
 
@@ -1086,10 +981,8 @@ void Place::DrawInventoryBubbles()
                                   inventoryBubbleDrawY[i] - bubblePadding,
                                   inventoryBubbleDrawX[i] + inventoryBubbleWidth[i] + bubblePadding,
                                   inventoryBubbleDrawY[i] + inventoryBubbleHeight[i] + bubblePadding,
-                                  bubbleCornerRadius,
-                                  bubbleCornerRadius,
-                                  COL_INDIGO,
-                                  4);
+                                  bubbleCornerRadius, bubbleCornerRadius,
+                                  COL_INDIGO, 4);
 
         string_al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX[i], inventoryBubbleDrawY[i]-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, inventoryBubbleLabel[i]);
 
@@ -1112,7 +1005,7 @@ void Place::DrawInventoryBubbles()
             }
         }
         else
-            al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX[i],inventoryBubbleDrawY[i],ALLEGRO_ALIGN_LEFT,"(No cargo).");
+            string_al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX[i],inventoryBubbleDrawY[i],ALLEGRO_ALIGN_LEFT,inventoryBubbleEmptyText);
     }
 
 }

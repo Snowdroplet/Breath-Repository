@@ -89,7 +89,7 @@ public:
     const float tradeRecordsBubbleDrawX = SCREEN_W*1/40;
     const float tradeRecordsBubbleDrawY = SCREEN_H*15/40;
     const float tradeRecordsBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
-    const float tradeRecordsBubbleBaseRows = 1;
+    const unsigned tradeRecordsBubbleBaseRows = 1;
     const float tradeRecordsBubbleWidth = TILE_W*6;
     unsigned tradeRecordsBubbleNumRows;
     float tradeRecordsBubbleHeight;
@@ -98,8 +98,8 @@ public:
     const float pathfindingBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
     const float pathfindingBubbleDrawX = SCREEN_W*1/40;
     const float pathfindingBubbleDrawY = SCREEN_H*35/40;
-    const float pathfindingBubbleBaseCols = 1;
-    const float pathfindingBubbleBaseRows = 1;
+    const unsigned pathfindingBubbleBaseCols = 1;
+    const unsigned pathfindingBubbleBaseRows = 1;
     unsigned pathfindingBubbleNumCols;
     unsigned pathfindingBubbleNumRows;
     float pathfindingBubbleWidth, pathfindingBubbleHeight;
@@ -117,6 +117,12 @@ public:
     void SetHometown(int which);
 
 /// Mission, trade and movement functions
+    void ProgressTradeMission();
+
+    int DetermineMostSuitableTradeDestination();
+    void LoadGenericTradeMission();
+    void UnloadTradeMission();
+
     void OverworldLogic();
     void SellCargo();
     void BuyCargo();

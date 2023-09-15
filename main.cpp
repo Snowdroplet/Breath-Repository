@@ -396,7 +396,7 @@ void ProgressWorld()
 
                 ((*it).second)->UpdateSurplusesTopTen();
                 ((*it).second)->UpdateDeficitsTopTen();
-                ((*it).second)->ProgressTradeMissions();
+                //((*it).second)->ProgressTradeMissions();
             }
 
             /*
@@ -505,8 +505,8 @@ void DrawUI()
         for(unsigned i = 0; i < Caravan::caravans.size(); i++)
             Caravan::caravans[i]->DrawSpriteOnOverworld();
 
-        for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
-            (*it).second->DrawCaravanseraiBubbleOnOverworld();
+        //for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
+            //(*it).second->DrawCaravanseraiBubbleOnOverworld();
 
         for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
             (*it).second->DrawFlyingTexts();
@@ -514,7 +514,8 @@ void DrawUI()
         if(overworldCameraPlace != nullptr)
         {
             overworldCameraPlace->DrawPopulationBubble();
-            overworldCameraPlace->DrawCitizensBubble();
+            //overworldCameraPlace->DrawCitizensBubble();
+            overworldCameraPlace->DrawCaravanseraiBubble();
             overworldCameraPlace->DrawSurplusBubble();
             overworldCameraPlace->DrawDeficitBubble();
             overworldCameraPlace->DrawInventoryBubbles();
@@ -529,7 +530,8 @@ void DrawUI()
             if(overworldCameraCaravan->atPlace)
             {
                 overworldCameraCaravan->whichPlace->DrawPopulationBubble();
-                overworldCameraCaravan->whichPlace->DrawCitizensBubble();
+                //overworldCameraCaravan->whichPlace->DrawCitizensBubble();
+                overworldCameraCaravan->whichPlace->DrawCaravanseraiBubble();
                 overworldCameraCaravan->whichPlace->DrawSurplusBubble();
                 overworldCameraCaravan->whichPlace->DrawDeficitBubble();
                 overworldCameraCaravan->whichPlace->DrawInventoryBubbles();

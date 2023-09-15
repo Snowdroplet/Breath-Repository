@@ -122,6 +122,7 @@ public:
     float populationBubbleWidth;
     unsigned populationBubbleNumCols;
 
+/*
 /// Bubbles -- Citizen Caravans
     const std::string citizensBubbleLabel = "Associated Caravans";
     const float citizensBubbleDrawX = SCREEN_W*33/40;
@@ -130,11 +131,20 @@ public:
     const unsigned citizensBubbleBaseRows = 1;
     unsigned citizensBubbleNumRows;
     float citizensBubbleHeight;
+*/
 
 /// Bubbles -- Caravanserai
-    bool caravanseraiBubbleActive;
-    float caravanseraiBubbleWidth, caravanseraiBubbleHeight;
-    unsigned caravanseraiBubbleNumCols, caravanseraiBubbleNumRows;
+    const std::string caravanseraiBubbleLabel = "Caravanserai";
+    const std::string caravanseraiBubbleEmptyText = "<Empty>";
+    const float caravanseraiBubbleDrawX = SCREEN_W*33/40;
+    const float caravanseraiBubbleDrawY = SCREEN_H*28/40;
+    const unsigned caravanseraiBubbleBaseCols = 6;
+    const unsigned caravanseraiBubbleBaseRows = 1;
+    unsigned caravanseraiBubbleNumCols;
+    unsigned caravanseraiBubbleNumRows;
+    float caravanseraiBubbleWidth;
+    float caravanseraiBubbleHeight;
+
 
 /// Bubbles -- Surplus and Deficit
     const std::string surplusBubbleLabel = "Surplus";
@@ -190,16 +200,10 @@ public:
 
 /// Population functions
 
-/// Citizen caravans and trade mission functions
+/// Citizen caravans (soon to have scope reduced to hometown only)
     void NewCitizenCaravan();
     void DeleteCitizenCaravan(Caravan *c);
     void GenerateCitizenCaravans();
-
-    void ProgressTradeMissions();
-
-    int DetermineMostSuitableTradeDestination();
-    void LoadGenericTradeMission(Caravan *c);
-    void UnloadTradeMission(Caravan *c);
 
 /// Caravanserai functions
     void AddToCaravanserai(Caravan *c);
@@ -263,7 +267,8 @@ public:
     void DrawSpriteOnOverworld();
     void DrawPopulationBubble();
     void DrawCitizensBubble();
-    void DrawCaravanseraiBubbleOnOverworld();
+    //void DrawCaravanseraiBubbleOnOverworld();
+    void DrawCaravanseraiBubble();
     void DrawSurplusBubble();
     void DrawDeficitBubble();
     void DrawInventoryBubbles();
