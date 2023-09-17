@@ -65,6 +65,10 @@ public:
     const int MIN_TIME_AT_PLACE = 50;
     const int MAX_TIME_AT_PLACE = 100;
 
+/// Coins and Travel Supplies
+    float coins;
+    float travelSupplies;
+
 /// Inventory
     Inventory inventory;
     float cargoWeight, cargoWeightMax; // Just have everything weigh 1 for now.
@@ -126,6 +130,7 @@ public:
     void OverworldLogic();
     void SellCargo();
     void BuyCargo();
+    void BuyTravelSupplies();
 
 /// Location functions
     void UpdateTravelSpeed();

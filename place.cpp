@@ -100,6 +100,7 @@ void Place::NewCitizenCaravan()
 void Place::DeleteCitizenCaravan(Caravan *c)
 {
     // code here
+    // don't actually delete the object. The pointer still would still exist in Caravan::caravans
 
     //UpdateCitizensBubble();
 }

@@ -10,13 +10,16 @@ enum enumIndustries
     IND_HUNT_MEAT = 0,
     IND_HUNT_ECTOPLASM = 1, IND_SORCERY_CONTRACT = 2, IND_SORCERY_SPELLBOOK = 3,
     IND_FARM_RICE = 4, IND_ALCHEMY_ALCOHOL = 5,
-    IND_FARM_CANDLECAP = 6,
+    IND_FARM_MUSHROOMS = 6,
     IND_FARM_HERBS = 7, IND_ALCHEMY_MEDICINE = 8,
     IND_FARM_SPICE = 9,
     IND_MINE_CLAY = 10, IND_CRAFT_POTTERY = 11,
     IND_MINE_SILVER = 12, IND_CRAFT_JEWELRY = 13,
     IND_MINE_LEYSTONE = 14, IND_MACHINE_CLOCKWORK = 15, IND_MACHINE_AUTOMATON = 17
 };
+
+const int IND_MARKER_FIRST = IND_HUNT_MEAT;
+const int IND_MARKER_LAST = IND_MACHINE_AUTOMATON;
 
 
 enum enumExpertiseTypes {EXP_COMMON = 0, EXP_HUNT = 1, EXP_FARM = 2, EXP_MINE = 3, EXP_ALCHEMY = 4, EXP_SORCERY = 5, EXP_CRAFT = 6, EXP_MECHANICS = 7};
@@ -32,7 +35,7 @@ const std::map<int, std::string>industryNames =
     {IND_SORCERY_SPELLBOOK, "Binding Contracts -> Spellbooks"},
     {IND_FARM_RICE, "Growing Rice"},
     {IND_ALCHEMY_ALCOHOL, "Brewing Rice -> Alcohol"},
-    {IND_FARM_CANDLECAP, "Growing Mushrooms"},
+    {IND_FARM_MUSHROOMS, "Growing Mushrooms"},
     {IND_FARM_HERBS, "Cultivating Herbs"},
     {IND_ALCHEMY_MEDICINE, "Brewing Herbs -> Medicines"},
     {IND_FARM_SPICE, "Cultivating Spices"},
@@ -53,7 +56,7 @@ const std::map<int, float>baseProductionToComplete =
     {IND_SORCERY_SPELLBOOK, 240},
     {IND_FARM_RICE, 240},
     {IND_ALCHEMY_ALCOHOL, 448},
-    {IND_FARM_CANDLECAP, 360},
+    {IND_FARM_MUSHROOMS, 360},
     {IND_FARM_HERBS, 480},
     {IND_ALCHEMY_MEDICINE, 120},
     {IND_FARM_SPICE, 600},
@@ -75,7 +78,7 @@ const std::map<int, std::map<int,float>>baseJobInputs =
     {IND_SORCERY_SPELLBOOK, { { IT_CONTRACT,     6.0 } /*,{ IT_X, 0.0 }*/ } },
     {IND_FARM_RICE,         { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
     {IND_ALCHEMY_ALCOHOL,   { { IT_RICE,        30.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_FARM_CANDLECAP,    { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
+    {IND_FARM_MUSHROOMS,    { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
     {IND_FARM_HERBS,        { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
     {IND_ALCHEMY_MEDICINE,  { { IT_HERBS,        2.0 } /*,{ IT_X, 0.0 }*/ } },
     {IND_FARM_SPICE,        { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
@@ -96,7 +99,7 @@ const std::map<int, std::map<int,float>>baseJobOutputs =
     {IND_SORCERY_SPELLBOOK, { { IT_SPELLBOOK,    1.0 } /*,{ IT_X, 0.0 }*/ } },
     {IND_FARM_RICE,         { { IT_RICE,        50.0 } /*,{ IT_X, 0.0 }*/ } },
     {IND_ALCHEMY_ALCOHOL,   { { IT_ALCOHOL,     25.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_FARM_CANDLECAP,    { { IT_CANDLECAP,   30.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_FARM_MUSHROOMS,    { { IT_MUSHROOMS,   30.0 } /*,{ IT_X, 0.0 }*/ } },
     {IND_FARM_HERBS,        { { IT_HERBS,       20.0 } /*,{ IT_X, 0.0 }*/ } },
     {IND_ALCHEMY_MEDICINE,  { { IT_MEDICINE,     2.0 } /*,{ IT_X, 0.0 }*/ } },
     {IND_FARM_SPICE,        { { IT_SPICE,       10.0 } /*,{ IT_X, 0.0 }*/ } },
@@ -117,7 +120,7 @@ const std::map<int, int>jobExpertiseType =
     {IND_SORCERY_SPELLBOOK, EXP_SORCERY},
     {IND_FARM_RICE, EXP_FARM},
     {IND_ALCHEMY_ALCOHOL, EXP_ALCHEMY},
-    {IND_FARM_CANDLECAP, EXP_FARM},
+    {IND_FARM_MUSHROOMS, EXP_FARM},
     {IND_FARM_HERBS, EXP_FARM},
     {IND_ALCHEMY_MEDICINE, EXP_ALCHEMY},
     {IND_FARM_SPICE, EXP_FARM},
@@ -138,7 +141,7 @@ const std::map<int, int>jobExpertiseLevel =
     {IND_SORCERY_SPELLBOOK, 4},
     {IND_FARM_RICE, 1},
     {IND_ALCHEMY_ALCOHOL, 1},
-    {IND_FARM_CANDLECAP, 2},
+    {IND_FARM_MUSHROOMS, 2},
     {IND_FARM_HERBS, 3},
     {IND_ALCHEMY_MEDICINE, 2},
     {IND_FARM_SPICE, 4},

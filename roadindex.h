@@ -30,11 +30,18 @@ enum enumRoads
     ROAD_OBSERVIA_COLDLAKE = 13,
     ROAD_OBSERVIA_UMBERDELL = 14,
 
-    ROAD_RAMSHORN_JASPER = 15
+    ROAD_RAMSHORN_JASPER = 15,
 
+    ROAD_JASPER_RUMNIR = 16,
+
+    ROAD_RUMNIR_HEWNHEIM = 17,
+    ROAD_RUMNIR_ARTAS_ROCK = 18,
+
+    ROAD_HEWNHEIM_VERSE = 19,
+    ROAD_ARTAS_ROCK_VERSE = 20
 };
 const unsigned ROAD_MARKER_FIRST = ROAD_ERICENNES_CHORAS;
-const unsigned ROAD_MARKER_LAST = ROAD_RAMSHORN_JASPER;
+const unsigned ROAD_MARKER_LAST = ROAD_ARTAS_ROCK_VERSE;
 
 const std::map<int,std::string>roadNames =
 {
@@ -60,7 +67,15 @@ const std::map<int,std::string>roadNames =
     {ROAD_OBSERVIA_COLDLAKE, "Observia-Coldlake Road"},
     {ROAD_OBSERVIA_UMBERDELL, "Observia-Umberdell Road"},
 
-    {ROAD_RAMSHORN_JASPER, "Ramshorn-Jasper Road"}
+    {ROAD_RAMSHORN_JASPER, "Ramshorn-Jasper Road"},
+
+    {ROAD_JASPER_RUMNIR, "Jasper-Rumnir Road"},
+
+    {ROAD_RUMNIR_HEWNHEIM, "Rumnir-Hewnheim Road"},
+    {ROAD_RUMNIR_ARTAS_ROCK, "Rumnir-Arta's Rock Road"},
+
+    {ROAD_HEWNHEIM_VERSE, "Hewnheim-Verse Road"},
+    {ROAD_ARTAS_ROCK_VERSE, "Arta's Rock-Verse Road"}
 };
 
 #endif // ROADINDEX_H_INCLUDED

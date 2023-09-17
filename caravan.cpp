@@ -17,6 +17,9 @@ Caravan::Caravan()
     whichPlace = nullptr;
     whichRoad = nullptr;
 
+    coins = 1000;
+    travelSupplies = 1000;
+
     UpdateInventoryBubble();
     UpdateTradeRecordsBubble();
 

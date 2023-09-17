@@ -9,31 +9,11 @@ Caravan *overworldCameraCaravan = nullptr;
 float overworldCameraXPosition = 0;
 float overworldCameraYPosition = 0;
 
-int overworldCameraXSensitivity = 4;
-int overworldCameraYSensitivity = 4;
+int overworldCameraXSensitivity = 8;
+int overworldCameraYSensitivity = 8;
 
 void OverworldDrawGridUnderlay()
 {
-
-/*
-    for(int i = 0; i <= OVERWORLD_W; i+= TILE_W) //Columns
-    {
-                al_draw_line(i                -overworldCameraXPosition,
-                             0                -overworldCameraYPosition,
-                             i                -overworldCameraXPosition,
-                             OVERWORLD_H      -overworldCameraYPosition,
-                             COL_DARK_GRAY,1);
-    }
-
-    for(int i = 0; i <= OVERWORLD_H; i+= TILE_H) //Rows
-    {
-                al_draw_line(0              -overworldCameraXPosition,
-                             i              -overworldCameraYPosition,
-                             OVERWORLD_W    -overworldCameraXPosition,
-                             i              -overworldCameraYPosition,
-                             COL_DARK_GRAY,1);
-    }
-*/
 
     for(int x = 0; x <= SCREEN_W/TILE_W; x++) //Columns
     {
@@ -117,6 +97,6 @@ void OverworldUnlockCamera()
     OverworldUnlockCameraCaravan();
     overworldCameraLocked = false;
 
-    overworldCameraXPosition = overworldCameraXPosition/4*4; // rounds down to nearest 4 (truncates decimal)
-    overworldCameraYPosition = overworldCameraYPosition/4*4;
+    overworldCameraXPosition = overworldCameraXPosition/8*8; // rounds down to nearest 8 (truncates decimal)
+    overworldCameraYPosition = overworldCameraYPosition/8*8;
 }

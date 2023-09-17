@@ -48,10 +48,9 @@ public:
     int placeIdentity;
 
     std::string name; // Just the simple name for identification on the overworld map.
-    std::string epithet; // e.g. ", City of Dreaming Spires"
+    //std::string epithet; // e.g. ", City of Dreaming Spires"
 
 /// Population
-    int totalPopulation;
     std::map<int, unsigned>population;
 
     //std::vector<Being*>availableCrew;

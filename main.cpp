@@ -84,11 +84,12 @@ int main(int argc, char *argv[])
 
     AllegroCustomColours();
     LoadResources();
+
+    InitCalendar(22,30,12,2023);
+
     InitObjects();
-    //ChangePlayerLocation(PL_ERICENNES);
 
     ChangeUI(UI_OVERWORLD,SUB_OVERWORLD_NONE, TAB_OVERWORLD_NONE);
-    InitCalendar(22,30,12,2023);
 
     al_start_timer(FPSTimer);
 
