@@ -26,7 +26,7 @@ const std::map<int,std::string>itemNames =
     {IT_MEAT, "Beast Flesh"},
     {IT_ECTOPLASM, "Ectoplasm"}, {IT_CONTRACT, "Contract"}, {IT_SPELLBOOK, "Spellbook"},
     {IT_RICE, "Rice"}, {IT_ALCOHOL, "Alcohol"},
-    {IT_MUSHROOMS, "Candlecap"},
+    {IT_MUSHROOMS, "Mushrooms"},
     {IT_HERBS, "Herbs"}, {IT_MEDICINE, "Medicine"},
     {IT_SPICE, "Spice"},
     {IT_CLAY, "Clay"}, {IT_POTTERY, "Pottery"},

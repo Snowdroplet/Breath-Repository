@@ -1,23 +1,35 @@
 #ifndef TRADERECORD_H_INCLUDED
 #define TRADERECORD_H_INCLUDED
 
-const int TRADE_RECORD_LOST_NOTHING = -1;
-const int TRADE_RECORD_GAINED_NOTHING = -1;
+#include <map>
 
 class TradeRecord
 {
 public:
-    int itemLost;
-    float itemLostQuantity;
+    std::map<int, int>tradeQuantities;
+    const unsigned baseRows = 1;
+    unsigned numRows;
 
-    int itemGained;
-    float itemGainedQuantity;
+    const unsigned maxCols = 4;
 
-    int tradeLocation;
+    int location;
+
+    //int itemLost;
+    //float itemLostQuantity;
+
+    //int itemGained;
+    //float itemGainedQuantity;
+
+    //int tradeLocation;
 
 public:
-    TradeRecord(int il, float ilq, int ig, float igq, int loc);
+
+    TradeRecord(int whichLocation);
+    //TradeRecord(int il, float ilq, int ig, float igq, int loc);
     ~TradeRecord();
+
+    void ChangeEntry(int whichItem, int change);
+
 };
 
 #endif // TRADERECORD_H_INCLUDED

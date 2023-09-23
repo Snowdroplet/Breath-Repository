@@ -19,10 +19,10 @@ public:
     std::string text;
 
     const float scrollUpSpeed = 0.4;
-    const float scrollUpXDisplacement = 0;
+    const float scrollUpXDisplacement = TILE_W*0.5;
     const float scrollUpYDisplacement = TILE_H*(-1.5);
     const float scrollDownSpeed = 0.32;
-    const float scrollDownXDisplacement = TILE_W*(-1);
+    const float scrollDownXDisplacement = TILE_W*(-1.5);
     const float scrollDownYDisplacement = TILE_H*(-2);
 
     bool scrollUp;

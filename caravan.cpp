@@ -17,9 +17,6 @@ Caravan::Caravan()
     whichPlace = nullptr;
     whichRoad = nullptr;
 
-    coins = 1000;
-    travelSupplies = 1000;
-
     UpdateInventoryBubble();
     UpdateTradeRecordsBubble();
 
@@ -54,126 +51,32 @@ void Caravan::SetHometown(int id)
 }
 
 
-int Caravan::DetermineMostSuitableTradeDestination()
+int Caravan::SelectRandomTradeDestination()
 {
-
-    /// placeholder
     int result = rand()%(PL_MARKER_LAST-PL_MARKER_FIRST +1) + PL_MARKER_FIRST;
-
-    /// list destinations within range
-    /// score each destination by their sum deficits in sellingItems + sum surpluses in buyingItems
 
     //std::cout << "Most suitable trade destination set to " << placeNames.at(result) << std::endl;
 
     return result;
 }
 
-
-
 void Caravan::ProgressTradeMission()
 {
-        if(atHome)
-        {
-            if(tradeMission.missionComplete)
-            {
-                tradeMission.missionActive = false;
-                tradeMission.missionComplete = false;
-
-                //UnloadTradeMission();
-            }
-
-            if(!tradeMission.missionActive) //&& c->missionCooldown <= 0)
-            {
-                //std::cout << "debug: Caravan activated" << std::endl;
-                tradeMission.missionActive = true;
-                //LoadGenericTradeMission(*it);
-                tradeMission.SetTradeDestination(DetermineMostSuitableTradeDestination());
-            }
-
-        }
-}
-
-
-/*
-void Place::LoadGenericTradeMission(Caravan *c)
-{
-    /// Generic trade mission loads caravan with the city's full breadth of surplus goods.
-    /// The quantity of each good is directly proportional to surplusRatio.
-
-    //std::cout << "Debug: Loading generic trade mission to " << c->caravanLeader->name << std::endl;
-
-    c->tradeMission.SetMissionType(TRADE_MISSION_TYPE_GENERIC);
-
-    c->tradeMission.sellingItems.clear();
-    c->tradeMission.buyingItems.clear();
-
-    if(surplusesTopTen.size() > 0)
+    if(atHome)
     {
-        float surplusSum = 0; // To tally up the total quantity of surplus goods across all items.
-
-        for(std::vector<int>::iterator it = surplusesTopTen.begin(); it != surplusesTopTen.end(); ++it)
+        if(tradeMission.missionComplete)
         {
-            c->tradeMission.sellingItems[*it] = 0;
-            surplusSum += surplusRatio.at(*it);
+            tradeMission.missionActive = false;
+            tradeMission.missionComplete = false;
         }
 
-        float cargoLimit = c->cargoWeightMax; // Assumes current weight of 0 after UnloadTradeMission
-
-        /// revise loop to take into account the amount of surplus city is willing to sell (less than amount that would put it at low consumption tier... but how low?)
-        for(std::map<int,float>::iterator it = c->tradeMission.sellingItems.begin(); it != c->tradeMission.sellingItems.end(); ++it)
+        if(!tradeMission.missionActive) //&& c->missionCooldown <= 0)
         {
-            float transferQuantity = (surplusRatio.at((*it).first) / surplusSum ) * cargoLimit; // Proportion of caravan's cargo hold to be filled up with each item
-
-            if(transferQuantity >= 1) // Don't bother transferring less than 1. It'll get drawn as a zero in cargo and be confusing.
-            {
-                float transferLimit = 0; //Cannot transfer more stock than is present in city inventory
-                if(inventory[PLACE_INVENTORY_MARKET].cargo.count((*it).first) > 0) /// Check if key exists in inventory map... which it should, since there is a surplus - however, program crashes without this line, so investigate
-                    transferLimit = inventory[PLACE_INVENTORY_MARKET].cargo.at((*it).first);
-
-                if(transferQuantity > transferLimit)
-                    transferQuantity = transferLimit;
-
-                // Must record transaction before transfering items out of city inventory or it'll record quantity as zero.
-                c->AddTradeRecord(TRADE_RECORD_LOST_NOTHING,0,
-                                  (*it).first, transferQuantity,
-                                  placeIdentity);
-
-                TransferInventoryStockToCaravan(PLACE_INVENTORY_MARKET, c, (*it).first, transferQuantity);
-
-            }
+            tradeMission.missionActive = true;
+            tradeMission.SetTradeDestination(SelectRandomTradeDestination());
         }
     }
-
-
 }
-*/
-
-/*
-void Place::UnloadTradeMission(Caravan *c)
-{
-    //std::cout<< "debug: Unloading trade mission of " << c->caravanLeader->name << std::endl;
-
-    // Transfer entire contents of caravan to inventory
-
-    if(c->inventory.cargo.size() > 0)
-    {
-        for(std::map<int,float>::iterator it = c->inventory.cargo.begin(); it != c->inventory.cargo.end(); ++it)
-        {
-            // Must record transaction before transfering to city inventory or it'll record quantity as zero.
-            c->AddTradeRecord((*it).first, (*it).second,
-                              TRADE_RECORD_GAINED_NOTHING, 0,
-                              placeIdentity);
-
-            TransferInventoryStockFromCaravan(PLACE_INVENTORY_MARKET, c, (*it).first, (*it).second);
-        }
-
-
-    }
-    else
-        std::cout << "Tried to unload, but cargo of inventory is size 0" << std::endl;
-
-}
-*/
 
 void Caravan::UpdateOverworldPosition()
 {
@@ -218,7 +121,11 @@ void Caravan::OverworldLogic()
     if(onRoad)
     {
         if(atRoadsEnd)
+        {
             MoveToPlace(Place::places[roadDestination]);
+            UnloadCargo();
+            LoadCargo();
+        }
         else
         {
             distanceFromNextWaypoint -= travelSpeed;
@@ -271,64 +178,14 @@ void Caravan::OverworldLogic()
     }
 }
 
-void Caravan::SellCargo()
+void Caravan::UnloadCargo()
 {
-    if(tradeMission.missionType == TRADE_MISSION_TYPE_GENERIC)
-    {
-        //exponential time complexity
-        //produce a two-dimensional array that compares every item in caravan's cargo with every item in city market.
-        //List the best deal for each cargo item (the one that eliminates the most deficit in the home city while promoting the most surplus)
-        //Trade if the deal passes both parties' willingness to pay. Move on to the second, third, fourth... best deal until no possible deals remain. Break loop early if less than 1 full unit of cargo remains to sell.
-
-        std::vector<float>tradeBenefit; // flattened 2d array ---  row index * numColumns  + column index;
-
-        //int rows = inventory.cargo.size();
-        //int cols = whichPlace->inventory[PLACE_INVENTORY_MARKET].cargo.size();
-
-        /*
-        /// populate grid
-        for(int y = 0; y < rows; y++)
-        {
-            for(int x = 0; x < cols; x++)
-            {
-                tradeBenefit.push_back(
-                                        // home city's deficit
-                                        // city's buy price
-
-                                                 );
-
-
-            }
-        }
-
-        /// list best deals
-        for(int y = 0; y < rows; y++)
-        {
-            for(int x = 0; x < cols; x++)
-            {
-                int bestDealIndex = -1;
-                if(bestDealIndex > -1 && )
-                {
-
-                }
-            }
-        }
-        */
-
-    }
-    else if(tradeMission.missionType == TRADE_MISSION_TYPE_PICKUP_ORDER)
-    {
-
-    }
-    else if(tradeMission.missionType == TRADE_MISSION_TYPE_DROPOFF_ORDER)
-    {
-
-    }
+    whichPlace->UnloadCaravan(this);
 }
 
-void Caravan::BuyCargo()
+void Caravan::LoadCargo()
 {
-
+    whichPlace->LoadCaravan(this);
 }
 
 void Caravan::UpdateTravelSpeed()
@@ -493,16 +350,27 @@ void Caravan::SetInventoryStock(int a, float b)
     UpdateInventoryBubble();
 }
 
-void Caravan::AddTradeRecord(int il, float ilq, int ig, float igq, int loc)
+void Caravan::AddTradeRecord(int location)
 {
-    if(tradeRecords.size() >= tradeRecordsMaxElements)
-    {
-        delete tradeRecords.front();
-        tradeRecords.erase(tradeRecords.begin()); // Infamously inefficient to remove elements from a vector this way, but who cares?
-    }
+    tradeRecords.push_back(new TradeRecord(location));
+}
 
-    TradeRecord *newTradeRecord = new TradeRecord(il, ilq, ig, igq, loc);
-    tradeRecords.push_back(newTradeRecord);
+void Caravan::UpdateTradeRecords(int whichItem, int change)
+{
+    tradeRecords.back()->ChangeEntry(whichItem, change);
+
+    unsigned rowCount = 0;
+
+    for(std::vector<TradeRecord*>::iterator it = tradeRecords.begin(); it != tradeRecords.end(); ++it)
+        rowCount += (*it)->numRows;
+
+    while(rowCount > tradeRecordsMaxRows && tradeRecords.size() > 1) // Trim trade records down to their maximum total rows.
+    {
+        rowCount -= tradeRecords.front()->numRows;
+
+        delete tradeRecords.front();
+        tradeRecords.erase(tradeRecords.begin());
+    }
 
     UpdateTradeRecordsBubble();
 }
@@ -528,8 +396,14 @@ void Caravan::UpdateTradeRecordsBubble()
 {
     tradeRecordsBubbleNumRows = tradeRecordsBubbleBaseRows;
 
-    if(tradeRecords.size() > tradeRecordsBubbleNumRows)
-        tradeRecordsBubbleNumRows = tradeRecords.size();
+    if(tradeRecords.size() > 0)
+    {
+        int rowCount = 0;
+        for(std::vector<TradeRecord*>::iterator it = tradeRecords.begin(); it != tradeRecords.end(); ++it)
+            rowCount += (*it)->numRows;
+
+        tradeRecordsBubbleNumRows = rowCount;
+    }
 
     tradeRecordsBubbleHeight = tradeRecordsBubbleNumRows*(TILE_H+tradeRecordsBubbleRowSpacing);
 }
@@ -637,44 +511,52 @@ void Caravan::DrawTradeRecordsBubble()
 
     if(tradeRecords.size() > 0)
     {
-        unsigned i = 0;
-        for(std::vector<TradeRecord*>::iterator it = tradeRecords.begin(); it != tradeRecords.end(); ++it)
+        unsigned col = 0;
+        unsigned row = 0;
+
+        for(std::vector<TradeRecord*>::reverse_iterator rit = tradeRecords.rbegin(); rit != tradeRecords.rend(); ++rit)
         {
-            float drawX = tradeRecordsBubbleDrawX;
-            float drawY = tradeRecordsBubbleDrawY + i*(TILE_H + tradeRecordsBubbleRowSpacing);
-
-            if((*it)->itemLost != TRADE_RECORD_LOST_NOTHING)
-            {
-                al_draw_bitmap_region(cargoPng,
-                                  ((*it)->itemLost)*TILE_W, 0,
-                                  TILE_W, TILE_H,
-                                  drawX, drawY,
-                                  0);
-
-                string_al_draw_text(builtin, COL_BLACK, drawX+TILE_W, drawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it)->itemLostQuantity));
-            }
-
-            al_draw_bitmap(redArrowPng, drawX + TILE_W, drawY, 0);
-
-            if((*it)->itemGained != TRADE_RECORD_GAINED_NOTHING)
-            {
-                al_draw_bitmap_region(cargoPng,
-                                 ((*it)->itemGained)*TILE_W, 0,
-                                  TILE_W, TILE_H,
-                                  drawX + 2*TILE_W, drawY,
-                                  0);
-
-                string_al_draw_text(builtin, COL_BLACK,
-                                    drawX + 3*TILE_W,
-                                    drawY+TILE_H,
-                                    ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it)->itemGainedQuantity));
-            }
-
             string_al_draw_text(builtin, COL_BLACK,
-                                drawX + 3.5*TILE_W,
-                                drawY + TILE_H/2 - tradeRecordsBubbleRowSpacing/2,
-                                ALLEGRO_ALIGN_LEFT, placeNames.at((*it)->tradeLocation));
-            i++;
+                                tradeRecordsBubbleDrawX,
+                                tradeRecordsBubbleDrawY + row*(TILE_H + tradeRecordsBubbleRowSpacing),
+                                ALLEGRO_ALIGN_LEFT,
+                                placeNames.at((*rit)->location));
+
+            if((*rit)->tradeQuantities.size() > 0)
+            {
+                for(std::map<int, int>::iterator jt = (*rit)->tradeQuantities.begin(); jt != (*rit)->tradeQuantities.end(); ++jt)
+                {
+                    if(col >= tradeRecordsBubbleNumIconCols)
+                    {
+                        col = 0;
+                        row++;
+                    }
+
+                    float iconDrawX = tradeRecordsBubbleDrawX + tradeRecordsBubblePlaceNameWidth + col*(TILE_W);
+                    float iconDrawY = tradeRecordsBubbleDrawY + row*(TILE_H + tradeRecordsBubbleRowSpacing);
+
+                    al_draw_bitmap_region(cargoPng,
+                                          ((*jt).first)*TILE_W, 0,
+                                          TILE_W, TILE_H,
+                                          iconDrawX, iconDrawY,
+                                          0);
+
+                    string_al_draw_text(builtin, COL_BLACK, iconDrawX+TILE_W, iconDrawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((*jt).second));
+
+                    col ++;
+                }
+            }
+            else // tradeQuantities vector empty
+            {
+                string_al_draw_text(builtin, COL_BLACK,
+                                    tradeRecordsBubbleDrawX + tradeRecordsBubblePlaceNameWidth + col*(TILE_W),
+                                    tradeRecordsBubbleDrawY + row*(TILE_H + tradeRecordsBubbleRowSpacing),
+                                    ALLEGRO_ALIGN_LEFT,
+                                    "(No transaction).");
+            }
+
+            col = 0;
+            row++;
         }
     }
     else

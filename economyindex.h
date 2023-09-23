@@ -7,7 +7,7 @@
 #include "inventoryindex.h"
 #include "industryindex.h"
 
-
+/**
 enum enumStandardsOfLiving
 {
     LIVING_DESTITUTE = 0,   // City has < 0.5x its maitainence
@@ -18,8 +18,9 @@ enum enumStandardsOfLiving
 };
 const int LIVING_MARKER_FIRST = LIVING_DESTITUTE;
 const int LIVING_MARKER_LAST = LIVING_PROFLIGATE;
+*/
 
-const std::map<int, float>economyBaseItemValue =
+const std::map<int, float>economyItemBaseValue =
 {
     // The intention is that base value depends on
     // on hours required for a production cycle divided by units produced per cycle
@@ -64,6 +65,8 @@ const std::map<int, float>economyItemBaseQuantity =
     // Volume at which item is traded at 100% of base value, before any other modifiers.
     // This number should be related to the volume of goods that an industry can produce per production cycle.
 
+    // This number might be modified by population later.
+
     //{ITEM, production output quantity * 20 }
 
     {IT_MEAT,      200},
@@ -94,31 +97,63 @@ const std::map<int, float>economyItemBaseQuantity =
 
 };
 
-const std::map<int, std::array<int,LIVING_MARKER_LAST+1>>economyBaseMaintainenceConsumptionRate = // Also known as "household consumption", as opposed to industrial consumption
+/**
+
+enum enumPriceModificationCategories
+{
+    PRICE_MOD_NEUTRAL = 0,
+    PRICE_MOD_INDUSTRIAL_PRODUCER = 1,
+    PRICE_MOD_INDUSTRIAL_CONSUMER = 2,
+    PRICE_MOD_CULTURAL_DEMAND = 3
+};
+const int PRICE_MOD_MARKER_FIRST = PRICE_MOD_NEUTRAL;
+const int PRICE_MOD_MARKER_LAST = PRICE_MOD_CULTURAL_DEMAND;
+
+const std::map<int, std::array<int, PRICE_MOD_MARKER_LAST+1>>economyValueModificationByPercentageOfBaseQuantityBracket
+{
+    //    Neutral Produces Consumes Demand
+    {  0, { 130,   110,      150,    155 }},
+    { 20, { 122,   104,      140,    146 }},
+    { 40, { 115,    99,      131,    138 }},
+    { 60, { 109,    95,      123,    131 }},
+    { 80, { 104,    92,      116,    125 }},
+
+    {100, { 100,    90,      110,    120 }},
+
+    {120, { 96,     84,      109,    118 }},
+    {140, { 91,     77,      107,    115 }},
+    {160, { 85,     69,      104,    111 }},
+    {180, { 78,     60,      100,    106 }},
+    {200, { 70,     50,       95,    100 }},
+    // If percentage is greater than 200, use the 200 bracket.
+};
+*/
+
+
+const std::map<int, int>economyBaseMaintainenceConsumptionRate = // Also known as "household consumption", as opposed to industrial consumption
 {
     // For an average person (common role, generic ancestry)
     // This accounts for "excess consumption" beyond basic needs like food, essentially "wasting" a unit to maintain standard of living.
     // Values are in hours between consumption of 1 unit.
                     //D     P     C     W     P
-    {IT_MEAT,        {9999, 9999, 168,  36,   24  }},
-    {IT_ECTOPLASM,   {9999, 9999, 9999, 72,   24  }},
-    {IT_CONTRACT,    {9999, 9999, 720,  168,  48  }},
-    {IT_SPELLBOOK,   {9999, 9999, 9999, 720,  168 }},
-    {IT_RICE,        {9999, 720,  168,  48,   24  }},
-    {IT_ALCOHOL,     {336,  72,   96,   48,   24  }},
-    {IT_MUSHROOMS,   {9999, 9999, 96,   72,   24  }},
-    {IT_HERBS,       {9999, 9999, 168,  48,   24  }},
-    {IT_MEDICINE,    {9999, 9999, 9999, 720,  168 }},
-    {IT_SPICE,       {9999, 9999, 720,  168,  48  }},
-    {IT_CLAY,        {9999, 9999, 2880, 336,  144 }},
-    {IT_POTTERY,     {9999, 4320, 720,  336,  72  }},
-    {IT_SILVER,      {9999, 9999, 9999, 2160, 336 }},
-    {IT_JEWELRY,     {9999, 9999, 9999, 1440, 336 }},
-    {IT_LEYSTONE,    {9999, 2160, 336,  72,   24  }},
-    {IT_CLOCKWORK,   {9999, 9999, 9999, 2880, 720 }},
-    {IT_AUTOMATON,   {9999, 9999, 9999, 8760, 2160}}
+    {IT_MEAT,        36},
+    {IT_ECTOPLASM,   72},
+    {IT_CONTRACT,    168},
+    {IT_SPELLBOOK,   720},
+    {IT_RICE,        48},
+    {IT_ALCOHOL,     72},
+    {IT_MUSHROOMS,   96},
+    {IT_HERBS,       168},
+    {IT_MEDICINE,    720},
+    {IT_SPICE,       720},
+    {IT_CLAY,        144},
+    {IT_POTTERY,     720},
+    {IT_SILVER,      2160},
+    {IT_JEWELRY,     1440},
+    {IT_LEYSTONE,    336},
+    {IT_CLOCKWORK,   2880},
+    {IT_AUTOMATON,   8760}
 };
-
 
 const std::map<int, std::array<float, EXP_MARKER_LAST+1>>economyRoleMaintainenceConsumptionQuantity =
 {

@@ -29,8 +29,10 @@
 /// Dependencies
 class Caravan; // Circular
 
-enum enumPlaceInventories {                                     //PLACE_INVENTORY_RESERVE     = 0,
-                           PLACE_INVENTORY_MARKET = /*1,*/ 0}; // PLACE_INVENTORY_INDUSTRIAL  = 2, PLACE_INVENTORY_MAINTAINENCE = 3};
+enum enumPlaceInventories                                       //PLACE_INVENTORY_RESERVE     = 0,
+{
+    PLACE_INVENTORY_MARKET = /*1,*/ 0
+}; // PLACE_INVENTORY_INDUSTRIAL  = 2, PLACE_INVENTORY_MAINTAINENCE = 3};
 //const int PLACE_INVENTORY_MARKER_FIRST = PLACE_INVENTORY_RESERVE;
 //const int PLACE_INVENTORY_MARKER_LAST = PLACE_INVENTORY_MAINTAINENCE;
 const int PLACE_INVENTORY_MARKER_FIRST = PLACE_INVENTORY_MARKET;
@@ -64,18 +66,18 @@ public:
     const int removeFromCaravanseraiDelay = 50; // Todo: Tie to advancement of calendar time instead of arbitrary number
 
 /// Economy - Main
-    float maintainenceSecurityFactor; /// Security factor is the lynchpin of a city's economy, affecting supply and demand. How many multiples of its consumption must a city be overstocked for in order to consider itself at a resource surplus for its consumption tier.
-    float industrialSecurityFactor;   /// As above, but for industrial inputs. Based on daily average, so a security factory of 7 means that the city wants to have enough inputs to cover 7 days' production at any time.
-    /// To do: split maintainence security factor into array with indexes for five thresholds - corresponding to consumption tiers (destitute, poor, comfortable, wealthy, profligate)
+    std::array<bool, IT_MARKER_LAST+1>itemsConsumedByIndustries; // Not mutually exclusive with "itemsProducedByIndustries", i.e. in the case of intermediate inputs in two stage production chains
+    std::array<bool, IT_MARKER_LAST+1>itemsProducedByIndustries;
+    std::array<bool, IT_MARKER_LAST+1>itemsConsumedByPopulation;
 
-    int resourceSecurityReevaluationTime;
-    int resourceSecurityReevaluationThreshold;
-    int initialStandardOfLiving; /// See maintainenceConsumptionTier
+    const float maintainenceSecurityFactor = 3; /// Security factor is the lynchpin of a city's economy, affecting supply and demand. How many multiples of its consumption must a city be overstocked for in order to consider itself at a resource surplus.
+    const float industrialSecurityFactor = 3;   /// As above, but for industrial inputs. Based on daily average, so a security factory of 7 means that the city wants to have enough inputs to cover 7 days' production at any time.
 
     std::array<float, IT_MARKER_LAST+1>surplusRatio;
     std::array<float, IT_MARKER_LAST+1>deficitRatio;
     std::vector<int>surplusesTopTen;
     std::vector<int>deficitsTopTen;
+
 
 /// Economy - Inventory
     std::array<Inventory, PLACE_INVENTORY_MARKER_LAST+1>inventory;
@@ -86,21 +88,22 @@ public:
 /// Economy - Industrial Production
     //std::map<int,float>dailyProduction;
 
+/// Economy - Trading
+
+
 /// Economy - Maintainence Consumption --- Maintainence consumption roughly corresponds to "household consumption" in economics, as opposed to "industrial consumption".
+
     std::array<int,IT_MARKER_LAST+1>maintainenceConsumptionLevel; // Standard of living, as applied to individual items.
     std::array<int,IT_MARKER_LAST+1>maintainenceConsumptionTimer; // When this increases to threshold, it's time for a consumption tick
     std::array<int,IT_MARKER_LAST+1>maintainenceConsumptionTimerThreshold;
     std::array<float,IT_MARKER_LAST+1>maintainenceConsumptionQuantityOnTick; // How much of a resource is consumed during a consumption tick
     std::array<float,IT_MARKER_LAST+1>maintainenceConsumptionQuantityDaily;
 
-    const std::array<unsigned, LIVING_MARKER_LAST+1>maintainenceConsumptionTierSecurityThreshold = { /*Destitute:*/ 0, /*Poor*/ 1, /*confortable*/ 3, /*wealthy*/ 7, /*profligate*/ 20};
-    std::array<int, IT_MARKER_LAST+1>maintainenceConsumptionTier; /// It is important to note that changing MCT only affects maintainence consumption rate (not consumption quantity), through the updatemaintainenceconsumptionquantity function
+///std::array<int, IT_MARKER_LAST+1>maintainenceConsumptionTier; /// It is important to note that changing MCT only affects maintainence consumption rate (not consumption quantity), through the updatemaintainenceconsumptionquantity function
     std::map<int,float>dailyConsumption;
 
 /// Economy - Industrial Consumption --- As opposed to maintainence consumption above.
     std::array<float,IT_MARKER_LAST+1>industrialConsumptionQuantityDaily; // How much of a resource is consumed by industries on average **per day**.
-
-/// Trade mission
 
 /// Location
     int overworldXPosition, overworldYPosition; // Absolute position on the overworld.
@@ -120,17 +123,6 @@ public:
     const float populationBubbleHeight = TILE_H;
     float populationBubbleWidth;
     unsigned populationBubbleNumCols;
-
-/*
-/// Bubbles -- Citizen Caravans
-    const std::string citizensBubbleLabel = "Associated Caravans";
-    const float citizensBubbleDrawX = SCREEN_W*33/40;
-    const float citizensBubbleDrawY = SCREEN_H*28/40;
-    const float citizensBubbleWidth = TILE_W*6; // + bubblePadding;
-    const unsigned citizensBubbleBaseRows = 1;
-    unsigned citizensBubbleNumRows;
-    float citizensBubbleHeight;
-*/
 
 /// Bubbles -- Caravanserai
     const std::string caravanseraiBubbleLabel = "Caravanserai";
@@ -164,15 +156,16 @@ public:
     unsigned deficitBubbleNumCols, deficitBubbleNumRows;
     float deficitBubbleWidth, deficitBubbleHeight; // Width extended by TILE_W*1.5 in UpdateDeficitBubble()
 
+
 /// Bubbles -- Inventory
-                                                                                    //  MARKET,              RESERVE,       INDUSTRIAL,    MAINTAINENCE
+    //  MARKET,              RESERVE,       INDUSTRIAL,    MAINTAINENCE
     const std::array<std::string, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleLabel = {"Market"};       /*", Reserves",    "Industrial",  "Maintainence"};*/
     const std::string inventoryBubbleEmptyText                                       = "<No inventory>";
     const std::array<float, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleDrawX       = {SCREEN_W*26/40}; /*, SCREEN_W*28/40, SCREEN_W*28/40, SCREEN_W*34/40};*/
     const std::array<float, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleDrawY       = {SCREEN_H*10/40}; /*, SCREEN_H* 2/40, SCREEN_H*10/40, SCREEN_H*10/40};*/
     const float inventoryBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
     const unsigned inventoryBubbleBaseCols = 6;
-    const unsigned inventoryBubbleBaseRows = 2;
+    const unsigned inventoryBubbleBaseRows = 1;
     std::array<unsigned, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleNumCols;
     std::array<unsigned, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleNumRows;
     std::array<float, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleWidth;
@@ -208,10 +201,18 @@ public:
     void AddToCaravanserai(Caravan *c);
     void RemoveFromCaravanserai(Caravan *c);
 
+
 /// Economy functions -- Main functions
+    void UpdateItemsProducedAndConsumedByIndustries();
+
     void UpdateSurplusAndDeficitRatios(unsigned whichItem);
     void UpdateSurplusesTopTen();
     void UpdateDeficitsTopTen();
+
+/// Economy functions -- Trading
+
+    void UnloadCaravan(Caravan *c);
+    void LoadCaravan(Caravan *c);
 
 /// Economy functions -- Maintainence consumption
     void UpdateMaintainenceConsumptionTimerThreshold(unsigned whichItem);
@@ -228,6 +229,7 @@ public:
 /// Economy functions -- Industrial consumption
     float CalculateIndustrialConsumptionQuantityDaily(unsigned whichItem); // Daily average
     void UpdateIndustrialConsumptionQuantityDaily(unsigned whichItem);
+
 
 /// Industry functions
     void AddIndustry(int whichIndustry);
@@ -250,8 +252,10 @@ public:
     void UpdatePopulationBubble();
     void UpdateCitizensBubble();
     void UpdateCaravanseraiBubble();
+
     void UpdateSurplusBubble();
     void UpdateDeficitBubble();
+
     void UpdateInventoryBubbles();
     void UpdateInventoryBubble(unsigned whichBubble);
     void UpdateIndustriesBubble(); // Only called when industrial activity updated
@@ -268,8 +272,10 @@ public:
     void DrawCitizensBubble();
     //void DrawCaravanseraiBubbleOnOverworld();
     void DrawCaravanseraiBubble();
+
     void DrawSurplusBubble();
     void DrawDeficitBubble();
+
     void DrawInventoryBubbles();
     void DrawIndustriesBubble();
     void DrawFlyingTexts();

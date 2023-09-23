@@ -1,7 +1,5 @@
 #include "flyingtext.h"
 
-//std::vector<FlyingText*>FlyingText::flyingTexts;
-
 FlyingText::FlyingText(int ic, std::string t, float x, float y, bool up)
 {
     active = true;
@@ -13,20 +11,25 @@ FlyingText::FlyingText(int ic, std::string t, float x, float y, bool up)
     itemIcon = ic;
     text = t;
     scrollUp = up;
-    overworldXPosition = x;
 
     if(scrollUp)
-        overworldYPosition = y - yPositionDisplacement;
+    {
+        overworldXPosition = x + scrollUpXDisplacement;
+        overworldYPosition = y + scrollUpYDisplacement;
+    }
     else
-        overworldYPosition = y + yPositionDisplacement;
+    {
+        overworldXPosition = x + scrollDownXDisplacement;
+        overworldYPosition = y + scrollDownYDisplacement;
+    }
 
-    std::cout << "Item #" << ic << " " << t << " " << x << "/" << y << std::endl;
+    //std::cout << "Item #" << ic << " " << t << " " << x << "/" << y << std::endl;
 
 }
 
 FlyingText::~FlyingText()
 {
-    std::cout << "Deletion test" << std::endl;
+    //std::cout << "Deletion test" << std::endl;
 }
 
 void FlyingText::Progress()
@@ -39,9 +42,9 @@ void FlyingText::Progress()
             active = false;
         }
         if(scrollUp)
-            overworldYPosition -= scrollSpeed;
+            overworldYPosition -= scrollUpSpeed;
         else
-            overworldYPosition += scrollSpeed;
+            overworldYPosition += scrollDownSpeed;
     }
 
 }
@@ -60,13 +63,9 @@ void FlyingText::DrawOnOverworld()
                               drawY,
                               0);
 
-        string_al_draw_text(builtin,COL_BLACK,drawX+MINI_TILE_W,drawY,ALLEGRO_ALIGN_LEFT,text);
+        if(scrollUp)
+            string_al_draw_text(builtin,COL_BLACK,drawX+MINI_TILE_W,drawY,ALLEGRO_ALIGN_LEFT,text);
+        else //scroll down
+            string_al_draw_text(builtin,COL_ORANGE,drawX+MINI_TILE_W,drawY,ALLEGRO_ALIGN_LEFT,text);
     }
 }
-
-/*
-void FlyingText::Output(int ic, std::string t, float x, float y, bool up)
-{
-    flyingTexts.push_back(new FlyingText(ic, t, x, y, up));
-}
-*/

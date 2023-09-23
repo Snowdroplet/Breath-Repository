@@ -65,17 +65,13 @@ public:
     const int MIN_TIME_AT_PLACE = 50;
     const int MAX_TIME_AT_PLACE = 100;
 
-/// Coins and Travel Supplies
-    float coins;
-    float travelSupplies;
-
 /// Inventory
     Inventory inventory;
     float cargoWeight, cargoWeightMax; // Just have everything weigh 1 for now.
 
 /// Trade records
     std::vector<TradeRecord*>tradeRecords;
-    const unsigned tradeRecordsMaxElements = 9;
+    const unsigned tradeRecordsMaxRows = 4;
 
 /// Bubbles
     const float bubblePadding = TILE_W/4;
@@ -84,7 +80,7 @@ public:
     const float inventoryBubbleDrawX = SCREEN_W*1/40;
     const float inventoryBubbleDrawY = SCREEN_H*9/40;
     const float inventoryBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
-    const float inventoryBubbleBaseCols = 6;
+    const float inventoryBubbleBaseCols = 7;
     const float inventoryBubbleBaseRows = 1;
     unsigned inventoryBubbleNumCols;
     unsigned inventoryBubbleNumRows;
@@ -94,9 +90,11 @@ public:
     const float tradeRecordsBubbleDrawY = SCREEN_H*15/40;
     const float tradeRecordsBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
     const unsigned tradeRecordsBubbleBaseRows = 1;
-    const float tradeRecordsBubbleWidth = TILE_W*6;
+    const float tradeRecordsBubbleWidth = TILE_W*7;
     unsigned tradeRecordsBubbleNumRows;
+    const float tradeRecordsBubbleNumIconCols = 4;
     float tradeRecordsBubbleHeight;
+    const float tradeRecordsBubblePlaceNameWidth = TILE_W*3;
 
     const float pathfindingBubbleColSpacing = TILE_W;
     const float pathfindingBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
@@ -121,16 +119,14 @@ public:
     void SetHometown(int which);
 
 /// Mission, trade and movement functions
+
     void ProgressTradeMission();
 
-    int DetermineMostSuitableTradeDestination();
-    void LoadGenericTradeMission();
-    void UnloadTradeMission();
+    int SelectRandomTradeDestination();
 
     void OverworldLogic();
-    void SellCargo();
-    void BuyCargo();
-    void BuyTravelSupplies();
+    void LoadCargo();
+    void UnloadCargo();
 
 /// Location functions
     void UpdateTravelSpeed();
@@ -149,7 +145,10 @@ public:
     void SetInventoryStock(int a, float b);
 
 /// Trade record functions
-    void AddTradeRecord(int il, float ilq, int ig, float igq, int loc);
+
+    //void AddTradeRecord(int il, float ilq, int ig, float igq, int loc);
+    void AddTradeRecord(int location);
+    void UpdateTradeRecords(int whichItem, int change);
 
 /// Bubble functions
     void UpdateInventoryBubble();

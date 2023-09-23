@@ -393,19 +393,19 @@ void ProgressWorld()
             if(hourChangeTick)
             {
                 ((*it).second)->ProgressProduction();
-                ((*it).second)->ProgressMaintainenceConsumption();
 
+                ((*it).second)->ProgressMaintainenceConsumption();
                 ((*it).second)->UpdateSurplusesTopTen();
                 ((*it).second)->UpdateDeficitsTopTen();
-                //((*it).second)->ProgressTradeMissions();
+
+
             }
 
-            /*
             if(dayChangeTick)
             {
-                ((*it).second)->UpdateEconomyData();
+                //((*it).second)->UpdateEconomyData();
             }
-            */
+
 
 
         }
@@ -506,19 +506,17 @@ void DrawUI()
         for(unsigned i = 0; i < Caravan::caravans.size(); i++)
             Caravan::caravans[i]->DrawSpriteOnOverworld();
 
-        //for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
-            //(*it).second->DrawCaravanseraiBubbleOnOverworld();
-
         for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
             (*it).second->DrawFlyingTexts();
 
         if(overworldCameraPlace != nullptr)
         {
             overworldCameraPlace->DrawPopulationBubble();
-            //overworldCameraPlace->DrawCitizensBubble();
             overworldCameraPlace->DrawCaravanseraiBubble();
+
             overworldCameraPlace->DrawSurplusBubble();
             overworldCameraPlace->DrawDeficitBubble();
+
             overworldCameraPlace->DrawInventoryBubbles();
             overworldCameraPlace->DrawIndustriesBubble();
         }
@@ -531,10 +529,11 @@ void DrawUI()
             if(overworldCameraCaravan->atPlace)
             {
                 overworldCameraCaravan->whichPlace->DrawPopulationBubble();
-                //overworldCameraCaravan->whichPlace->DrawCitizensBubble();
                 overworldCameraCaravan->whichPlace->DrawCaravanseraiBubble();
+
                 overworldCameraCaravan->whichPlace->DrawSurplusBubble();
                 overworldCameraCaravan->whichPlace->DrawDeficitBubble();
+
                 overworldCameraCaravan->whichPlace->DrawInventoryBubbles();
                 overworldCameraCaravan->whichPlace->DrawIndustriesBubble();
             }

@@ -18,26 +18,25 @@ Place::Place(int id)
             population[i] = placeInitialPopulation.at(placeIdentity).at(i);
     }
 
-    initialStandardOfLiving = LIVING_COMFORTABLE;
 
-    maintainenceSecurityFactor = maintainenceConsumptionTierSecurityThreshold.at(initialStandardOfLiving); // Wants to have enough resources to live on for 3 days
-    industrialSecurityFactor = 3; // Wants to have enough inputs for 3 days of industry
+    //maintainenceSecurityFactor = 3; // Wants to have enough goods for 3 days of consumption
+    //industrialSecurityFactor = 3; // Wants to have enough inputs for 3 days of industry
 
     //const int d/*ebug production quantity*/ = 6;
     for(std::vector<int>::const_iterator cit = placeInitialIndustries.at(placeIdentity).cbegin(); cit != placeInitialIndustries.at(placeIdentity).cend(); ++cit)
         AddIndustry(*cit);
 
+    UpdateItemsProducedAndConsumedByIndustries();
 
     for(unsigned i = IT_MARKER_FIRST; i <= IT_MARKER_LAST; i++)
     {
         // The order of the following function calls is important
 
 
-        maintainenceConsumptionTier.at(i) = initialStandardOfLiving;
 
         UpdateMaintainenceConsumptionTimerThreshold(i);
 
-        maintainenceConsumptionTimer.at(i) = rand()% economyBaseMaintainenceConsumptionRate.at(i).at(initialStandardOfLiving);
+        maintainenceConsumptionTimer.at(i) = rand()% economyBaseMaintainenceConsumptionRate.at(i);
 
         UpdateIndustrialConsumptionQuantityDaily(i); /// To do: Put at the end of AddIndustry in a loop that checks inputs of all industries
 
@@ -45,7 +44,10 @@ Place::Place(int id)
 
     }
 
+
     AddInitialStock();
+
+    ///UpdateAllBuyAndSellPrices();
 }
 
 Place::~Place()
@@ -94,7 +96,7 @@ void Place::NewCitizenCaravan()
     newCaravan->AddMember(newCaravanLeader);
     newCaravan->MoveToPlace(this);
 
-    //UpdateCitizensBubble();
+    LoadCaravan(newCaravan);
 }
 
 void Place::DeleteCitizenCaravan(Caravan *c)
@@ -212,12 +214,14 @@ void Place::ProgressProduction()
     }
 }
 
+
 void Place::UpdateMaintainenceConsumptionTimerThreshold(unsigned whichItem)
 {
-    maintainenceConsumptionTimerThreshold.at(whichItem) = economyBaseMaintainenceConsumptionRate.at(whichItem).at(maintainenceConsumptionTier.at(whichItem));
+    maintainenceConsumptionTimerThreshold.at(whichItem) =  economyBaseMaintainenceConsumptionRate.at(whichItem); ///.at(maintainenceConsumptionTier.at(whichItem));
     UpdateMaintainenceConsumptionQuantityOnTick(whichItem); /// To do: Put in the upcoming threshold checking function for updating consumption tier
     UpdateMaintainenceConsumptionQuantityDaily(whichItem);
 }
+
 
 void Place::ProgressMaintainenceConsumption()
 {
@@ -228,7 +232,7 @@ void Place::ProgressMaintainenceConsumption()
             maintainenceConsumptionTimer.at(i)++;
             if(maintainenceConsumptionTimer.at(i) >= maintainenceConsumptionTimerThreshold.at(i))
             {
-                if(inventory[PLACE_INVENTORY_MARKET].cargo.count(i) > 0 /*&& maintainenceConsumptionQuantityOnTickInteger > 0*/) // Check if key exists in map
+                if(inventory[PLACE_INVENTORY_MARKET].cargo.count(i) > 0) /// && maintainenceConsumptionQuantityOnTickInteger > 0) // Check if key exists in map
                 {
                     if(maintainenceConsumptionQuantityOnTick.at(i) <= inventory[PLACE_INVENTORY_MARKET].cargo.at(i))
                     {
@@ -274,12 +278,13 @@ void Place::ProgressMaintainenceConsumption()
                 }
 
                 maintainenceConsumptionTimer.at(i) = 0;
-                UpdateMaintainenceConsumptionTier(i);
 
             }
         }
     }
 }
+
+
 
 float Place::CalculateIndustrialConsumptionQuantityDaily(unsigned whichItem)
 {
@@ -302,6 +307,8 @@ float Place::CalculateIndustrialConsumptionQuantityDaily(unsigned whichItem)
     return result;
 }
 
+
+/**
 void Place::UpdateMaintainenceConsumptionTier(unsigned whichItem)
 {
     int currentTier = maintainenceConsumptionTier.at(whichItem);
@@ -325,6 +332,7 @@ void Place::UpdateMaintainenceConsumptionTier(unsigned whichItem)
         UpdateMaintainenceConsumptionTimerThreshold(whichItem);
     }
 }
+*/
 
 void Place::UpdateIndustrialConsumptionQuantityDaily(unsigned whichItem)
 {
@@ -455,6 +463,99 @@ void Place::UpdateDeficitsTopTen()
     UpdateDeficitBubble();
 }
 
+void Place::LoadCaravan(Caravan *c)
+{
+    /// Loads caravan with the city's (top ten) breadth of surplus goods.
+    /// The quantity of each good is directly proportional to surplusRatio.
+
+    //std::cout << "Debug: Loading surplus cargo to caravan " << c->caravanLeader->name << std::endl;
+
+    if(surplusesTopTen.size() > 0)
+    {
+        c->AddTradeRecord(placeIdentity);
+
+        float surplusSum = 0; // To tally up the total quantity of surplus goods across all items.
+        std::vector<int>itemsToLoad; // Copies from surplusesTopTen. Must not access surplusesTopTen directly because its contents are updated every time cargo is transfered in or out of city inventories.
+
+        for(std::vector<int>::iterator it = surplusesTopTen.begin(); it != surplusesTopTen.end(); ++it)
+        {
+            surplusSum += surplusRatio.at(*it);
+            itemsToLoad.push_back(*it);
+        }
+
+        int cargoLimit = c->cargoWeightMax - c->cargoWeight;
+
+        /// revise loop to take into account the amount of surplus city is willing to sell (less than amount that would put it at low consumption tier... but how low?)
+        for(std::vector<int>::iterator it = itemsToLoad.begin(); it != itemsToLoad.end(); ++it)
+        {
+            if(inventory[PLACE_INVENTORY_MARKET].cargo.count(*it) > 0) /// Check if key exists in inventory map... which it should, since there is a surplus - however, program crashes without this line, so investigate /// Perhaps the surpluses vector isn't updated promptly?
+            {
+                int transferQuantity = (surplusRatio.at(*it) / surplusSum ) * cargoLimit; // Proportion of caravan's cargo hold to be filled up with each item
+                if(transferQuantity >= 1) // Don't bother transferring less than 1. It'll get drawn as a zero in cargo and be confusing.
+                {
+                    int transferLimit = inventory[PLACE_INVENTORY_MARKET].cargo.at(*it);; //Cannot transfer more stock than is present in city inventory
+                    if(transferQuantity > transferLimit)
+                        transferQuantity = transferLimit;
+
+                    // Must record transaction before transfering items out of city inventory or it'll record quantity as zero.
+                    c->UpdateTradeRecords(*it, transferQuantity);
+                    TransferInventoryStockToCaravan(PLACE_INVENTORY_MARKET, c, *it, transferQuantity);
+                    QueueDownFlyingText(*it, "-" + std::to_string(transferQuantity), overworldXPosition, overworldYPosition);
+                }
+            }
+        }
+    }
+}
+
+void Place::UnloadCaravan(Caravan *c)
+{
+    //std::cout<< "Debug: Unloading cargo of caravan " << c->caravanLeader->name << " to fulfil city deficits" std::endl;
+
+    if(deficitsTopTen.size() > 0)
+    {
+        c->AddTradeRecord(placeIdentity);
+
+        std::vector<int>itemsToUnload = deficitsTopTen; // Copies from surplusesTopTen. Must not access deficitsTopTen directly because its contents are updated every time cargo is transfered in or out of city inventories.
+        for(std::vector<int>::iterator it = itemsToUnload.begin(); it != itemsToUnload.end(); ++it)
+        {
+            if(c->inventory.cargo.count(*it) > 0)
+            {
+                int transferQuantity = c->inventory.cargo.at(*it); // So... All of it.
+                if(transferQuantity >= 1)
+                {
+                    c->UpdateTradeRecords(*it,transferQuantity*(-1));
+                    TransferInventoryStockFromCaravan(PLACE_INVENTORY_MARKET, c, *it, transferQuantity);
+                    QueueUpFlyingText(*it, "+" + std::to_string(transferQuantity), overworldXPosition, overworldYPosition);
+                }
+            }
+        }
+    }
+}
+
+void Place::UpdateItemsProducedAndConsumedByIndustries()
+{
+    for(size_t i = 0; i <= IT_MARKER_LAST; i++)
+    {
+        itemsConsumedByIndustries[i] = false;
+        itemsProducedByIndustries[i] = false;
+    }
+
+    for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
+    {
+        for(std::map<unsigned,float>::iterator jt1 = (*it)->inputs.begin(); jt1 != (*it)->inputs.end(); ++jt1)
+        {
+            itemsConsumedByIndustries[(*jt1).first] = true;
+            //std::cout << placeNames.at(placeIdentity) << ": consumption of " << itemNames.at((*jt1).first) << " true -" << std::endl;
+        }
+
+        for(std::map<unsigned,float>::iterator jt2 = (*it)->outputs.begin(); jt2 != (*it)->outputs.end(); ++jt2)
+        {
+            itemsProducedByIndustries[(*jt2).first] = true;
+            //std::cout << placeNames.at(placeIdentity) << ": production of " << itemNames.at((*jt2).first) << " true -" << std::endl;
+        }
+    }
+}
+
 void Place::AddInventoryStock(unsigned whichInventory, int a, float b)
 {
     unsigned prev = inventory[whichInventory].cargo.size();
@@ -466,7 +567,6 @@ void Place::AddInventoryStock(unsigned whichInventory, int a, float b)
     UpdateSurplusAndDeficitRatios(a);
     UpdateSurplusesTopTen();
     UpdateDeficitsTopTen();
-    //UpdateMaintainenceConsumptionTier(a);
 }
 void Place::RemoveInventoryStock(unsigned whichInventory, int a, float b)
 {
@@ -479,8 +579,6 @@ void Place::RemoveInventoryStock(unsigned whichInventory, int a, float b)
     UpdateSurplusAndDeficitRatios(a);
     UpdateSurplusesTopTen();
     UpdateDeficitsTopTen();
-    //UpdateMaintainenceConsumptionTier(a);
-
 }
 void Place::SetInventoryStock(unsigned whichInventory, int a, float b)
 {
@@ -493,7 +591,6 @@ void Place::SetInventoryStock(unsigned whichInventory, int a, float b)
     UpdateSurplusAndDeficitRatios(a);
     UpdateSurplusesTopTen();
     UpdateDeficitsTopTen();
-    //UpdateMaintainenceConsumptionTier(a);
 }
 
 void Place::TransferInventoryStock(unsigned sourceInv, unsigned destInv, int a, float b)
@@ -541,10 +638,11 @@ void Place::AddInitialStock()
 void Place::UpdateAllBubbles()
 {
     UpdatePopulationBubble();
-    //UpdateCitizensBubble();
     UpdateCaravanseraiBubble();
+
     UpdateSurplusBubble();
     UpdateDeficitBubble();
+
     UpdateInventoryBubbles();
     UpdateIndustriesBubble();
 }
@@ -562,43 +660,9 @@ void Place::UpdatePopulationBubble()
     populationBubbleWidth = TILE_W*populationBubbleNumCols;
 }
 
-/*
-void Place::UpdateCitizensBubble()
-{
-    citizensBubbleNumRows = citizensBubbleBaseRows;
-
-    if(citizenCaravans.size() > citizensBubbleNumRows)
-        citizensBubbleNumRows = citizenCaravans.size();
-
-    citizensBubbleHeight = citizensBubbleNumRows*TILE_W;
-}
-*/
 
 void Place::UpdateCaravanseraiBubble()
 {
-    /*
-
-    if(caravanserai.size() > 0)
-    {
-        caravanseraiBubbleNumCols = 1;
-        caravanseraiBubbleNumRows = 1;
-
-        while(caravanserai.size() > caravanseraiBubbleNumCols*caravanseraiBubbleNumRows)
-        {
-            if(caravanseraiBubbleNumCols <= caravanseraiBubbleNumRows)
-                caravanseraiBubbleNumCols++;
-            else
-                caravanseraiBubbleNumRows++;
-        }
-
-        caravanseraiBubbleActive = true;
-        caravanseraiBubbleWidth = caravanseraiBubbleNumCols*TILE_W;
-        caravanseraiBubbleHeight = caravanseraiBubbleNumRows*TILE_H;
-    }
-    else
-        caravanseraiBubbleActive = false;
-
-    */
 
     caravanseraiBubbleNumCols = caravanseraiBubbleBaseCols;
     caravanseraiBubbleNumRows = caravanseraiBubbleBaseRows;
@@ -614,6 +678,8 @@ void Place::UpdateCaravanseraiBubble()
     caravanseraiBubbleWidth = caravanseraiBubbleNumCols*TILE_W;
     caravanseraiBubbleHeight = caravanseraiBubbleNumRows*TILE_H;
 }
+
+
 
 void Place::UpdateSurplusBubble()
 {
@@ -640,6 +706,8 @@ void Place::UpdateDeficitBubble()
     deficitBubbleWidth = deficitBubbleNumCols*TILE_W + TILE_W*1.5; // inelegantly extended by TILE_W*1.5
     deficitBubbleHeight = deficitBubbleNumRows*TILE_H;
 }
+
+
 
 void Place::UpdateInventoryBubbles()
 {
@@ -733,7 +801,7 @@ void Place::DrawPopulationBubble()
     string_al_draw_text(builtin,COL_BLACK, populationBubbleDrawX, populationBubbleDrawY-bubblePadding-8, ALLEGRO_ALIGN_LEFT, populationBubbleLabel);
 }
 
-/*
+/**
 void Place::DrawCitizensBubble()
 {
     al_draw_filled_rounded_rectangle(citizensBubbleDrawX - bubblePadding,
@@ -824,6 +892,8 @@ void Place::DrawCaravanseraiBubble()
         string_al_draw_text(builtin,COL_BLACK,caravanseraiBubbleDrawX,caravanseraiBubbleDrawY,ALLEGRO_ALIGN_LEFT,caravanseraiBubbleEmptyText);
 }
 
+
+
 void Place::DrawSurplusBubble()
 {
     al_draw_filled_rounded_rectangle(surplusBubbleDrawX - bubblePadding,
@@ -850,11 +920,6 @@ void Place::DrawSurplusBubble()
                               TILE_W,TILE_H,
                               surplusBubbleDrawX,surplusBubbleDrawY + TILE_H*drawRow, 0);
 
-        al_draw_bitmap_region(consumptionTierIcon,
-                              maintainenceConsumptionTier.at(*it)*(MINI_TILE_W), 0,
-                              MINI_TILE_W, MINI_TILE_H,
-                              surplusBubbleDrawX - TILE_W/2,
-                              surplusBubbleDrawY + TILE_H*drawRow, 0);
 
         std::stringstream roundedSurplusRatio;
         roundedSurplusRatio << std::fixed << std::setprecision(2) << surplusRatio.at(*it); // Rounded to 2 decimal places
@@ -919,11 +984,6 @@ void Place::DrawDeficitBubble()
                               TILE_W,TILE_H,
                               deficitBubbleDrawX, deficitBubbleDrawY + TILE_H*drawRow, 0);
 
-        al_draw_bitmap_region(consumptionTierIcon,
-                              maintainenceConsumptionTier.at(*it)*(MINI_TILE_W), 0,
-                              MINI_TILE_W, MINI_TILE_H,
-                              deficitBubbleDrawX - TILE_W/2,
-                              deficitBubbleDrawY + TILE_H*drawRow, 0);
 
         std::stringstream roundedDeficitRatio;
         roundedDeficitRatio << std::fixed << std::setprecision(2) << deficitRatio.at(*it); // Rounded to 2 decimal places
@@ -995,14 +1055,17 @@ void Place::DrawInventoryBubbles()
                 float drawX = inventoryBubbleDrawX[i] + s%inventoryBubbleNumCols[i]*TILE_W;
                 float drawY = inventoryBubbleDrawY[i] + s/inventoryBubbleNumCols[i]*(TILE_H+inventoryBubbleRowSpacing);
 
-                al_draw_bitmap_region(cargoPng,
-                                      0+((*it).first)*TILE_W, 0,
-                                      TILE_W, TILE_H,
-                                      drawX, drawY,
-                                      0);
+                if((*it).second >= 1)
+                {
+                    al_draw_bitmap_region(cargoPng,
+                                          0+((*it).first)*TILE_W, 0,
+                                          TILE_W, TILE_H,
+                                          drawX, drawY,
+                                          0);
 
-                string_al_draw_text(builtin, COL_BLACK, drawX+TILE_W, drawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
-                s++;
+                    string_al_draw_text(builtin, COL_BLACK, drawX+TILE_W, drawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
+                    s++;
+                }
             }
         }
         else
