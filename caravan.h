@@ -71,7 +71,7 @@ public:
 
 /// Trade records
     std::vector<TradeRecord*>tradeRecords;
-    const unsigned tradeRecordsMaxRows = 4;
+    const unsigned tradeRecordsMaxRows = 9;
 
 /// Bubbles
     const float bubblePadding = TILE_W/4;
@@ -146,9 +146,10 @@ public:
 
 /// Trade record functions
 
-    //void AddTradeRecord(int il, float ilq, int ig, float igq, int loc);
     void AddTradeRecord(int location);
-    void UpdateTradeRecords(int whichItem, int change);
+    void UpdateTradeRecordQuantities(int whichItem, int change);
+
+    void CheckTradeRecordsRowLimit();
 
 /// Bubble functions
     void UpdateInventoryBubble();

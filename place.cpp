@@ -32,16 +32,13 @@ Place::Place(int id)
     {
         // The order of the following function calls is important
 
-
-
         UpdateMaintainenceConsumptionTimerThreshold(i);
 
-        maintainenceConsumptionTimer.at(i) = rand()% economyBaseMaintainenceConsumptionRate.at(i);
+        maintainenceConsumptionTimer.at(i) = rand() % economyBaseMaintainenceConsumptionRate.at(i);
 
         UpdateIndustrialConsumptionQuantityDaily(i); /// To do: Put at the end of AddIndustry in a loop that checks inputs of all industries
 
         UpdateSurplusAndDeficitRatios(i);
-
     }
 
 
@@ -149,11 +146,11 @@ void Place::RemoveFromCaravanserai(Caravan *c)
 void Place::AddIndustry(int whichIndustry)
 {
     float baseProdPerTick = 1;
-    if(population.count(jobExpertiseType.at(whichIndustry)) > 0)
-        baseProdPerTick += population[jobExpertiseType.at(whichIndustry)];
+    //if(population.count(jobExpertiseType.at(whichIndustry)) > 0)
+    //    baseProdPerTick += population[jobExpertiseType.at(whichIndustry)];
 
-    if(population.count(jobExpertiseType.at(EXP_COMMON)) > 0)
-        baseProdPerTick += population[EXP_COMMON]*0.25;
+    //if(population.count(jobExpertiseType.at(EXP_COMMON)) > 0)
+    //    baseProdPerTick += population[EXP_COMMON]*0.25;
 
     industries.push_back(new Industry(whichIndustry, baseProdPerTick));
 }
@@ -217,7 +214,7 @@ void Place::ProgressProduction()
 
 void Place::UpdateMaintainenceConsumptionTimerThreshold(unsigned whichItem)
 {
-    maintainenceConsumptionTimerThreshold.at(whichItem) =  economyBaseMaintainenceConsumptionRate.at(whichItem); ///.at(maintainenceConsumptionTier.at(whichItem));
+    maintainenceConsumptionTimerThreshold.at(whichItem) = economyBaseMaintainenceConsumptionRate.at(whichItem);
     UpdateMaintainenceConsumptionQuantityOnTick(whichItem); /// To do: Put in the upcoming threshold checking function for updating consumption tier
     UpdateMaintainenceConsumptionQuantityDaily(whichItem);
 }
@@ -343,8 +340,10 @@ float Place::CalculateMaintainenceConsumptionQuantityOnTick(unsigned whichItem)
 {
     float result = 0;
 
+    /*
     for(std::map<int,unsigned>::iterator jt = population.begin(); jt != population.end(); ++jt)
         result += ((*jt).second) * economyRoleMaintainenceConsumptionQuantity.at(whichItem).at((*jt).first); // Not consumptionRate, mind. Quantity.
+    */
 
 #ifdef debug_output_place_calculate_and_draw_consumption
     //std::cout << "Maintainence consumption of " << itemNames.at(whichItem) << " at " << placeNames.at(placeIdentity) << ": " << result << " per tick." << std::endl;
@@ -470,10 +469,10 @@ void Place::LoadCaravan(Caravan *c)
 
     //std::cout << "Debug: Loading surplus cargo to caravan " << c->caravanLeader->name << std::endl;
 
+    c->AddTradeRecord(placeIdentity);
+
     if(surplusesTopTen.size() > 0)
     {
-        c->AddTradeRecord(placeIdentity);
-
         float surplusSum = 0; // To tally up the total quantity of surplus goods across all items.
         std::vector<int>itemsToLoad; // Copies from surplusesTopTen. Must not access surplusesTopTen directly because its contents are updated every time cargo is transfered in or out of city inventories.
 
@@ -498,22 +497,26 @@ void Place::LoadCaravan(Caravan *c)
                         transferQuantity = transferLimit;
 
                     // Must record transaction before transfering items out of city inventory or it'll record quantity as zero.
-                    c->UpdateTradeRecords(*it, transferQuantity);
+                    c->UpdateTradeRecordQuantities(*it, transferQuantity);
                     TransferInventoryStockToCaravan(PLACE_INVENTORY_MARKET, c, *it, transferQuantity);
                     QueueDownFlyingText(*it, "-" + std::to_string(transferQuantity), overworldXPosition, overworldYPosition);
                 }
             }
         }
     }
+
+    c->CheckTradeRecordsRowLimit();
+    c->UpdateTradeRecordsBubble();
 }
 
 void Place::UnloadCaravan(Caravan *c)
 {
     //std::cout<< "Debug: Unloading cargo of caravan " << c->caravanLeader->name << " to fulfil city deficits" std::endl;
 
+    c->AddTradeRecord(placeIdentity);
+
     if(deficitsTopTen.size() > 0)
     {
-        c->AddTradeRecord(placeIdentity);
 
         std::vector<int>itemsToUnload = deficitsTopTen; // Copies from surplusesTopTen. Must not access deficitsTopTen directly because its contents are updated every time cargo is transfered in or out of city inventories.
         for(std::vector<int>::iterator it = itemsToUnload.begin(); it != itemsToUnload.end(); ++it)
@@ -523,13 +526,16 @@ void Place::UnloadCaravan(Caravan *c)
                 int transferQuantity = c->inventory.cargo.at(*it); // So... All of it.
                 if(transferQuantity >= 1)
                 {
-                    c->UpdateTradeRecords(*it,transferQuantity*(-1));
+                    c->UpdateTradeRecordQuantities(*it,transferQuantity*(-1));
                     TransferInventoryStockFromCaravan(PLACE_INVENTORY_MARKET, c, *it, transferQuantity);
                     QueueUpFlyingText(*it, "+" + std::to_string(transferQuantity), overworldXPosition, overworldYPosition);
                 }
             }
         }
     }
+
+    c->CheckTradeRecordsRowLimit();
+    c->UpdateTradeRecordsBubble();
 }
 
 void Place::UpdateItemsProducedAndConsumedByIndustries()
@@ -613,25 +619,27 @@ void Place::TransferInventoryStockFromCaravan(unsigned destInv, Caravan *c, int 
 
 void Place::AddInitialStock()
 {
-    for (unsigned i = IT_MARKER_FIRST; i <= IT_MARKER_LAST; i++)
+    /*
+    for(unsigned i = IT_MARKER_FIRST; i <= IT_MARKER_LAST; i++)
     {
         for (std::map<int, unsigned>::iterator it = population.begin(); it != population.end(); ++it)
         {
             if(population.count((*it).second) > 0)
             {
-                float toAdd = economyRoleMaintainenceConsumptionQuantity.at(i).at((*it).first) * population.at((*it).second) * 2; // Arbitrary 1 here.
+                float toAdd = economyRoleMaintainenceConsumptionQuantity.at(i).at((*it).first) * population.at((*it).second) * 2; // Arbitrary multiplier of 2 here.
                 AddInventoryStock(PLACE_INVENTORY_MARKET, i, toAdd);
             }
         }
     }
+    */
 
     for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
     {
         for(std::map<unsigned,float>::iterator jt = (*it)->inputs.begin(); jt != (*it)->inputs.end(); ++jt)
-            AddInventoryStock(PLACE_INVENTORY_MARKET, (*jt).first, (*jt).second* 2);
+            AddInventoryStock(PLACE_INVENTORY_MARKET, (*jt).first, (*jt).second* 10);
 
         for(std::map<unsigned,float>::iterator kt = (*it)->outputs.begin(); kt != (*it)->outputs.end(); ++kt)
-            AddInventoryStock(PLACE_INVENTORY_MARKET, (*kt).first, (*kt).second* 2); // The multiplier here is just arbitrary. It could be, say, 2.
+            AddInventoryStock(PLACE_INVENTORY_MARKET, (*kt).first, (*kt).second* 10); // The multiplier of 5 here is just arbitrary.
     }
 }
 
@@ -1189,6 +1197,9 @@ void Place::QueueUpFlyingText(int ic, std::string t, float x, float y)
 void Place::QueueDownFlyingText(int ic, std::string t, float x, float y)
 {
     downFlyingTexts.push_back(new FlyingText(ic, t, x, y, false));
+
+    for(std::vector<FlyingText*>::iterator it = downFlyingTexts.begin(); it != downFlyingTexts.end(); ++it)
+        (*it)->overworldYPosition -= 2*MINI_TILE_H;
 }
 
 void Place::ProgressFlyingTexts()

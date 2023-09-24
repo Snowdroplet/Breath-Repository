@@ -14,18 +14,9 @@ public:
 
     int location;
 
-    //int itemLost;
-    //float itemLostQuantity;
-
-    //int itemGained;
-    //float itemGainedQuantity;
-
-    //int tradeLocation;
-
 public:
 
     TradeRecord(int whichLocation);
-    //TradeRecord(int il, float ilq, int ig, float igq, int loc);
     ~TradeRecord();
 
     void ChangeEntry(int whichItem, int change);

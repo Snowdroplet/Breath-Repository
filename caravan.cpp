@@ -328,7 +328,7 @@ void Caravan::UpdateCargoWeight()
 
 void Caravan::UpdateCargoWeightMax()
 {
-    cargoWeightMax = 100;
+    cargoWeightMax = 20;
 }
 
 void Caravan::AddInventoryStock(int a, float b)
@@ -355,10 +355,13 @@ void Caravan::AddTradeRecord(int location)
     tradeRecords.push_back(new TradeRecord(location));
 }
 
-void Caravan::UpdateTradeRecords(int whichItem, int change)
+void Caravan::UpdateTradeRecordQuantities(int whichItem, int change)
 {
     tradeRecords.back()->ChangeEntry(whichItem, change);
+}
 
+void Caravan::CheckTradeRecordsRowLimit()
+{
     unsigned rowCount = 0;
 
     for(std::vector<TradeRecord*>::iterator it = tradeRecords.begin(); it != tradeRecords.end(); ++it)
@@ -371,8 +374,6 @@ void Caravan::UpdateTradeRecords(int whichItem, int change)
         delete tradeRecords.front();
         tradeRecords.erase(tradeRecords.begin());
     }
-
-    UpdateTradeRecordsBubble();
 }
 
 void Caravan::UpdateInventoryBubble()
@@ -396,14 +397,12 @@ void Caravan::UpdateTradeRecordsBubble()
 {
     tradeRecordsBubbleNumRows = tradeRecordsBubbleBaseRows;
 
-    if(tradeRecords.size() > 0)
-    {
-        int rowCount = 0;
-        for(std::vector<TradeRecord*>::iterator it = tradeRecords.begin(); it != tradeRecords.end(); ++it)
-            rowCount += (*it)->numRows;
+    unsigned rowCount = 0;
+    for(std::vector<TradeRecord*>::iterator it = tradeRecords.begin(); it != tradeRecords.end(); ++it)
+        rowCount += (*it)->numRows;
 
+    if(rowCount > tradeRecordsBubbleBaseRows)
         tradeRecordsBubbleNumRows = rowCount;
-    }
 
     tradeRecordsBubbleHeight = tradeRecordsBubbleNumRows*(TILE_H+tradeRecordsBubbleRowSpacing);
 }
@@ -507,6 +506,7 @@ void Caravan::DrawTradeRecordsBubble()
                               COL_INDIGO,
                               4);
 
+
     al_draw_text(builtin, COL_BLACK, tradeRecordsBubbleDrawX, tradeRecordsBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, "Trade Records:");
 
     if(tradeRecords.size() > 0)
@@ -516,11 +516,13 @@ void Caravan::DrawTradeRecordsBubble()
 
         for(std::vector<TradeRecord*>::reverse_iterator rit = tradeRecords.rbegin(); rit != tradeRecords.rend(); ++rit)
         {
+
             string_al_draw_text(builtin, COL_BLACK,
-                                tradeRecordsBubbleDrawX,
+                                tradeRecordsBubbleDrawX + tradeRecordsBubblePlaceNameWidth,
                                 tradeRecordsBubbleDrawY + row*(TILE_H + tradeRecordsBubbleRowSpacing),
-                                ALLEGRO_ALIGN_LEFT,
-                                placeNames.at((*rit)->location));
+                                ALLEGRO_ALIGN_RIGHT,
+                                placeNames.at((*rit)->location)); //+ " (" + std::to_string((*rit)->numRows) + ")");
+
 
             if((*rit)->tradeQuantities.size() > 0)
             {
@@ -535,6 +537,16 @@ void Caravan::DrawTradeRecordsBubble()
                     float iconDrawX = tradeRecordsBubbleDrawX + tradeRecordsBubblePlaceNameWidth + col*(TILE_W);
                     float iconDrawY = tradeRecordsBubbleDrawY + row*(TILE_H + tradeRecordsBubbleRowSpacing);
 
+                    if((*jt).second < 0)
+                        al_draw_filled_rectangle(iconDrawX, iconDrawY,
+                                             iconDrawX+TILE_W, iconDrawY+TILE_H+tradeRecordsBubbleRowSpacing,
+                                             COL_ORANGE);
+                    else
+                        al_draw_filled_rectangle(iconDrawX, iconDrawY,
+                                             iconDrawX+TILE_W, iconDrawY+TILE_H+tradeRecordsBubbleRowSpacing,
+                                             COL_LIGHT_GREEN);
+
+
                     al_draw_bitmap_region(cargoPng,
                                           ((*jt).first)*TILE_W, 0,
                                           TILE_W, TILE_H,
@@ -543,14 +555,15 @@ void Caravan::DrawTradeRecordsBubble()
 
                     string_al_draw_text(builtin, COL_BLACK, iconDrawX+TILE_W, iconDrawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((*jt).second));
 
-                    col ++;
+                    col++;
                 }
+
             }
-            else // tradeQuantities vector empty
+            else if((*rit)->tradeQuantities.size() == 0) // tradeQuantities vector empty
             {
                 string_al_draw_text(builtin, COL_BLACK,
                                     tradeRecordsBubbleDrawX + tradeRecordsBubblePlaceNameWidth + col*(TILE_W),
-                                    tradeRecordsBubbleDrawY + row*(TILE_H + tradeRecordsBubbleRowSpacing),
+                                    tradeRecordsBubbleDrawY + row*(TILE_H + tradeRecordsBubbleRowSpacing) + TILE_H/2 - BUILTIN_TEXT_HEIGHT/2,
                                     ALLEGRO_ALIGN_LEFT,
                                     "(No transaction).");
             }

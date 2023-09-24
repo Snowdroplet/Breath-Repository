@@ -8,18 +8,6 @@
 #include "industryindex.h"
 
 /**
-enum enumStandardsOfLiving
-{
-    LIVING_DESTITUTE = 0,   // City has < 0.5x its maitainence
-    LIVING_POOR = 1,        // City has < 1x of its maintainence
-    LIVING_COMFORTABLE = 2, // City has 1x of its maintainence
-    LIVING_WEALTHY = 3,     // City has 3x of its maintainence
-    LIVING_PROFLIGATE = 4   // City has 10x of its maintaienece
-};
-const int LIVING_MARKER_FIRST = LIVING_DESTITUTE;
-const int LIVING_MARKER_LAST = LIVING_PROFLIGATE;
-*/
-
 const std::map<int, float>economyItemBaseValue =
 {
     // The intention is that base value depends on
@@ -31,7 +19,7 @@ const std::map<int, float>economyItemBaseValue =
     // may be better to adjust those values manually for the time being
     // as economic interactions are not in their final state yet.
 
-    /*{ITEM,     (input cost + prod hrs)/output quantity}  */
+    ///ITEM,     (input cost + prod hrs)/output quantity}
 
     {IT_MEAT,      (0        + 72)/10},  // 7.2
 
@@ -39,7 +27,7 @@ const std::map<int, float>economyItemBaseValue =
     {IT_CONTRACT,  (16*4     + 160)/1},  // 224
     {IT_SPELLBOOK, (224*6    + 240)/1},  // 1584
 
-    {IT_RICE,      (0        + 240)/50}, // 4.8
+    {IT_BERRIES,      (0        + 240)/50}, // 4.8
     {IT_ALCOHOL,   (30*4.8   + 448)/25}, // 23.68
 
     {IT_MUSHROOMS, (0        + 360)/30}, // 12
@@ -60,6 +48,7 @@ const std::map<int, float>economyItemBaseValue =
     {IT_AUTOMATON, (100.4*50 + 704)/1}   // 5724
 };
 
+
 const std::map<int, float>economyItemBaseQuantity =
 {
     // Volume at which item is traded at 100% of base value, before any other modifiers.
@@ -75,7 +64,7 @@ const std::map<int, float>economyItemBaseQuantity =
     {IT_CONTRACT,  20},
     {IT_SPELLBOOK, 20},
 
-    {IT_RICE,      1000},
+    {IT_BERRIES,      1000},
     {IT_ALCOHOL,   500},
 
     {IT_MUSHROOMS, 600},
@@ -96,8 +85,6 @@ const std::map<int, float>economyItemBaseQuantity =
     {IT_AUTOMATON, 20}
 
 };
-
-/**
 
 enum enumPriceModificationCategories
 {
@@ -132,29 +119,16 @@ const std::map<int, std::array<int, PRICE_MOD_MARKER_LAST+1>>economyValueModific
 
 const std::map<int, int>economyBaseMaintainenceConsumptionRate = // Also known as "household consumption", as opposed to industrial consumption
 {
-    // For an average person (common role, generic ancestry)
-    // This accounts for "excess consumption" beyond basic needs like food, essentially "wasting" a unit to maintain standard of living.
-    // Values are in hours between consumption of 1 unit.
-                    //D     P     C     W     P
-    {IT_MEAT,        36},
-    {IT_ECTOPLASM,   72},
-    {IT_CONTRACT,    168},
-    {IT_SPELLBOOK,   720},
-    {IT_RICE,        48},
-    {IT_ALCOHOL,     72},
-    {IT_MUSHROOMS,   96},
-    {IT_HERBS,       168},
-    {IT_MEDICINE,    720},
-    {IT_SPICE,       720},
-    {IT_CLAY,        144},
-    {IT_POTTERY,     720},
-    {IT_SILVER,      2160},
-    {IT_JEWELRY,     1440},
-    {IT_LEYSTONE,    336},
-    {IT_CLOCKWORK,   2880},
-    {IT_AUTOMATON,   8760}
+    {IT_CORPUS,  720}, {IT_PLASM,  720}, {IT_OCULUS,    720}, {IT_STRANGE_EGG, 720},
+    {IT_BERRIES, 720}, {IT_HERBS,  720}, {IT_MUSHROOMS, 720}, {IT_SPICE,       720},
+    {IT_CLAY,    720}, {IT_COPPER, 720}, {IT_IRON,      720}, {IT_LEYSTONE,    720},
+
+    {IT_ALCOHOL, 720}, {IT_MEDICINE,  720}, {IT_POISON, 720}, {IT_COUNTERAGENT, 720},
+    {IT_EFFIGY,  720}, {IT_CONTRACT,  720}, {IT_VESSEL, 720}, {IT_SPELLBOOK,    720},
+    {IT_FUEL,    720}, {IT_CLOCKWORK, 720}, {IT_TOOLS,  720}, {IT_AUTOMATON,    720}
 };
 
+/*
 const std::map<int, std::array<float, EXP_MARKER_LAST+1>>economyRoleMaintainenceConsumptionQuantity =
 {
 //EXP_COMMON = 0, EXP_HUNT = 1, EXP_FARM = 2, EXP_MINE = 3, EXP_ALCHEMY = 4, EXP_SORCERY = 5, EXP_CRAFT = 6, EXP_MECHANICS = 7
@@ -163,7 +137,7 @@ const std::map<int, std::array<float, EXP_MARKER_LAST+1>>economyRoleMaintainence
     {IT_ECTOPLASM,   {0.01,    1, 0.01, 0.01, 0.01,    1, 0.01, 0.01}},
     {IT_CONTRACT,    {0.01,  0.5, 0.01, 0.01,    1,    2,  0.5,  0.5}},
     {IT_SPELLBOOK,   {0.01, 0.01, 0.01, 0.01,    1,    1, 0.25, 0.25}},
-    {IT_RICE,        {   1,  1.5,  1.5,  1.5,    1,    1,    1,    1}},
+    {IT_BERRIES,        {   1,  1.5,  1.5,  1.5,    1,    1,    1,    1}},
     {IT_ALCOHOL,     {   1,  1.5,  1.5,  1.5,    1,    1,    1,    1}},
     {IT_MUSHROOMS,   {   1,    1,    1,    1,  1.5,  1.5,    1,    1}},
     {IT_HERBS,       { 0.5,    1,    2,    1,    2,    1,    1,    1}},
@@ -177,6 +151,7 @@ const std::map<int, std::array<float, EXP_MARKER_LAST+1>>economyRoleMaintainence
     {IT_CLOCKWORK,   {0.01, 0.01,  0.5,  0.5,  0.5,  0.5, 0.01,    2}},
     {IT_AUTOMATON,   {0.01, 0.01,  0.5,  0.5, 0.25, 0.25, 0.01,    1}}
 };
+*/
 
 /// Better just keep a blank copy of the array around just in case
 /*
@@ -184,7 +159,7 @@ const std::map<int, std::array<float, EXP_MARKER_LAST+1>>economyRoleMaintainence
     {IT_ECTOPLASM,   { 0.0, 0.0, 0.0, 0.0, 0.0}},
     {IT_CONTRACT,    { 0.0, 0.0, 0.0, 0.0, 0.0}},
     {IT_SPELLBOOK,   { 0.0, 0.0, 0.0, 0.0, 0.0}},
-    {IT_RICE,        { 0.0, 0.0, 0.0, 0.0, 0.0}},
+    {IT_BERRIES,        { 0.0, 0.0, 0.0, 0.0, 0.0}},
     {IT_ALCOHOL,     { 0.0, 0.0, 0.0, 0.0, 0.0}},
     {IT_MUSHROOMS,   { 0.0, 0.0, 0.0, 0.0, 0.0}},
     {IT_HERBS,       { 0.0, 0.0, 0.0, 0.0, 0.0}},

@@ -34,9 +34,9 @@ public:
     std::string remainingTimeText;
 
 /// Job identity
-    std::string industryName;
-    int expertiseType;
-    float expertiseLevelRequired;
+    //std::string industryName;
+    //int expertiseType;
+    //float expertiseLevelRequired;
 
 /// Inputs and outputs
     std::map<unsigned,float>inputs;

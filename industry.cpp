@@ -5,7 +5,7 @@ Industry::Industry(int id, float ppt)
     jobState = JOB_STATE_INSUFFICIENT_INPUTS;
     jobPauseTicks = 0;
 
-    industryName = industryNames.at(id);
+    //industryName = industryNames.at(id);
 
     inputMultiplier = 1.0;
     outputMultiplier = 1.0;
@@ -23,8 +23,8 @@ Industry::Industry(int id, float ppt)
         for(std::map<int, float>::const_iterator it = baseJobOutputs.at(id).cbegin(); it != baseJobOutputs.at(id).cend(); ++it)
             outputs[(*it).first] = (*it).second;
 
-    expertiseType = jobExpertiseType.at(id);
-    expertiseLevelRequired = jobExpertiseLevel.at(id);
+    //expertiseType = jobExpertiseType.at(id);
+    //expertiseLevelRequired = jobExpertiseLevel.at(id);
 
     pauseProgressBarFill = jobPauseTicks/jobPauseThreshold;
     pauseProgressBarNeedsRollover = false;
