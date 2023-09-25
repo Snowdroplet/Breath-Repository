@@ -517,7 +517,7 @@ void DrawUI()
             overworldCameraPlace->DrawSurplusBubble();
             overworldCameraPlace->DrawDeficitBubble();
 
-            overworldCameraPlace->DrawInventoryBubbles();
+            overworldCameraPlace->DrawMarketBubble();
             overworldCameraPlace->DrawIndustriesBubble();
         }
         else if(overworldCameraCaravan != nullptr)
@@ -534,7 +534,7 @@ void DrawUI()
                 overworldCameraCaravan->whichPlace->DrawSurplusBubble();
                 overworldCameraCaravan->whichPlace->DrawDeficitBubble();
 
-                overworldCameraCaravan->whichPlace->DrawInventoryBubbles();
+                overworldCameraCaravan->whichPlace->DrawMarketBubble();
                 overworldCameraCaravan->whichPlace->DrawIndustriesBubble();
             }
         }

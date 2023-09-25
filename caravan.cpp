@@ -123,8 +123,8 @@ void Caravan::OverworldLogic()
         if(atRoadsEnd)
         {
             MoveToPlace(Place::places[roadDestination]);
-            UnloadCargo();
-            LoadCargo();
+
+            whichPlace->TradeWithCaravan(this);
         }
         else
         {
@@ -176,16 +176,6 @@ void Caravan::OverworldLogic()
             UpdatePathfindingBubble();
         }
     }
-}
-
-void Caravan::UnloadCargo()
-{
-    whichPlace->UnloadCaravan(this);
-}
-
-void Caravan::LoadCargo()
-{
-    whichPlace->LoadCaravan(this);
 }
 
 void Caravan::UpdateTravelSpeed()

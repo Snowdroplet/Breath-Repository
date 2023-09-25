@@ -29,15 +29,6 @@
 /// Dependencies
 class Caravan; // Circular
 
-enum enumPlaceInventories                                       //PLACE_INVENTORY_RESERVE     = 0,
-{
-    PLACE_INVENTORY_MARKET = /*1,*/ 0
-}; // PLACE_INVENTORY_INDUSTRIAL  = 2, PLACE_INVENTORY_MAINTAINENCE = 3};
-//const int PLACE_INVENTORY_MARKER_FIRST = PLACE_INVENTORY_RESERVE;
-//const int PLACE_INVENTORY_MARKER_LAST = PLACE_INVENTORY_MAINTAINENCE;
-const int PLACE_INVENTORY_MARKER_FIRST = PLACE_INVENTORY_MARKET;
-const int PLACE_INVENTORY_MARKER_LAST =  PLACE_INVENTORY_MARKET;
-
 class Place
 {
 public:
@@ -80,7 +71,8 @@ public:
 
 
 /// Economy - Inventory
-    std::array<Inventory, PLACE_INVENTORY_MARKER_LAST+1>inventory;
+    Inventory market;
+    Inventory marketBuffer; // Items are traded from caravan to buffer to caravan, to prevent back-and-forth trades based on updates to surplus/deficit data.
 
 /// Economy - Industries
     std::vector<Industry*>industries;
@@ -157,19 +149,18 @@ public:
     float deficitBubbleWidth, deficitBubbleHeight; // Width extended by TILE_W*1.5 in UpdateDeficitBubble()
 
 
-/// Bubbles -- Inventory
-    //  MARKET,              RESERVE,       INDUSTRIAL,    MAINTAINENCE
-    const std::array<std::string, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleLabel = {"Market"};       /*", Reserves",    "Industrial",  "Maintainence"};*/
-    const std::string inventoryBubbleEmptyText                                       = "<No inventory>";
-    const std::array<float, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleDrawX       = {SCREEN_W*26/40}; /*, SCREEN_W*28/40, SCREEN_W*28/40, SCREEN_W*34/40};*/
-    const std::array<float, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleDrawY       = {SCREEN_H*10/40}; /*, SCREEN_H* 2/40, SCREEN_H*10/40, SCREEN_H*10/40};*/
-    const float inventoryBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
-    const unsigned inventoryBubbleBaseCols = 6;
-    const unsigned inventoryBubbleBaseRows = 1;
-    std::array<unsigned, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleNumCols;
-    std::array<unsigned, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleNumRows;
-    std::array<float, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleWidth;
-    std::array<float, PLACE_INVENTORY_MARKER_LAST+1>inventoryBubbleHeight;
+/// Bubbles -- Market
+    const std::string marketBubbleLabel = "Market";
+    const std::string marketBubbleEmptyText = "<No inventory>";
+    const float marketBubbleDrawX       = SCREEN_W*26/40;
+    const float marketBubbleDrawY       = SCREEN_H*10/40;
+    const float marketBubbleRowSpacing  = BUILTIN_TEXT_HEIGHT;
+    const unsigned marketBubbleBaseCols = 6;
+    const unsigned marketBubbleBaseRows = 1;
+    unsigned marketBubbleNumCols;
+    unsigned marketBubbleNumRows;
+    float marketBubbleWidth;
+    float marketBubbleHeight;
 
 /// Bubbles -- Industry
     const std::string industriesBubbleLabel = "Local Industries";
@@ -210,9 +201,11 @@ public:
     void UpdateDeficitsTopTen();
 
 /// Economy functions -- Trading
+    void TradeWithCaravan(Caravan *c);
 
-    void UnloadCaravan(Caravan *c);
+    void UnloadCaravanToMarketBuffer(Caravan *c);
     void LoadCaravan(Caravan *c);
+
 
 /// Economy functions -- Maintainence consumption
     void UpdateMaintainenceConsumptionTimerThreshold(unsigned whichItem);
@@ -238,14 +231,25 @@ public:
     void ProgressProduction();
 
 /// Inventory functions
-    void AddInventoryStock(unsigned whichInventory, int a, float b);
-    void RemoveInventoryStock(unsigned whichInventory, int a, float b);
-    void SetInventoryStock(unsigned whichInventory, int a, float b);
-    void TransferInventoryStock(unsigned sourceInv, unsigned destInv, int a, float b);
-    void TransferInventoryStockToCaravan(unsigned sourceInv, Caravan *c, int a, float b);
-    void TransferInventoryStockFromCaravan(unsigned destInv, Caravan *c, int a, float b);
 
-    void AddInitialStock();
+    void AddMarketStock(int a, float b);
+    void RemoveMarketStock(int a, float b);
+    void SetMarketStock(int a, float b);
+
+    void AddMarketBufferStock(int a, float b);
+    void RemoveMarketBufferStock(int a, float b);
+    void SetMarketBufferStock(int a, float b);
+
+//Market to Caravan
+    void TransferMarketStockToCaravanStock(Caravan *c, int a, float b);
+
+// Caravan to Buffer
+    void TransferCaravanStockToMarketBufferStock(Caravan *c, int a, float b);
+
+// Buffer to Market
+    void DumpMarketBufferStockToMarketStock();
+
+    void AddInitialMarketStock();
 
 /// Bubble functions
     void UpdateAllBubbles();
@@ -256,8 +260,7 @@ public:
     void UpdateSurplusBubble();
     void UpdateDeficitBubble();
 
-    void UpdateInventoryBubbles();
-    void UpdateInventoryBubble(unsigned whichBubble);
+    void UpdateMarketBubble();
     void UpdateIndustriesBubble(); // Only called when industrial activity updated
     void ProgressIndustriesBubbleProgressBars(); // Called on timer tick
 
@@ -276,7 +279,8 @@ public:
     void DrawSurplusBubble();
     void DrawDeficitBubble();
 
-    void DrawInventoryBubbles();
+    ///void DrawInventoryBubbles();
+    void DrawMarketBubble();
     void DrawIndustriesBubble();
     void DrawFlyingTexts();
 };

@@ -125,8 +125,6 @@ public:
     int SelectRandomTradeDestination();
 
     void OverworldLogic();
-    void LoadCargo();
-    void UnloadCargo();
 
 /// Location functions
     void UpdateTravelSpeed();
