@@ -108,6 +108,14 @@ Road::Road(int id)
         SetWaypoint(2, TILE_W*4 + TILE_W/2, TILE_H*32);
         break;
 
+    case ROAD_AMBLEFORTH_OBSERVIA:
+        endpointA = PL_AMBLEFORTH;
+        endpointB = PL_OBSERVIA;
+        SetWaypoint(0, TILE_W*4,            TILE_H*12 + TILE_H/2);
+        SetWaypoint(1, TILE_W*9 + TILE_W/2, TILE_H*12 + TILE_H/2);
+        SetWaypoint(2, TILE_W*9 + TILE_W/2, TILE_H*6  + TILE_H/2);
+        break;
+
     case ROAD_ROSKANEL_ROSELLA:
         endpointA = PL_ROSKANEL;
         endpointB = PL_ROSELLA;

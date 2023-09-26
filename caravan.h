@@ -78,7 +78,7 @@ public:
     const float bubbleCornerRadius = 8;
 
     const float inventoryBubbleDrawX = SCREEN_W*1/40;
-    const float inventoryBubbleDrawY = SCREEN_H*9/40;
+    const float inventoryBubbleDrawY = SCREEN_H*8/40;
     const float inventoryBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
     const float inventoryBubbleBaseCols = 7;
     const float inventoryBubbleBaseRows = 1;
@@ -87,7 +87,7 @@ public:
     float inventoryBubbleWidth, inventoryBubbleHeight;
 
     const float tradeRecordsBubbleDrawX = SCREEN_W*1/40;
-    const float tradeRecordsBubbleDrawY = SCREEN_H*15/40;
+    const float tradeRecordsBubbleDrawY = SCREEN_H*14/40;
     const float tradeRecordsBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
     const unsigned tradeRecordsBubbleBaseRows = 1;
     const float tradeRecordsBubbleWidth = TILE_W*7;

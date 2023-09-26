@@ -23,9 +23,6 @@ Industry::Industry(int id, float ppt)
         for(std::map<int, float>::const_iterator it = baseJobOutputs.at(id).cbegin(); it != baseJobOutputs.at(id).cend(); ++it)
             outputs[(*it).first] = (*it).second;
 
-    //expertiseType = jobExpertiseType.at(id);
-    //expertiseLevelRequired = jobExpertiseLevel.at(id);
-
     pauseProgressBarFill = jobPauseTicks/jobPauseThreshold;
     pauseProgressBarNeedsRollover = false;
 
@@ -38,12 +35,12 @@ Industry::~Industry()
 
 }
 
-void Industry::SetJobStateInsufficientInputs(int thresh)
+void Industry::SetJobStateInsufficientInputs(/*int thresh*/)
 {
     jobState = JOB_STATE_INSUFFICIENT_INPUTS;
 
     jobPauseTicks = 0;
-    jobPauseThreshold = thresh;
+    //jobPauseThreshold = thresh;
 }
 
 void Industry::SetJobStateDeductionsNecessary()
@@ -61,6 +58,7 @@ void Industry::SetJobStateHarvestReady()
     jobState = JOB_STATE_HARVEST_READY;
 }
 
+/*
 float Industry::CalculateAverageInput(int whichItem, int period)
 {
     if(inputs.count(whichItem) > 0)
@@ -73,6 +71,7 @@ float Industry::CalculateAverageInput(int whichItem, int period)
     else
         return 0;
 }
+*/
 
 void Industry::ProgressJobPause()
 {

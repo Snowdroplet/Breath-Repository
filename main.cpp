@@ -395,8 +395,8 @@ void ProgressWorld()
                 ((*it).second)->ProgressProduction();
 
                 ((*it).second)->ProgressMaintainenceConsumption();
-                ((*it).second)->UpdateSurplusesTopTen();
-                ((*it).second)->UpdateDeficitsTopTen();
+                ((*it).second)->UpdateSurplusesDescending();
+                ((*it).second)->UpdateDeficitsDescending();
 
 
             }

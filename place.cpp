@@ -5,7 +5,6 @@ std::map<int, Place*> Place::places;
 Place::Place(int id)
 {
     placeIdentity = id;
-    //std::cout << "Place created with ID " << id << std::endl;
 
     name = placeNames.at(placeIdentity);
 
@@ -19,10 +18,6 @@ Place::Place(int id)
     }
 
 
-    //maintainenceSecurityFactor = 3; // Wants to have enough goods for 3 days of consumption
-    //industrialSecurityFactor = 3; // Wants to have enough inputs for 3 days of industry
-
-    //const int d/*ebug production quantity*/ = 6;
     for(std::vector<int>::const_iterator cit = placeInitialIndustries.at(placeIdentity).cbegin(); cit != placeInitialIndustries.at(placeIdentity).cend(); ++cit)
         AddIndustry(*cit);
 
@@ -180,7 +175,10 @@ void Place::ProgressProduction()
     for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
     {
         if((*it)->jobState == JOB_STATE_INSUFFICIENT_INPUTS)
+        {
+
             (*it)->ProgressJobPause();
+        }
 
         if((*it)->jobState == JOB_STATE_DEDUCTIONS_NECESSARY)
         {
@@ -190,7 +188,7 @@ void Place::ProgressProduction()
                 (*it)->SetJobStateNormal();
             }
             else
-                (*it)->SetJobStateInsufficientInputs(4);
+                (*it)->SetJobStateInsufficientInputs(/*4*/);
         }
 
         if((*it)->jobState == JOB_STATE_NORMAL)
@@ -347,6 +345,8 @@ float Place::CalculateMaintainenceConsumptionQuantityOnTick(unsigned whichItem)
     //std::cout << "Maintainence consumption of " << itemNames.at(whichItem) << " at " << placeNames.at(placeIdentity) << ": " << result << " per tick." << std::endl;
 #endif
 
+    result += 1;
+
     return result;
 }
 
@@ -407,12 +407,12 @@ void Place::UpdateSurplusAndDeficitRatios(unsigned whichItem)
     }
 
     surplusRatio.at(whichItem) = result;
-    deficitRatio.at(whichItem) = (result - 1) * (-1); // Result - 1 because result is at least 1 in calculateMaintainenceQuantityDaily()
+    deficitRatio.at(whichItem) = (result - 1) * (-1); // (Result - 1) because result is at least 1 in calculateMaintainenceQuantityDaily()
 }
 
-void Place::UpdateSurplusesTopTen()
+void Place::UpdateSurplusesDescending()
 {
-    surplusesTopTen.clear();
+    surplusesDescending.clear();
 
     std::vector<int> indices(surplusRatio.size());
     for (unsigned i = 0; i <= surplusRatio.size()-1; i++)
@@ -425,19 +425,19 @@ void Place::UpdateSurplusesTopTen()
     } );
 
     // Store the indices of the ten highest values (or fewer if there are fewer than ten)
-    for (int i = 0; i < std::min(static_cast<int>(surplusRatio.size()-1), 10); i++)
+    for(unsigned i = 0; i < surplusRatio.size(); i++)
     {
         // Don't store surpluses less than 0. Those are deficits.
         if(surplusRatio[indices[i]] >= 0)
-            surplusesTopTen.push_back(indices[i]);
+            surplusesDescending.push_back(indices[i]);
     }
 
     UpdateSurplusBubble();
 }
 
-void Place::UpdateDeficitsTopTen()
+void Place::UpdateDeficitsDescending()
 {
-    deficitsTopTen.clear();
+    deficitsDescending.clear();
 
     std::vector<int> indices(deficitRatio.size());
     for(unsigned i = 0; i <= deficitRatio.size()-1; i++)
@@ -450,11 +450,11 @@ void Place::UpdateDeficitsTopTen()
     } );
 
     // Store the indices of the ten highest values (or fewer if there are fewer than ten)
-    for (int i = 0; i < std::min(static_cast<int>(deficitRatio.size()-1), 10); i++)
+    for(unsigned i = 0; i < deficitRatio.size(); i++)
     {
-        // Don't store deficits less than 0. Those are surpluses.
-        if(deficitRatio[indices[i]] > 0)
-            deficitsTopTen.push_back(indices[i]);
+        // Don't store deficits of 0 or less. Those are surpluses.
+        if(deficitRatio[indices[i]] >= 0)
+            deficitsDescending.push_back(indices[i]);
     }
 
     UpdateDeficitBubble();
@@ -471,9 +471,9 @@ void Place::UnloadCaravanToMarketBuffer(Caravan *c)
 {
     c->AddTradeRecord(placeIdentity);
 
-    if(deficitsTopTen.size() > 0)
+    if(deficitsDescending.size() > 0)
     {
-        std::vector<int>itemsToUnload = deficitsTopTen; // Copies from surplusesTopTen. Must not access deficitsTopTen directly because its contents are updated every time cargo is transfered in or out of city inventories.
+        std::vector<int>itemsToUnload = deficitsDescending; // Copies from surplusesDescending. Must not access deficitsDescending directly because its contents are updated every time cargo is transfered in or out of city inventories.
         for(std::vector<int>::iterator it = itemsToUnload.begin(); it != itemsToUnload.end(); ++it)
         {
             if(c->inventory.cargo.count(*it) > 0)
@@ -490,25 +490,51 @@ void Place::UnloadCaravanToMarketBuffer(Caravan *c)
         DumpMarketBufferStockToMarketStock();
     }
 
+    // Routine intended to prevent saturated caravans from wandering endlessly between cities that don't have a deficit for any of their goods.
+    // Caravans that are at least 80% encumbered must trade away half their weight in order to make room for loading. Prefer supplying the city's lower surpluses (note the reverse iteration).
+    // Stop if the caravan has at least half its carrying capacity freed up.
+    if(c->cargoWeight >= c->cargoWeightMax*8/10)
+    {
+        //std::cout << placeNames.at(placeIdentity) << " didn't need anything from heavily loaded caravan " << c->caravanLeader->name << ", but cargo was unloaded anyway to make room." << std::endl;
+
+        std::vector<int>itemsToUnload = surplusesDescending;
+        for(std::vector<int>::reverse_iterator rit = surplusesDescending.rbegin(); rit != surplusesDescending.rend(); ++rit)
+        {
+            if(c->inventory.cargo.count(*rit) > 0)
+            {
+                int transferQuantity = c->inventory.cargo.at(*rit);
+                if(transferQuantity >= 1)
+                {
+                    c->UpdateTradeRecordQuantities(*rit,transferQuantity*(-1));
+                    TransferCaravanStockToMarketBufferStock(c, *rit, transferQuantity);
+                    QueueUpFlyingText(*rit, "+" + std::to_string(transferQuantity), overworldXPosition, overworldYPosition);
+                }
+            }
+
+            if(c->cargoWeight <= c->cargoWeightMax/2)
+                break;
+        }
+    }
+
     c->CheckTradeRecordsRowLimit();
     c->UpdateTradeRecordsBubble();
 }
 
 void Place::LoadCaravan(Caravan *c)
 {
-    /// Loads caravan with the city's (top ten) breadth of surplus goods.
+    /// Loads caravan with the city's breadth of surplus goods.
     /// The quantity of each good is directly proportional to surplusRatio.
 
     //std::cout << "Debug: Loading surplus cargo to caravan " << c->caravanLeader->name << std::endl;
 
     c->AddTradeRecord(placeIdentity);
 
-    if(surplusesTopTen.size() > 0)
+    if(surplusesDescending.size() > 0)
     {
         float surplusSum = 0; // To tally up the total quantity of surplus goods across all items.
-        std::vector<int>itemsToLoad; // Copies from surplusesTopTen. Must not access surplusesTopTen directly because its contents are updated every time cargo is transfered in or out of city inventories.
+        std::vector<int>itemsToLoad; // Copies from surplusesDescending. Must not access surplusesDescending directly because its contents are updated every time cargo is transfered in or out of city inventories.
 
-        for(std::vector<int>::iterator it = surplusesTopTen.begin(); it != surplusesTopTen.end(); ++it)
+        for(std::vector<int>::iterator it = surplusesDescending.begin(); it != surplusesDescending.end(); ++it)
         {
             surplusSum += surplusRatio.at(*it);
             itemsToLoad.push_back(*it);
@@ -574,8 +600,8 @@ void Place::AddMarketStock(int a, float b)
         UpdateMarketBubble();
 
     UpdateSurplusAndDeficitRatios(a);
-    UpdateSurplusesTopTen();
-    UpdateDeficitsTopTen();
+    UpdateSurplusesDescending();
+    UpdateDeficitsDescending();
 }
 void Place::RemoveMarketStock(int a, float b)
 {
@@ -586,8 +612,8 @@ void Place::RemoveMarketStock(int a, float b)
         UpdateMarketBubble();
 
     UpdateSurplusAndDeficitRatios(a);
-    UpdateSurplusesTopTen();
-    UpdateDeficitsTopTen();
+    UpdateSurplusesDescending();
+    UpdateDeficitsDescending();
 }
 void Place::SetMarketStock(int a, float b)
 {
@@ -598,8 +624,8 @@ void Place::SetMarketStock(int a, float b)
         UpdateMarketBubble();
 
     UpdateSurplusAndDeficitRatios(a);
-    UpdateSurplusesTopTen();
-    UpdateDeficitsTopTen();
+    UpdateSurplusesDescending();
+    UpdateDeficitsDescending();
 }
 
 
@@ -641,7 +667,7 @@ void Place::DumpMarketBufferStockToMarketStock()
         int item = it->first;
         float quantity = it->second;
         RemoveMarketBufferStock(item,quantity);
-        market.AddStock(item,quantity);
+        AddMarketStock(item,quantity);
     }
 }
 
@@ -721,10 +747,14 @@ void Place::UpdateSurplusBubble()
 {
     surplusBubbleNumCols = surplusBubbleBaseCols;
 
-    if(surplusesTopTen.size() > 0)
-        surplusBubbleNumRows = surplusesTopTen.size();
+    if(surplusesDescending.size() > 0)
+    {
+        surplusBubbleNumRows = surplusesDescending.size();
+        if(surplusBubbleNumRows > surplusBubbleMaxRows)
+            surplusBubbleNumRows = surplusBubbleMaxRows;
+    }
     else
-        surplusBubbleNumRows = 1;
+        surplusBubbleNumRows = surplusBubbleBaseRows;
 
     surplusBubbleWidth = surplusBubbleNumCols*TILE_W + TILE_W*1.5; // inelegantly extended by TILE_W*1.5
     surplusBubbleHeight = surplusBubbleNumRows*TILE_H;
@@ -734,10 +764,14 @@ void Place::UpdateDeficitBubble()
 {
     deficitBubbleNumCols = deficitBubbleBaseCols;
 
-    if(deficitsTopTen.size() > 0)
-        deficitBubbleNumRows = deficitsTopTen.size();
+    if(deficitsDescending.size() > 0)
+    {
+        deficitBubbleNumRows = deficitsDescending.size();
+        if(deficitBubbleNumRows > deficitBubbleMaxRows)
+            deficitBubbleNumRows = deficitBubbleMaxRows;
+    }
     else
-        deficitBubbleNumRows = 1;
+        deficitBubbleNumRows = deficitBubbleMaxRows;
 
     deficitBubbleWidth = deficitBubbleNumCols*TILE_W + TILE_W*1.5; // inelegantly extended by TILE_W*1.5
     deficitBubbleHeight = deficitBubbleNumRows*TILE_H;
@@ -888,8 +922,10 @@ void Place::DrawSurplusBubble()
                               COL_INDIGO, 4);
 
     unsigned drawRow = 0;
-    for(std::vector<int>::iterator it = surplusesTopTen.begin(); it != surplusesTopTen.end(); ++it)
+    for(std::vector<int>::iterator it = surplusesDescending.begin(); it != surplusesDescending.end(); ++it)
     {
+        if(drawRow >= surplusBubbleMaxRows)
+            break;
 
         al_draw_bitmap_region(cargoPng,
                               (*it)*TILE_W, 0,
@@ -952,8 +988,10 @@ void Place::DrawDeficitBubble()
                               COL_INDIGO, 4);
 
     unsigned drawRow = 0;
-    for(std::vector<int>::iterator it = deficitsTopTen.begin(); it != deficitsTopTen.end(); ++it)
+    for(std::vector<int>::iterator it = deficitsDescending.begin(); it != deficitsDescending.end(); ++it)
     {
+        if(drawRow >= deficitBubbleMaxRows)
+            break;
 
         al_draw_bitmap_region(cargoPng,
                               (*it)*TILE_W, 0,

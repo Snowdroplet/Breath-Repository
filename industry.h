@@ -2,7 +2,6 @@
 #define INDUSTRY_H_INCLUDED
 
 #include <iostream>
-#include <string>
 #include <map>
 #include <cmath>
 
@@ -23,20 +22,17 @@ enum enumJobStates
 class Industry
 {
 public:
-    //static std::map<int, float>ItemBaseValue;
 
 /// Job status
     int jobState;
 
     float jobPauseTicks;
-    float jobPauseThreshold;
+    const float jobPauseThreshold = 4;
 
     std::string remainingTimeText;
 
 /// Job identity
     //std::string industryName;
-    //int expertiseType;
-    //float expertiseLevelRequired;
 
 /// Inputs and outputs
     std::map<unsigned,float>inputs;
@@ -67,14 +63,14 @@ public:
 /// Job state function;
     void ProgressJobPause();
 
-    void SetJobStateInsufficientInputs(int thresh);
+    void SetJobStateInsufficientInputs(/*int thresh*/);
     void SetJobStateDeductionsNecessary();
     void SetJobStateNormal();
     void SetJobStateHarvestReady();
 
 /// Input and output calculation
 
-    float CalculateAverageInput(int whichItem, int period); // Period in in-world hours
+    //float CalculateAverageInput(int whichItem, int period); // Period in in-world hours
 
 /// Production functions
     void SetProductionPerTick(float ppt);

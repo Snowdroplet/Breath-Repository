@@ -66,8 +66,8 @@ public:
 
     std::array<float, IT_MARKER_LAST+1>surplusRatio;
     std::array<float, IT_MARKER_LAST+1>deficitRatio;
-    std::vector<int>surplusesTopTen;
-    std::vector<int>deficitsTopTen;
+    std::vector<int>surplusesDescending;
+    std::vector<int>deficitsDescending;
 
 
 /// Economy - Inventory
@@ -110,7 +110,7 @@ public:
     const std::string populationBubbleLabel = "Population";
     const std::string populationBubbleEmptyText = "<None>";
     const float populationBubbleDrawX = SCREEN_W*26/40;
-    const float populationBubbleDrawY = SCREEN_H*6/40;
+    const float populationBubbleDrawY = SCREEN_H*4/40;
     const int populationBubbleBaseCols = 1;
     const float populationBubbleHeight = TILE_H;
     float populationBubbleWidth;
@@ -120,7 +120,7 @@ public:
     const std::string caravanseraiBubbleLabel = "Caravanserai";
     const std::string caravanseraiBubbleEmptyText = "<Empty>";
     const float caravanseraiBubbleDrawX = SCREEN_W*33/40;
-    const float caravanseraiBubbleDrawY = SCREEN_H*28/40;
+    const float caravanseraiBubbleDrawY = SCREEN_H*24/40;
     const unsigned caravanseraiBubbleBaseCols = 6;
     const unsigned caravanseraiBubbleBaseRows = 1;
     unsigned caravanseraiBubbleNumCols;
@@ -132,19 +132,19 @@ public:
 /// Bubbles -- Surplus and Deficit
     const std::string surplusBubbleLabel = "Surplus";
     const float surplusBubbleDrawX = SCREEN_W*33/40;
-    const float surplusBubbleDrawY = SCREEN_H*10/40;
+    const float surplusBubbleDrawY = SCREEN_H*8/40;
     const unsigned surplusBubbleBaseCols = 1;
     const unsigned surplusBubbleBaseRows = 1;
-    const unsigned surplusBubbleMaxRows = 7;
+    const unsigned surplusBubbleMaxRows = 8;
     unsigned surplusBubbleNumCols, surplusBubbleNumRows;
     float surplusBubbleWidth, surplusBubbleHeight; // Width extended by TILE_W*1.5 in UpdateSurplusBubble()
 
     const std::string deficitBubbleLabel = "Deficit";
     const float deficitBubbleDrawX = SCREEN_W*37/40 - TILE_W/2;
-    const float deficitBubbleDrawY = SCREEN_H*10/40;
+    const float deficitBubbleDrawY = SCREEN_H*8/40;
     const unsigned deficitBubbleBaseCols = 1;
     const unsigned deficitBubbleBaseRows = 1;
-    const unsigned deficitBubbleMaxRows = 7;
+    const unsigned deficitBubbleMaxRows = 8;
     unsigned deficitBubbleNumCols, deficitBubbleNumRows;
     float deficitBubbleWidth, deficitBubbleHeight; // Width extended by TILE_W*1.5 in UpdateDeficitBubble()
 
@@ -153,7 +153,7 @@ public:
     const std::string marketBubbleLabel = "Market";
     const std::string marketBubbleEmptyText = "<No inventory>";
     const float marketBubbleDrawX       = SCREEN_W*26/40;
-    const float marketBubbleDrawY       = SCREEN_H*10/40;
+    const float marketBubbleDrawY       = SCREEN_H*8/40;
     const float marketBubbleRowSpacing  = BUILTIN_TEXT_HEIGHT;
     const unsigned marketBubbleBaseCols = 6;
     const unsigned marketBubbleBaseRows = 1;
@@ -166,7 +166,7 @@ public:
     const std::string industriesBubbleLabel = "Local Industries";
     const std::string industriesBubbleEmptyText = "<No industries>";
     const float industriesBubbleDrawX = SCREEN_W*26/40;
-    const float industriesBubbleDrawY = SCREEN_H*28/40;
+    const float industriesBubbleDrawY = SCREEN_H*24/40;
     const float industriesBubbleRowSpacing = 4; // Arbitrary gap
     const float industriesBubbleWidth = TILE_W*6; //+ bubblePadding;
     float industriesBubbleHeight;
@@ -197,8 +197,8 @@ public:
     void UpdateItemsProducedAndConsumedByIndustries();
 
     void UpdateSurplusAndDeficitRatios(unsigned whichItem);
-    void UpdateSurplusesTopTen();
-    void UpdateDeficitsTopTen();
+    void UpdateSurplusesDescending();
+    void UpdateDeficitsDescending();
 
 /// Economy functions -- Trading
     void TradeWithCaravan(Caravan *c);
@@ -273,7 +273,6 @@ public:
     void DrawSpriteOnOverworld();
     void DrawPopulationBubble();
     void DrawCitizensBubble();
-    //void DrawCaravanseraiBubbleOnOverworld();
     void DrawCaravanseraiBubble();
 
     void DrawSurplusBubble();
