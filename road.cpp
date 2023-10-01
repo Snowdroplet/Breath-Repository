@@ -46,6 +46,24 @@ Road::Road(int id)
         SetWaypoint(2, TILE_W*26, TILE_H*22 + TILE_H/2);
         break;
 
+    case ROAD_WATERWAY_ERICENNES_COLDLAKE:
+        endpointA = PL_ERICENNES;
+        endpointB = PL_COLDLAKE;
+        SetWaypoint(0, TILE_W*20, TILE_H*18 + TILE_H/2);
+        SetWaypoint(1, TILE_W*20, TILE_H*17           );
+        SetWaypoint(2, TILE_W*16, TILE_H*13           );
+        SetWaypoint(3, TILE_W*16, TILE_H*11 + TILE_H/2);
+        break;
+
+    case ROAD_WATERWAY_ERICENNES_VEINS:
+        endpointA = PL_ERICENNES;
+        endpointB = PL_VEINS;
+        SetWaypoint(0, TILE_W*20, TILE_H*21 + TILE_H/2);
+        SetWaypoint(1, TILE_W*20, TILE_H*23           );
+        SetWaypoint(2, TILE_W*16, TILE_H*27           );
+        SetWaypoint(3, TILE_W*16, TILE_H*31 + TILE_H/2);
+        break;
+
     case ROAD_CHORAS_COLDLAKE:
         endpointA = PL_CHORAS;
         endpointB = PL_COLDLAKE;
@@ -178,8 +196,6 @@ Road::Road(int id)
         SetWaypoint(0, TILE_W*27 + TILE_W/2, TILE_H*(-7) + TILE_H/2);
         SetWaypoint(1, TILE_W*25 + TILE_W/2, TILE_H*(-9) + TILE_H/2);
         SetWaypoint(2, TILE_W*18 + TILE_W/2, TILE_H*(-9) + TILE_H/2);
-        SetWaypoint(3, TILE_W*15, TILE_H*(-13) + TILE_H/2);
-        SetWaypoint(4, TILE_W*15, TILE_H*(-17) + TILE_H/2);
         break;
 
     case ROAD_RUMNIR_ARTAS_ROCK:
@@ -187,24 +203,24 @@ Road::Road(int id)
         endpointB = PL_ARTAS_ROCK;
         SetWaypoint(0, TILE_W*28 + TILE_W/2, TILE_H*(-8) + TILE_H/2);
         SetWaypoint(1, TILE_W*27, TILE_H*(-9));
-        SetWaypoint(2, TILE_W*27, TILE_H*(-23) + TILE_H/2);
+        SetWaypoint(2, TILE_W*27, TILE_H*(-15) + TILE_H/2);
         break;
 
     case ROAD_HEWNHEIM_VERSE:
         endpointA = PL_HEWNHEIM;
         endpointB = PL_VERSE;
-        SetWaypoint(0, TILE_W*15, TILE_H*(-20) + TILE_H/2);
-        SetWaypoint(1, TILE_W*15, TILE_H*(-21));
-        SetWaypoint(2, TILE_W*20 + TILE_W/2, TILE_H*(-26) + TILE_H/2);
-        SetWaypoint(3, TILE_W*20 + TILE_W/2, TILE_H*(-29) + TILE_H/2);
+        SetWaypoint(0, TILE_W*16 + TILE_W/2, TILE_H*(-11) + TILE_H/2);
+        SetWaypoint(1, TILE_W*16 + TILE_H/2, TILE_H*(-13)           );
+        SetWaypoint(2, TILE_W*20 + TILE_W/2, TILE_H*(-18) + TILE_H/2);
+        SetWaypoint(3, TILE_W*20 + TILE_W/2, TILE_H*(-21) + TILE_H/2);
         break;
 
     case ROAD_ARTAS_ROCK_VERSE:
         endpointA = PL_ARTAS_ROCK;
         endpointB = PL_VERSE;
-        SetWaypoint(0, TILE_W*27,            TILE_H*(-26) + TILE_H/2);
-        SetWaypoint(1, TILE_W*21 + TILE_W/2, TILE_H*(-26) + TILE_H/2);
-        SetWaypoint(2, TILE_W*21 + TILE_W/2, TILE_H*(-29) + TILE_H/2);
+        SetWaypoint(0, TILE_W*27,            TILE_H*(-18) + TILE_H/2);
+        SetWaypoint(1, TILE_W*21 + TILE_W/2, TILE_H*(-18) + TILE_H/2);
+        SetWaypoint(2, TILE_W*21 + TILE_W/2, TILE_H*(-21) + TILE_H/2);
         break;
 
     case ROAD_YHANE_VEINS:
@@ -221,6 +237,15 @@ Road::Road(int id)
         SetWaypoint(0, TILE_W*20 + TILE_W/2, TILE_H*31 + TILE_H/2);
         SetWaypoint(1, TILE_W*20 + TILE_W/2, TILE_H*36 + TILE_H/2);
         SetWaypoint(2, TILE_W*22 + TILE_W/2, TILE_H*39 + TILE_H/2);
+        break;
+
+    case ROAD_WATERWAY_VEINS_QUMANTH:
+        endpointA = PL_VEINS;
+        endpointB = PL_QUMANTH;
+        SetWaypoint(0, TILE_W*16           , TILE_H*34 + TILE_H/2);
+        SetWaypoint(1, TILE_W*16           , TILE_H*37           );
+        SetWaypoint(2, TILE_W*15           , TILE_H*38           );
+        SetWaypoint(3, TILE_W*15           , TILE_H*43 + TILE_H/2);
         break;
 
     case ROAD_QALAIZ_TOBANDJAN:
