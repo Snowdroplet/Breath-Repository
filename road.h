@@ -4,6 +4,8 @@
 #include <iostream>
 #include <map>
 
+#include "colorindex.h"
+
 #include "gamestate.h"
 #include "overworld.h"
 #include "roadindex.h"
@@ -29,14 +31,28 @@ public:
     std::map<int,int>yWaypoints;
     int lastWaypoint; // When not reversed.
 
+/// Sovereignty
+    int sovereignty;
+
+/// Geography
+    int geography;
+
+/// Cosmetic
+    ALLEGRO_COLOR drawOverColour;
+    ALLEGRO_COLOR drawUnderColour;
+
 /// Constructor
     Road(int id);
     ~Road();
 
-
     void SetWaypoint(unsigned index, int x, int y);
+    void SetGeography(int whichGeography);
+    void SetSovereignty(int whichSovereignty);
+
     float ReturnSegmentLength(int a, int b);
     void DrawSegmentsOnOverworld();
+
+
 };
 
 #endif // ROAD_H_INCLUDED

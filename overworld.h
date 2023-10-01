@@ -7,6 +7,8 @@
 #include "allegrocustom.h"
 #include <allegro5/allegro_primitives.h>
 
+#include "colorindex.h"
+
 #include "gamestate.h"
 #include "resource.h"
 

@@ -5,6 +5,8 @@
 #include <vector>
 #include <random>
 
+#include "colorindex.h"
+
 #include "being.h"
 #include "inventory.h"
 #include "placeindex.h"
@@ -13,6 +15,7 @@
 #include "worldgraph.h"
 #include "trademission.h"
 #include "traderecord.h"
+
 
 /// Dependencies
 class Place; // Circular
@@ -62,8 +65,8 @@ public:
 
 /// Place activities
     int currentTimeAtPlace, thresholdTimeAtPlace;
-    const int MIN_TIME_AT_PLACE = 50;
-    const int MAX_TIME_AT_PLACE = 100;
+    const int MIN_TIME_AT_PLACE = 150;
+    const int MAX_TIME_AT_PLACE = 600;
 
 /// Inventory
     Inventory inventory;

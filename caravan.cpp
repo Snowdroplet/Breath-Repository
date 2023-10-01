@@ -318,7 +318,7 @@ void Caravan::UpdateCargoWeight()
 
 void Caravan::UpdateCargoWeightMax()
 {
-    cargoWeightMax = 20;
+    cargoWeightMax = 40;
 }
 
 void Caravan::AddInventoryStock(int a, float b)
@@ -435,7 +435,7 @@ void Caravan::DrawInventoryBubble()
                                      inventoryBubbleDrawY + inventoryBubbleHeight + bubblePadding,
                                      bubbleCornerRadius,
                                      bubbleCornerRadius,
-                                     COL_DARK_WHITE);
+                                     COLKEY_UI_BUBBLE_BODY);
 
 
     al_draw_rounded_rectangle(inventoryBubbleDrawX - bubblePadding,
@@ -444,10 +444,10 @@ void Caravan::DrawInventoryBubble()
                               inventoryBubbleDrawY + inventoryBubbleHeight + bubblePadding,
                               bubbleCornerRadius,
                               bubbleCornerRadius,
-                              COL_INDIGO,
+                              COLKEY_UI_BUBBLE_FRAME,
                               4);
 
-    al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX, inventoryBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, "Cargo:");
+    al_draw_text(builtin,COLKEY_TEXT,inventoryBubbleDrawX, inventoryBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, "Cargo:");
 
     if(inventory.cargo.size() > 0)
     {
@@ -463,14 +463,14 @@ void Caravan::DrawInventoryBubble()
                                   drawX, drawY,
                                   0);
 
-            string_al_draw_text(builtin, COL_BLACK, drawX+TILE_W, drawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
+            string_al_draw_text(builtin, COLKEY_TEXT, drawX+TILE_W, drawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
             i++;
         }
     }
     else
-        al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX,inventoryBubbleDrawY,ALLEGRO_ALIGN_LEFT,"(No cargo carried).");
+        al_draw_text(builtin,COLKEY_TEXT,inventoryBubbleDrawX,inventoryBubbleDrawY,ALLEGRO_ALIGN_LEFT,"(No cargo carried).");
 
-    string_al_draw_text(builtin,COL_BLACK,inventoryBubbleDrawX,
+    string_al_draw_text(builtin,COLKEY_TEXT,inventoryBubbleDrawX,
                         inventoryBubbleDrawY+inventoryBubbleHeight + BUILTIN_TEXT_HEIGHT,
                         ALLEGRO_ALIGN_LEFT,
                         "Weight: " + std::to_string((int)cargoWeight) + " / " + std::to_string((int)cargoWeightMax) );
@@ -485,7 +485,7 @@ void Caravan::DrawTradeRecordsBubble()
                                      tradeRecordsBubbleDrawY + tradeRecordsBubbleHeight + bubblePadding,
                                      bubbleCornerRadius,
                                      bubbleCornerRadius,
-                                     COL_DARK_WHITE);
+                                     COLKEY_UI_BUBBLE_BODY);
 
     al_draw_rounded_rectangle(tradeRecordsBubbleDrawX - bubblePadding,
                               tradeRecordsBubbleDrawY - bubblePadding,
@@ -493,11 +493,11 @@ void Caravan::DrawTradeRecordsBubble()
                               tradeRecordsBubbleDrawY + tradeRecordsBubbleHeight + bubblePadding,
                               bubbleCornerRadius,
                               bubbleCornerRadius,
-                              COL_INDIGO,
+                              COLKEY_UI_BUBBLE_FRAME,
                               4);
 
 
-    al_draw_text(builtin, COL_BLACK, tradeRecordsBubbleDrawX, tradeRecordsBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, "Trade Records:");
+    al_draw_text(builtin, COLKEY_TEXT, tradeRecordsBubbleDrawX, tradeRecordsBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, "Trade Records:");
 
     if(tradeRecords.size() > 0)
     {
@@ -507,7 +507,7 @@ void Caravan::DrawTradeRecordsBubble()
         for(std::vector<TradeRecord*>::reverse_iterator rit = tradeRecords.rbegin(); rit != tradeRecords.rend(); ++rit)
         {
 
-            string_al_draw_text(builtin, COL_BLACK,
+            string_al_draw_text(builtin, COLKEY_TEXT,
                                 tradeRecordsBubbleDrawX + tradeRecordsBubblePlaceNameWidth,
                                 tradeRecordsBubbleDrawY + row*(TILE_H + tradeRecordsBubbleRowSpacing),
                                 ALLEGRO_ALIGN_RIGHT,
@@ -530,11 +530,11 @@ void Caravan::DrawTradeRecordsBubble()
                     if((*jt).second < 0)
                         al_draw_filled_rectangle(iconDrawX, iconDrawY,
                                              iconDrawX+TILE_W, iconDrawY+TILE_H+tradeRecordsBubbleRowSpacing,
-                                             COL_ORANGE);
+                                             COLKEY_UI_TRADERECORD_NEGATIVE);
                     else
                         al_draw_filled_rectangle(iconDrawX, iconDrawY,
                                              iconDrawX+TILE_W, iconDrawY+TILE_H+tradeRecordsBubbleRowSpacing,
-                                             COL_LIGHT_GREEN);
+                                             COLKEY_UI_TRADERECORD_POSITIVE);
 
 
                     al_draw_bitmap_region(cargoPng,
@@ -543,7 +543,7 @@ void Caravan::DrawTradeRecordsBubble()
                                           iconDrawX, iconDrawY,
                                           0);
 
-                    string_al_draw_text(builtin, COL_BLACK, iconDrawX+TILE_W, iconDrawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((*jt).second));
+                    string_al_draw_text(builtin, COLKEY_TEXT, iconDrawX+TILE_W, iconDrawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((*jt).second));
 
                     col++;
                 }
@@ -551,7 +551,7 @@ void Caravan::DrawTradeRecordsBubble()
             }
             else if((*rit)->tradeQuantities.size() == 0) // tradeQuantities vector empty
             {
-                string_al_draw_text(builtin, COL_BLACK,
+                string_al_draw_text(builtin, COLKEY_TEXT,
                                     tradeRecordsBubbleDrawX + tradeRecordsBubblePlaceNameWidth + col*(TILE_W),
                                     tradeRecordsBubbleDrawY + row*(TILE_H + tradeRecordsBubbleRowSpacing) + TILE_H/2 - BUILTIN_TEXT_HEIGHT/2,
                                     ALLEGRO_ALIGN_LEFT,
@@ -563,7 +563,7 @@ void Caravan::DrawTradeRecordsBubble()
         }
     }
     else
-        al_draw_text(builtin,COL_BLACK,tradeRecordsBubbleDrawX, tradeRecordsBubbleDrawY, ALLEGRO_ALIGN_LEFT, "(No recent trades).");
+        al_draw_text(builtin,COLKEY_TEXT,tradeRecordsBubbleDrawX, tradeRecordsBubbleDrawY, ALLEGRO_ALIGN_LEFT, "(No recent trades).");
 }
 
 void Caravan::DrawPathfindingBubble()
@@ -574,13 +574,15 @@ void Caravan::DrawPathfindingBubble()
                                      pathfindingBubbleDrawY + pathfindingBubbleHeight + bubblePadding,
                                      bubbleCornerRadius,
                                      bubbleCornerRadius,
-                                     COL_DARK_WHITE);
+                                     COLKEY_UI_BUBBLE_BODY);
 
-    al_draw_rectangle(pathfindingBubbleDrawX - bubblePadding,
+    al_draw_rounded_rectangle(pathfindingBubbleDrawX - bubblePadding,
                       pathfindingBubbleDrawY - bubblePadding,
                       pathfindingBubbleDrawX + pathfindingBubbleWidth + bubblePadding,
                       pathfindingBubbleDrawY + pathfindingBubbleHeight + bubblePadding,
-                      COL_INDIGO,
+                      bubbleCornerRadius,
+                      bubbleCornerRadius,
+                      COLKEY_UI_BUBBLE_FRAME,
                       4);
 
     if(!worldGraph.path.empty())
@@ -596,7 +598,7 @@ void Caravan::DrawPathfindingBubble()
                                   drawX, drawY,
                                   0);
 
-            string_al_draw_text(builtin, COL_BLACK,
+            string_al_draw_text(builtin, COLKEY_TEXT,
                                 drawX + TILE_W, drawY + 2*TILE_H,
                                 ALLEGRO_ALIGN_CENTER,
                                 placeNames.at(worldGraph.path[i]));
@@ -612,12 +614,12 @@ void Caravan::DrawPathfindingBubble()
     }
     else
     {
-        al_draw_text(builtin, COL_BLACK,
+        al_draw_text(builtin, COLKEY_TEXT,
                      pathfindingBubbleDrawX+pathfindingBubbleWidth/2,
                      pathfindingBubbleDrawY+pathfindingBubbleWidth/2 - BUILTIN_TEXT_HEIGHT,
                      ALLEGRO_ALIGN_CENTER, "(No Path)");
     }
-    al_draw_text(builtin,COL_BLACK,
+    al_draw_text(builtin,COLKEY_TEXT,
                  pathfindingBubbleDrawX,
                  pathfindingBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT,
                  ALLEGRO_ALIGN_LEFT, "Pathfinding:");

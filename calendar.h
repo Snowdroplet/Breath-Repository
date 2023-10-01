@@ -10,6 +10,8 @@
 #include "gamestate.h"
 #include "resource.h"
 
+#include "colorindex.h"
+
 extern bool hourChangeTick;
 extern bool dayChangeTick;
 

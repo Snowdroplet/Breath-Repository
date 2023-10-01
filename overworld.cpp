@@ -24,7 +24,7 @@ void OverworldDrawGridUnderlay()
                              0,
                              x*TILE_W - owcxp%tw,
                              SCREEN_H,
-                             COL_DARK_GRAY,1);
+                             COLKEY_DEBUG_GRID_UNDERLAY,1);
     }
 
     for(int y = 0; y <= SCREEN_H/TILE_W; y++) //Rows
@@ -36,7 +36,7 @@ void OverworldDrawGridUnderlay()
                              y*TILE_H - owcyp%th,
                              SCREEN_W,
                              y*TILE_H - owcyp%th,
-                             COL_DARK_GRAY,1);
+                             COLKEY_DEBUG_GRID_UNDERLAY,1);
     }
 
 
@@ -49,15 +49,15 @@ void OverworldDrawGridUnderlay()
     std::string positionString = "(" + std::to_string(crosshairXPosition) + ", " + std::to_string(crosshairYPosition) + ") : (" + std::to_string(crosshairXPositionCell) + ", " + std::to_string(crosshairYPositionCell) + ")";
     if(!overworldCameraLocked)
     {
-        string_al_draw_text(builtin,COL_BLUE,0,0,ALLEGRO_ALIGN_LEFT,positionString);
-        al_draw_line(SCREEN_W/2,0,SCREEN_W/2,SCREEN_H,COL_BLUE,1);
-        al_draw_line(0,SCREEN_H/2,SCREEN_W,SCREEN_H/2,COL_BLUE,1);
+        string_al_draw_text(builtin,COLKEY_CAMERA_CROSSHAIR_FREE,0,0,ALLEGRO_ALIGN_LEFT,positionString);
+        al_draw_line(SCREEN_W/2,0,SCREEN_W/2,SCREEN_H,COLKEY_CAMERA_CROSSHAIR_FREE,1);
+        al_draw_line(0,SCREEN_H/2,SCREEN_W,SCREEN_H/2,COLKEY_CAMERA_CROSSHAIR_FREE,1);
     }
     else
     {
-        string_al_draw_text(builtin,COL_ORANGE,0,0,ALLEGRO_ALIGN_LEFT,positionString);
-        al_draw_line(SCREEN_W/2,0,SCREEN_W/2,SCREEN_H,COL_ORANGE,1);
-        al_draw_line(0,SCREEN_H/2,SCREEN_W,SCREEN_H/2,COL_ORANGE,1);
+        string_al_draw_text(builtin,COLKEY_CAMERA_CROSSHAIR_LOCKED,0,0,ALLEGRO_ALIGN_LEFT,positionString);
+        al_draw_line(SCREEN_W/2,0,SCREEN_W/2,SCREEN_H,COLKEY_CAMERA_CROSSHAIR_LOCKED,1);
+        al_draw_line(0,SCREEN_H/2,SCREEN_W,SCREEN_H/2,COLKEY_CAMERA_CROSSHAIR_LOCKED,1);
     }
 }
 

@@ -467,7 +467,7 @@ void ChangeUI(int whichUI, int whichSubUI, int whichTab)
 
     if(activeUI == UI_OVERWORLD)
     {
-        currentClearColor = COL_LIGHT_GREEN;
+        currentClearColor = COL_JADE_3;
     }
 
     /*

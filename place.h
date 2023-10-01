@@ -13,6 +13,8 @@
 
 #include "allegrocustom.h"
 
+#include "colorindex.h"
+
 #include "overworld.h"
 #include "caravan.h"
 #include "industry.h"
@@ -24,6 +26,7 @@
 
 #include "placeindex.h"
 #include "economyindex.h"
+#include "sovereigntyindex.h"
 
 
 /// Dependencies
@@ -42,6 +45,8 @@ public:
 
     std::string name; // Just the simple name for identification on the overworld map.
     //std::string epithet; // e.g. ", City of Dreaming Spires"
+
+    int sovereignty;
 
 /// Population
     std::map<int, unsigned>population;
