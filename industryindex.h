@@ -12,7 +12,7 @@ enum enumIndustries
     IND_MINE_CLAY    = 8, IND_MINE_COPPER = 9, IND_MINE_IRON     = 10, IND_MINE_LEYSTONE   = 11,
 
     IND_ALCHEMY_ALCOHOL = 12, IND_ALCHEMY_MEDICINE  = 13, IND_ALCHEMY_POISON = 14, IND_ALCHEMY_COUNTERAGENT = 15,
-    IND_SORCERY_EFFIGY  = 16, IND_SORCERY_CONTRACT  = 17, IND_SORCERY_VESSEL = 18, IND_SORCERY_SPELLBOOK    = 19,
+    IND_SORCERY_EFFIGY  = 16, IND_SORCERY_CONTRACT  = 17, IND_SORCERY_VESSEL = 18, IND_SORCERY_GRIMOIRE     = 19,
     IND_MACHINE_FUEL    = 20, IND_MACHINE_CLOCKWORK = 21, IND_MACHINE_TOOLS  = 22, IND_MACHINE_AUTOMATON    = 23
 };
 
@@ -31,7 +31,7 @@ const std::map<int, float>baseProductionToComplete = // In hours
     {IND_MINE_CLAY,    4}, {IND_MINE_COPPER, 4}, {IND_MINE_IRON,      4}, {IND_MINE_LEYSTONE,    16},
 
     {IND_ALCHEMY_ALCOHOL, 8}, {IND_ALCHEMY_MEDICINE,  8}, {IND_ALCHEMY_POISON, 8}, {IND_ALCHEMY_COUNTERAGENT, 32},
-    {IND_SORCERY_EFFIGY,  8}, {IND_SORCERY_CONTRACT,  8}, {IND_SORCERY_VESSEL, 8}, {IND_SORCERY_SPELLBOOK,    32},
+    {IND_SORCERY_EFFIGY,  8}, {IND_SORCERY_CONTRACT,  8}, {IND_SORCERY_VESSEL, 8}, {IND_SORCERY_GRIMOIRE,     32},
     {IND_MACHINE_FUEL,    8}, {IND_MACHINE_CLOCKWORK, 8}, {IND_MACHINE_TOOLS,  8}, {IND_MACHINE_AUTOMATON,    32}
 };
 
@@ -60,7 +60,7 @@ const std::map<int, std::map<int,float>>baseJobInputs =
     {IND_SORCERY_EFFIGY,       { { IT_CORPUS,    2.0 } /*,{ IT_X, 0.0 }*/ } },
     {IND_SORCERY_CONTRACT,     { { IT_PLASM,     2.0 } /*,{ IT_X, 0.0 }*/ } },
     {IND_SORCERY_VESSEL,       { { IT_CLAY,      2.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_SORCERY_SPELLBOOK,    { { IT_CONTRACT,  4.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_SORCERY_GRIMOIRE,     { { IT_CONTRACT,  4.0 } /*,{ IT_X, 0.0 }*/ } },
 
     {IND_MACHINE_FUEL,         { { IT_MUSHROOMS, 2.0 } /*,{ IT_X, 0.0 }*/ } },
     {IND_MACHINE_CLOCKWORK,    { { IT_COPPER,    2.0 } /*,{ IT_X, 0.0 }*/ } },
@@ -94,7 +94,7 @@ const std::map<int, std::map<int,float>>baseJobOutputs =
     {IND_SORCERY_EFFIGY,       { { IT_EFFIGY,       1.0 } /*,{ IT_X, 0.0 }*/ } },
     {IND_SORCERY_CONTRACT,     { { IT_CONTRACT,     1.0 } /*,{ IT_X, 0.0 }*/ } },
     {IND_SORCERY_VESSEL,       { { IT_VESSEL,       1.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_SORCERY_SPELLBOOK,    { { IT_SPELLBOOK,    1.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_SORCERY_GRIMOIRE,     { { IT_GRIMOIRE,    1.0 } /*,{ IT_X, 0.0 }*/ } },
 
     {IND_MACHINE_FUEL,         { { IT_FUEL,         1.0 } /*,{ IT_X, 0.0 }*/ } },
     {IND_MACHINE_CLOCKWORK,    { { IT_CLOCKWORK,    1.0 } /*,{ IT_X, 0.0 }*/ } },

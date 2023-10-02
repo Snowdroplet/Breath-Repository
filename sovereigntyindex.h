@@ -15,15 +15,20 @@ enum enumSoverignties
 
     SOV_VERUS_SHARUMNIR_BORDER = 5,
     SOV_VERUS_XENIA_BORDER = 6,
-    SOV_VERUS_THOUSAND_ISLES_BORDER = 7
-
+    SOV_VERUS_THOUSAND_ISLES_BORDER = 7,
+    SOV_SHARUMNIR_THOUSAND_ISLES_BORDER = 8,
+    SOV_XENIA_THOUSAND_ISLES_BORDER = 9
 };
 
 const std::map<int, std::string>sovereigntyNames =
 {
     {SOV_NULL, "No sovereignty"},
     {SOV_VERUS,"Republic of Verus"}, {SOV_SHARUMNIR,"Sharumnir Assembly"}, {SOV_XENIA, "Kingdom of Xenia"}, {SOV_THOUSAND_ISLES,"Convocation of The Thousand Isles"},
-    {SOV_VERUS_SHARUMNIR_BORDER, "Verus-Sharumnir Border"}, {SOV_VERUS_XENIA_BORDER, "Verus-Xenia Border"}, {SOV_VERUS_THOUSAND_ISLES_BORDER, "Verus-Thousand Isles Border"}
+    {SOV_VERUS_SHARUMNIR_BORDER, "Verus-Sharumnir Border"},
+    {SOV_VERUS_XENIA_BORDER, "Verus-Xenia Border"},
+    {SOV_VERUS_THOUSAND_ISLES_BORDER, "Verus-Thousand Isles Border"},
+    {SOV_SHARUMNIR_THOUSAND_ISLES_BORDER, "Sharumnir-Thousand Isles Border"},
+    {SOV_XENIA_THOUSAND_ISLES_BORDER, "Xenia-Thousand Isles Border"}
 };
 
 

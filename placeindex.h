@@ -30,7 +30,7 @@ enum enumPlaces
     PL_ETRURI = 33
 };
 const unsigned PL_MARKER_FIRST = PL_ERICENNES;
-const unsigned PL_MARKER_LAST = PL_XENIA;
+const unsigned PL_MARKER_LAST = PL_YULMER;
 
 const std::map<int, std::string>placeNames =
 {
@@ -42,7 +42,7 @@ const std::map<int, std::string>placeNames =
     {PL_RUMNIR, "Rumnir"}, {PL_HEWNHEIM,"Hewnheim"}, {PL_ARTAS_ROCK, "Arta's Rock"}, {PL_VERSE, "Verse"},
     {PL_YHANE, "Yhane"}, {PL_VEINS, "Veins"}, {PL_QALAIZ, "Qalaiz"},
     {PL_TOBANDJAN, "Tobandjan"}, {PL_QUMANTH, "Qumanth"}, {PL_XENIA, "Xenia"},
-    {PL_REACH, "Reach"}, {PL_KARUNE, "Karune"}, {PL_HATHSERA, "Hathsera"}, {PL_VORDOZAAL, "V'ordozaal"},
+    {PL_REACH, "Reach"}, {PL_KARUNE, "Karune"}, {PL_HATHSERA, "Hathsera"}, {PL_VORDOZAAL, "V'ordozaal"}, {PL_YULMER, "Yulmer"},
     {PL_MAKHIA, "Makhia"}, {PL_HAPHADEE, "Haphadee"}, {PL_ASTEROS, "Asteros"},
     {PL_ETRURI, "Etruri"}
 };
@@ -69,10 +69,10 @@ const std::map<int, std::array<float,2>>placeOverworldXYCells =
     {PL_HOLLYHEAD,    { 25 ,   5 } },
     {PL_JASPER,       { 36 ,   2 } },
 
-    {PL_RUMNIR,       { 29 ,  -6 } },
-    {PL_HEWNHEIM,     { 17 ,  -9 } },
-    {PL_ARTAS_ROCK,   { 27 , -16 } },
-    {PL_VERSE,        { 21 , -22 } },
+    {PL_RUMNIR,       { 21 ,  -6 } },
+    {PL_HEWNHEIM,     {  9 ,  -9 } },
+    {PL_ARTAS_ROCK,   { 19 , -16 } },
+    {PL_VERSE,        { 13 , -22 } },
 
     {PL_YHANE,        { 20 ,  30 } },
     {PL_VEINS,        { 16 ,  33 } },
@@ -82,15 +82,15 @@ const std::map<int, std::array<float,2>>placeOverworldXYCells =
     {PL_QUMANTH,      { 15 ,  45 } },
     {PL_XENIA,        { 30 ,  47 } },
 
-    {PL_REACH,        {-12 , 30 } },
-    {PL_KARUNE,       {  0 ,0 } },
-    {PL_HATHSERA,     {  0 ,0 } },
-    {PL_VORDOZAAL,    {  0 ,0 } },
-    {PL_YULMER,       {  0 ,0 } },
+    {PL_REACH,        {-12 ,  30 } },
+    {PL_KARUNE,       {-10 ,  11 } },
+    {PL_HATHSERA,     { -5 ,  42 } },
+    {PL_VORDOZAAL,    { -8 ,  48 } },
+    {PL_YULMER,       { -4 ,  -6 } },
 
-    {PL_MAKHIA,       {0 ,0 } },
-    {PL_HAPHADEE,     {0 ,0 } },
-    {PL_ASTEROS,      {0 ,0 } },
+    {PL_MAKHIA,       {0 , 0 } },
+    {PL_HAPHADEE,     {0 , 0 } },
+    {PL_ASTEROS,      {-5 , 21 } },
 
     {PL_ETRURI,       {0 ,0 } }
 };
@@ -142,22 +142,21 @@ const std::map<int, const std::array<int,EXP_MARKER_LAST+1>>placeInitialPopulati
     {PL_QUMANTH,      { 6,    4, 2, 1,    2, 6, 0} }, // = 20
     {PL_XENIA,        { 7,    1, 2, 0,    4, 2, 1} }, // = 17
 
+    {PL_REACH,        { 3,    3, 2, 3,    2, 2, 2} }, // = 17
+    {PL_KARUNE,       { 4,    2, 3, 2,    3, 1, 0} }, // = 15
+    {PL_HATHSERA,     { 1,    5, 6, 0,    1, 0, 0} }, // = 13
+    {PL_VORDOZAAL,    { 0,    3, 0, 2,    0, 0, 3} }, // =  8
+    {PL_YULMER,       { 3,    1, 1, 0,    0, 1, 0} }, // =  6
+
     {PL_MAKHIA,       { 0,    0, 0, 0,    0, 0, 0} }, // = 12
     {PL_HAPHADEE,     { 0,    0, 0, 0,    0, 0, 0} }, // = 12
     {PL_ASTEROS,      { 0,    0, 0, 0,    0, 0, 0} }, // =  1
-
-    {PL_REACH,        { 0,    0, 0, 0,    0, 0, 0} }, // = 17
-    {PL_KARUNE,       { 0,    0, 0, 0,    0, 0, 0} }, // = 15
-    {PL_HATHSERA,     { 0,    0, 0, 0,    0, 0, 0} }, // = 13
-    {PL_VORDOZAAL,    { 0,    0, 0, 0,    0, 0, 0} }, // = 16
-    {PL_YULMER,       { 0,    0, 0, 0,    0, 0, 0} }, // = 10
 
     {PL_ETRURI,       { 0,    0, 0, 0,    0, 0, 0} }  // =  5
 };
 
 const std::map<int, std::vector<int>>placeInitialIndustries =
 {
-
     {PL_ERICENNES,    { IND_FARM_BERRIES, IND_ALCHEMY_ALCOHOL, IND_ALCHEMY_COUNTERAGENT, IND_SORCERY_EFFIGY, IND_SORCERY_CONTRACT} },
     {PL_CHORAS,       { IND_FARM_MUSHROOMS, IND_FARM_HERBS, IND_MINE_CLAY, IND_ALCHEMY_POISON, IND_SORCERY_VESSEL} },
     {PL_KETH_KETHER,  { IND_MINE_COPPER, IND_MINE_LEYSTONE, IND_MACHINE_FUEL, IND_MACHINE_CLOCKWORK, IND_MACHINE_AUTOMATON} },
@@ -170,7 +169,7 @@ const std::map<int, std::vector<int>>placeInitialIndustries =
     {PL_ROSKANEL,     { IND_HUNT_PLASM, IND_ALCHEMY_MEDICINE, IND_MACHINE_TOOLS} },
     {PL_ROSELLA,      { IND_HUNT_STRANGE_EGG, IND_FARM_SPICE, IND_MINE_CLAY} },
 
-    {PL_OBSERVIA,     { IND_HUNT_PLASM, IND_HUNT_OCULUS, IND_SORCERY_EFFIGY, IND_SORCERY_CONTRACT, IND_SORCERY_SPELLBOOK} },
+    {PL_OBSERVIA,     { IND_HUNT_PLASM, IND_HUNT_OCULUS, IND_SORCERY_EFFIGY, IND_SORCERY_CONTRACT, IND_SORCERY_GRIMOIRE} },
     {PL_COLDLAKE,     { IND_MINE_CLAY, IND_MINE_COPPER, IND_MINE_IRON, IND_MINE_LEYSTONE} },
     {PL_UMBERDELL,    { IND_HUNT_STRANGE_EGG, IND_FARM_MUSHROOMS, IND_FARM_HERBS, IND_ALCHEMY_MEDICINE} },
 
@@ -181,25 +180,25 @@ const std::map<int, std::vector<int>>placeInitialIndustries =
     {PL_RUMNIR,       { IND_HUNT_CORPUS, IND_HUNT_OCULUS, IND_SORCERY_EFFIGY} },
     {PL_HEWNHEIM,     { IND_HUNT_PLASM, IND_FARM_MUSHROOMS, IND_MINE_COPPER, IND_MINE_LEYSTONE, IND_ALCHEMY_POISON, IND_MACHINE_CLOCKWORK} },
     {PL_ARTAS_ROCK,   { IND_FARM_HERBS, IND_MINE_CLAY, IND_SORCERY_VESSEL, IND_MACHINE_AUTOMATON} },
-    {PL_VERSE,        { IND_HUNT_STRANGE_EGG, IND_ALCHEMY_MEDICINE, IND_ALCHEMY_POISON, IND_SORCERY_CONTRACT, IND_SORCERY_SPELLBOOK} },
+    {PL_VERSE,        { IND_HUNT_STRANGE_EGG, IND_ALCHEMY_MEDICINE, IND_ALCHEMY_POISON, IND_SORCERY_CONTRACT, IND_SORCERY_GRIMOIRE} },
 
     {PL_YHANE,        { IND_HUNT_OCULUS, IND_FARM_MUSHROOMS, IND_MINE_COPPER, IND_ALCHEMY_POISON, IND_SORCERY_CONTRACT, IND_MACHINE_FUEL} },
     {PL_VEINS,        { IND_FARM_BERRIES, IND_FARM_HERBS, IND_MINE_LEYSTONE, IND_ALCHEMY_ALCOHOL, IND_ALCHEMY_MEDICINE} },
     {PL_QALAIZ,       { IND_HUNT_CORPUS, IND_MINE_IRON, IND_ALCHEMY_POISON, IND_MACHINE_FUEL} },
 
     {PL_TOBANDJAN,    { IND_FARM_HERBS, IND_FARM_SPICE, IND_MINE_CLAY, IND_SORCERY_EFFIGY} },
-    {PL_QUMANTH,      { IND_HUNT_PLASM, IND_FARM_BERRIES, IND_ALCHEMY_COUNTERAGENT, IND_SORCERY_CONTRACT, IND_SORCERY_VESSEL, IND_SORCERY_SPELLBOOK} },
+    {PL_QUMANTH,      { IND_HUNT_PLASM, IND_FARM_BERRIES, IND_ALCHEMY_COUNTERAGENT, IND_SORCERY_CONTRACT, IND_SORCERY_VESSEL, IND_SORCERY_GRIMOIRE} },
     {PL_XENIA,        { IND_HUNT_STRANGE_EGG, IND_MINE_COPPER, IND_ALCHEMY_ALCOHOL, IND_MACHINE_TOOLS, IND_MACHINE_CLOCKWORK, IND_MACHINE_AUTOMATON } },
+
+    {PL_REACH,        { IND_HUNT_CORPUS, IND_MINE_CLAY, IND_MINE_LEYSTONE, IND_ALCHEMY_ALCOHOL, IND_SORCERY_EFFIGY, IND_MACHINE_TOOLS} },
+    {PL_KARUNE,       { IND_HUNT_STRANGE_EGG, IND_FARM_HERBS, IND_MINE_COPPER, IND_ALCHEMY_POISON, IND_ALCHEMY_COUNTERAGENT, IND_SORCERY_CONTRACT} },
+    {PL_HATHSERA,     { IND_FARM_BERRIES, IND_FARM_MUSHROOMS, IND_FARM_HERBS, IND_FARM_SPICE, IND_ALCHEMY_MEDICINE, IND_SORCERY_VESSEL} },
+    {PL_VORDOZAAL,    { IND_HUNT_OCULUS, IND_HUNT_STRANGE_EGG, IND_MINE_IRON, IND_MINE_LEYSTONE, IND_MACHINE_TOOLS} },
+    {PL_YULMER,       { IND_HUNT_PLASM, IND_HUNT_OCULUS, IND_FARM_MUSHROOMS, IND_SORCERY_GRIMOIRE} },
 
     {PL_MAKHIA,       { IND_FARM_MUSHROOMS, IND_FARM_HERBS, IND_MINE_CLAY, IND_SORCERY_VESSEL} },
     {PL_HAPHADEE,     { IND_FARM_MUSHROOMS, IND_FARM_HERBS, IND_MINE_CLAY, IND_SORCERY_VESSEL} },
     {PL_ASTEROS,      { IND_FARM_MUSHROOMS, IND_FARM_HERBS, IND_MINE_CLAY, IND_SORCERY_VESSEL} },
-
-    {PL_REACH,        { IND_FARM_MUSHROOMS, IND_FARM_HERBS, IND_MINE_CLAY, IND_SORCERY_VESSEL} },
-    {PL_KARUNE,       { IND_FARM_MUSHROOMS, IND_FARM_HERBS, IND_MINE_CLAY, IND_SORCERY_VESSEL} },
-    {PL_HATHSERA,     { IND_FARM_MUSHROOMS, IND_FARM_HERBS, IND_MINE_CLAY, IND_SORCERY_VESSEL} },
-    {PL_VORDOZAAL,    { IND_FARM_MUSHROOMS, IND_FARM_HERBS, IND_MINE_CLAY, IND_SORCERY_VESSEL} },
-    {PL_YULMER,       { IND_FARM_MUSHROOMS, IND_FARM_HERBS, IND_MINE_CLAY, IND_SORCERY_VESSEL} },
 
     {PL_ETRURI,       { IND_FARM_MUSHROOMS, IND_FARM_HERBS, IND_MINE_CLAY, IND_SORCERY_VESSEL} },
 
@@ -218,7 +217,7 @@ const std::map<int,int>placeSovereignties =
     {PL_YHANE, SOV_XENIA}, {PL_VEINS, SOV_XENIA}, {PL_QALAIZ, SOV_XENIA},
     {PL_TOBANDJAN, SOV_XENIA}, {PL_QUMANTH, SOV_XENIA}, {PL_XENIA, SOV_XENIA},
 
-    {PL_REACH, SOV_THOUSAND_ISLES}, {PL_KARUNE, SOV_THOUSAND_ISLES}, {PL_HATHSERA, SOV_THOUSAND_ISLES}, {PL_VORDOZAAL, SOV_THOUSAND_ISLES},
+    {PL_REACH, SOV_THOUSAND_ISLES}, {PL_KARUNE, SOV_THOUSAND_ISLES}, {PL_HATHSERA, SOV_THOUSAND_ISLES}, {PL_VORDOZAAL, SOV_THOUSAND_ISLES}, {PL_YULMER, SOV_THOUSAND_ISLES},
 
     {PL_MAKHIA, SOV_NULL}, {PL_HAPHADEE, SOV_NULL}, {PL_ASTEROS, SOV_NULL},
     {PL_ETRURI, SOV_NULL}

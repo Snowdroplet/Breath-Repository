@@ -13,7 +13,7 @@ enum enumItems
     IT_CLAY    = 8, IT_COPPER = 9, IT_IRON     = 10, IT_LEYSTONE    = 11,
 
     IT_ALCOHOL = 12, IT_MEDICINE  = 13, IT_POISON = 14, IT_COUNTERAGENT = 15,
-    IT_EFFIGY  = 16, IT_CONTRACT  = 17, IT_VESSEL = 18, IT_SPELLBOOK    = 19,
+    IT_EFFIGY  = 16, IT_CONTRACT  = 17, IT_VESSEL = 18, IT_GRIMOIRE     = 19,
     IT_FUEL    = 20, IT_CLOCKWORK = 21, IT_TOOLS  = 22, IT_AUTOMATON    = 23
 };
 const unsigned IT_MARKER_FIRST = IT_CORPUS;
@@ -26,7 +26,7 @@ const std::map<int,std::string>itemNames =
     {IT_CLAY, "Clay"}, {IT_COPPER, "Copper"}, {IT_IRON, "Iron"}, {IT_LEYSTONE, "Leystone"},
 
     {IT_ALCOHOL, "Alcohol"}, {IT_MEDICINE, "Medicine"}, {IT_POISON, "Poison"}, {IT_COUNTERAGENT, "Counteragent"},
-    {IT_EFFIGY, "Effigy"}, {IT_CONTRACT, "Contract"}, {IT_VESSEL, "Vessel"}, {IT_SPELLBOOK, "Spellbook"},
+    {IT_EFFIGY, "Effigy"}, {IT_CONTRACT, "Contract"}, {IT_VESSEL, "Vessel"}, {IT_GRIMOIRE, "Spellbook"},
     {IT_FUEL, "Fuel"}, {IT_CLOCKWORK, "Clockwork"}, {IT_TOOLS, "Tools"}, {IT_AUTOMATON, "Automaton"}
 };
 

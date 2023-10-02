@@ -14,7 +14,7 @@ const std::map<int, int>economyBaseMaintainenceConsumptionRate = // Also known a
     {IT_CLAY,     48}, {IT_COPPER,  48}, {IT_IRON,       48}, {IT_LEYSTONE,     24},
 
     {IT_ALCOHOL,  72}, {IT_MEDICINE,   72}, {IT_POISON,  72}, {IT_COUNTERAGENT, 168},
-    {IT_EFFIGY,   72}, {IT_CONTRACT,   72}, {IT_VESSEL,  72}, {IT_SPELLBOOK,    168},
+    {IT_EFFIGY,   72}, {IT_CONTRACT,   72}, {IT_VESSEL,  72}, {IT_GRIMOIRE,    168},
     {IT_FUEL,     72}, {IT_CLOCKWORK,  72}, {IT_TOOLS,   72}, {IT_AUTOMATON,    168}
 };
 
