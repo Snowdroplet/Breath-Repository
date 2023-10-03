@@ -406,8 +406,6 @@ void ProgressWorld()
                 //((*it).second)->UpdateEconomyData();
             }
 
-
-
         }
 
         for(std::map<int,Road*>::iterator it = Road::roads.begin(); it != Road::roads.end(); ++it)
@@ -706,8 +704,8 @@ void InitObjects()
     /*
     player = new Being;
     player->SetName("Player");
-    player->SetRace(RACE_VERIT);
-    player->SetPortrait(RACE_VERIT,1);
+    player->SetAncestry(ANCESTRY_VERIT);
+    player->SetPortrait(ANCESTRY_VERIT,1);
     Being::people.push_back(player);
     */
 

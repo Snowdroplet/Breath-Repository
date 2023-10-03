@@ -65,7 +65,6 @@ Place::~Place()
     for(std::vector<FlyingText*>::iterator it = downFlyingTexts.begin(); it != downFlyingTexts.end(); ++it)
         delete *it;
     downFlyingTexts.clear();
-
 }
 
 void Place::NewCitizenCaravan()
@@ -75,8 +74,8 @@ void Place::NewCitizenCaravan()
     Being::people.push_back(newCaravanLeader);
 
     newCaravanLeader->SetHometown(placeIdentity);
-    newCaravanLeader->SetRace(std::rand()%(RACE_MARKER_LAST-RACE_MARKER_FIRST+1));
-    newCaravanLeader->SetName(raceNames.at(newCaravanLeader->race) + " " + std::to_string(std::rand()%999));
+    newCaravanLeader->SetAncestry(std::rand()%(ANCESTRY_MARKER_LAST-ANCESTRY_MARKER_FIRST+1));
+    newCaravanLeader->SetName(beingAncestryNames.at(newCaravanLeader->ancestry) + " " + std::to_string(std::rand()%999));
 
 
 // Construct Caravan
@@ -128,7 +127,7 @@ void Place::RemoveFromCaravanserai(Caravan *c)
             it = caravanserai.erase(it);
         else
         {
-            (*it)->thresholdTimeAtPlace += removeFromCaravanseraiDelay;
+            (*it)->thresholdHoursAtPlace += removeFromCaravanseraiDelayHours;
             ++it;
         }
     }
@@ -492,9 +491,9 @@ void Place::UnloadCaravanToMarketBuffer(Caravan *c)
     }
 
     // Routine intended to prevent saturated caravans from wandering endlessly between cities that don't have a deficit for any of their goods.
-    // Caravans that are at least 80% encumbered must trade away half their weight in order to make room for loading. Prefer supplying the city's lower surpluses (note the reverse iteration).
+    // Caravans that are at least 60% encumbered must trade away half their weight in order to make room for loading. Prefer supplying the city's lower surpluses (note the reverse iteration).
     // Stop if the caravan has at least half its carrying capacity freed up.
-    if(c->cargoWeight >= c->cargoWeightMax*8/10)
+    if(c->cargoWeight >= c->cargoWeightMax*6/10)
     {
         //std::cout << placeNames.at(placeIdentity) << " didn't need anything from heavily loaded caravan " << c->caravanLeader->name << ", but cargo was unloaded anyway to make room." << std::endl;
 

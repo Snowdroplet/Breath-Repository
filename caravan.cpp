@@ -54,28 +54,7 @@ void Caravan::SetHometown(int id)
 int Caravan::SelectRandomTradeDestination()
 {
     int result = rand()%(PL_MARKER_LAST-PL_MARKER_FIRST +1) + PL_MARKER_FIRST;
-
-    //std::cout << "Most suitable trade destination set to " << placeNames.at(result) << std::endl;
-
     return result;
-}
-
-void Caravan::ProgressTradeMission()
-{
-    if(atHome)
-    {
-        if(tradeMission.missionComplete)
-        {
-            tradeMission.missionActive = false;
-            tradeMission.missionComplete = false;
-        }
-
-        if(!tradeMission.missionActive) //&& c->missionCooldown <= 0)
-        {
-            tradeMission.missionActive = true;
-            tradeMission.SetTradeDestination(SelectRandomTradeDestination());
-        }
-    }
 }
 
 void Caravan::UpdateOverworldPosition()
@@ -116,7 +95,6 @@ void Caravan::UpdateOverworldPosition()
 
 void Caravan::OverworldLogic()
 {
-    ProgressTradeMission();
 
     if(onRoad)
     {
@@ -134,46 +112,52 @@ void Caravan::OverworldLogic()
     }
     else if(atPlace)
     {
-        currentTimeAtPlace++;
-        if(currentTimeAtPlace >= thresholdTimeAtPlace)
+        if(hourChangeTick)
         {
-            if(worldGraph.path.size() <= 1) // The last remaining node will be the destination - I can't call clear() worldGraph.path prematurely, but whatever.
+            /// debug
+            if(currentHoursAtPlace > 20)
             {
-                //std::cout << "Worldgraph path empty. " << std::endl;
+                std::cout << "Debug: " << caravanLeader->name << " spent " << currentHoursAtPlace << "/" << thresholdHoursAtPlace <<" hours at " << placeNames.at(whichPlace->placeIdentity) << std::endl;
+                std::cout << "Number of destinations on path: " << worldGraph.path.size() << std::endl;
+                std::cout << "Hometown: " << placeNames.at(hometownID) << std::endl;
+            }
+            /// ---
 
-                if(tradeMission.onReturnTrip)
-                    pathfindingDestination = hometownID;
-                else // not onReturnTrip -- i.e. leaving hometown on a mission
-                {
-                    pathfindingDestination = tradeMission.tradeDestination;
-                    //std::cout << "Random destination set to " << placeNames.at(pathfindingDestination) << std::endl;
-                }
+            currentHoursAtPlace++;
+            if(currentHoursAtPlace >= thresholdHoursAtPlace)
+            {
 
-                if(pathfindingDestination != whichPlace->placeIdentity)
+                if(worldGraph.path.size() <= 1) // The path has been followed to its last node. This remaining node will be the destination - I can't call clear() worldGraph.path prematurely, but whatever.
                 {
+
+                    pathfindingDestination = SelectRandomTradeDestination(); // This line isn't redundant. Removing it will cause the entire world to congregate at Ericennes (place identity zero).
+                    while(pathfindingDestination == whichPlace->placeIdentity) // Reroll until the destination is not the current location.
+                    {
+                        pathfindingDestination = SelectRandomTradeDestination();
+                        //std:: cout << "Debug: " << caravanLeader->name << " rerolled pathfinding destination to " << placeNames.at(pathfindingDestination) << std::endl;
+                    }
+
                     worldGraph.Dijkstra(whichPlace->placeIdentity,pathfindingDestination); // This also overwrites the path with that last remaining element at index 0.
-                    //std::cout << std::endl;
+
                 }
-
-            }
-            else // !worldGraph.path.empty()
-            {
-                worldGraph.path.erase(worldGraph.path.begin());
-
-                int nextPlaceOnPath = worldGraph.path[0];
-                //std::cout << "NextPlaceOnPath is " << placeNames.at(worldGraph.path[0]) << std::endl;
-
-                for(std::vector<Road*>::iterator it = whichPlace->connections.begin(); it != whichPlace->connections.end(); ++it)
+                else // worldGraph.path.size > 1
                 {
-                    if((*it)->endpointA == nextPlaceOnPath)
-                        MoveToRoad((*it),true);
+                    worldGraph.path.erase(worldGraph.path.begin());
 
-                    else if((*it)->endpointB == nextPlaceOnPath)
-                        MoveToRoad((*it),false);
+                    int nextPlaceOnPath = worldGraph.path[0];
+
+                    for(std::vector<Road*>::iterator it = whichPlace->connections.begin(); it != whichPlace->connections.end(); ++it)
+                    {
+                        if((*it)->endpointA == nextPlaceOnPath)
+                            MoveToRoad((*it),true); // Reverse path = true
+
+                        else if((*it)->endpointB == nextPlaceOnPath)
+                            MoveToRoad((*it),false); // Forward path = true
+                    }
                 }
-            }
 
-            UpdatePathfindingBubble();
+                UpdatePathfindingBubble();
+            }
         }
     }
 }
@@ -199,22 +183,15 @@ void Caravan::MoveToPlace(Place *p)
     p->AddToCaravanserai(this);
 
     if(whichPlace == hometownPointer)
-    {
-        if(tradeMission.onReturnTrip) // prevents Caravan from being instantly unloaded after first mission after generation is issued
-            tradeMission.missionComplete = true;
-
-        tradeMission.onReturnTrip = false;
         atHome = true;
-    }
-    else if(whichPlace->placeIdentity == pathfindingDestination)
-        tradeMission.onReturnTrip = true;
+
 
     onRoad = false;
     whichRoad = nullptr;
     atRoadsEnd = false;
 
-    currentTimeAtPlace = 0;
-    thresholdTimeAtPlace = rand()%(MAX_TIME_AT_PLACE-MIN_TIME_AT_PLACE) + MIN_TIME_AT_PLACE;
+    currentHoursAtPlace = 0;
+    thresholdHoursAtPlace = rand()%(MAX_HOURS_AT_PLACE-MIN_HOURS_AT_PLACE) + MIN_HOURS_AT_PLACE;
 
     overworldXPosition = p->overworldXPosition;
     overworldYPosition = p->overworldYPosition;
@@ -529,12 +506,12 @@ void Caravan::DrawTradeRecordsBubble()
 
                     if((*jt).second < 0)
                         al_draw_filled_rectangle(iconDrawX, iconDrawY,
-                                             iconDrawX+TILE_W, iconDrawY+TILE_H+tradeRecordsBubbleRowSpacing,
-                                             COLKEY_UI_TRADERECORD_NEGATIVE);
+                                                 iconDrawX+TILE_W, iconDrawY+TILE_H+tradeRecordsBubbleRowSpacing,
+                                                 COLKEY_UI_TRADERECORD_NEGATIVE);
                     else
                         al_draw_filled_rectangle(iconDrawX, iconDrawY,
-                                             iconDrawX+TILE_W, iconDrawY+TILE_H+tradeRecordsBubbleRowSpacing,
-                                             COLKEY_UI_TRADERECORD_POSITIVE);
+                                                 iconDrawX+TILE_W, iconDrawY+TILE_H+tradeRecordsBubbleRowSpacing,
+                                                 COLKEY_UI_TRADERECORD_POSITIVE);
 
 
                     al_draw_bitmap_region(cargoPng,
@@ -577,13 +554,13 @@ void Caravan::DrawPathfindingBubble()
                                      COLKEY_UI_BUBBLE_BODY);
 
     al_draw_rounded_rectangle(pathfindingBubbleDrawX - bubblePadding,
-                      pathfindingBubbleDrawY - bubblePadding,
-                      pathfindingBubbleDrawX + pathfindingBubbleWidth + bubblePadding,
-                      pathfindingBubbleDrawY + pathfindingBubbleHeight + bubblePadding,
-                      bubbleCornerRadius,
-                      bubbleCornerRadius,
-                      COLKEY_UI_BUBBLE_FRAME,
-                      4);
+                              pathfindingBubbleDrawY - bubblePadding,
+                              pathfindingBubbleDrawX + pathfindingBubbleWidth + bubblePadding,
+                              pathfindingBubbleDrawY + pathfindingBubbleHeight + bubblePadding,
+                              bubbleCornerRadius,
+                              bubbleCornerRadius,
+                              COLKEY_UI_BUBBLE_FRAME,
+                              4);
 
     if(!worldGraph.path.empty())
     {

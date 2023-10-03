@@ -13,7 +13,6 @@
 #include "road.h"
 #include "place.h"
 #include "worldgraph.h"
-#include "trademission.h"
 #include "traderecord.h"
 
 
@@ -40,7 +39,6 @@ public:
 /// Objectives: Recruiting
     //RecruitingMission recruitingMission;
 /// Objectives: Trading
-    TradeMission tradeMission;
 
 /// Location
     bool atPlace;
@@ -64,9 +62,9 @@ public:
     float travelSpeed;
 
 /// Place activities
-    int currentTimeAtPlace, thresholdTimeAtPlace;
-    const int MIN_TIME_AT_PLACE = 150;
-    const int MAX_TIME_AT_PLACE = 600;
+    int currentHoursAtPlace, thresholdHoursAtPlace;
+    const int MIN_HOURS_AT_PLACE = 4;
+    const int MAX_HOURS_AT_PLACE = 10;
 
 /// Inventory
     Inventory inventory;
@@ -122,9 +120,6 @@ public:
     void SetHometown(int which);
 
 /// Mission, trade and movement functions
-
-    void ProgressTradeMission();
-
     int SelectRandomTradeDestination();
 
     void OverworldLogic();

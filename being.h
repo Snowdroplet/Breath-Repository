@@ -28,16 +28,15 @@ public:
 
 /// Biography
     std::string name;
-    int race;
+    int ancestry;
     int hometown;
-
-    int skillProfile; // Read skills from file.
-    std::map <int, int> skills;// Expertise from 1 to 5.
 
     float travelSpeed;
 
 /// Drawing
     bool facingLeft;
+    const int beingSpriteNumVariants = 2; // In total. Not counting from zero.
+    int spriteVariant;
     int spriteWidth, spriteHeight;
     int currentFrame, maxFrame;
     int frameDelayCount;     // Meant to iterate from zero.
@@ -54,22 +53,16 @@ public:
     void SetActivity(int act);
 
     void SetName(std::string n);
-    void SetRace(int r);
-    //void SetPortrait(int r, int c);
+    void SetAncestry(int a);
 
     void SetHometown(int h);
-
-    void SetSkill(int s, int v);
 
     bool IsActive();
 
 /// Progress
     void Progress();
 
-    //void DrawPortrait(float x, float y);
     void DrawName(float x, float y, int flags);
-    //void DrawSkills(float x, float y);
-    //void DrawSkillsDetailed(float x, float y);
 
     void DrawActivity(float x, float y);
     void ProgressAnimation();

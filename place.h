@@ -59,7 +59,7 @@ public:
 /// Caravanserai
     std::vector<Caravan*>caravanserai;
 
-    const int removeFromCaravanseraiDelay = 50; // Todo: Tie to advancement of calendar time instead of arbitrary number
+    const int removeFromCaravanseraiDelayHours = 1; // Todo: Tie to advancement of calendar time instead of arbitrary number
 
 /// Economy - Main
     std::array<bool, IT_MARKER_LAST+1>itemsConsumedByIndustries; // Not mutually exclusive with "itemsProducedByIndustries", i.e. in the case of intermediate inputs in two stage production chains

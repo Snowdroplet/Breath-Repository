@@ -7,38 +7,35 @@
 #include "UI.h"
 #include "beingindex.h"
 
-/*
-const int PNG_INACTIVE = 0;
-const int PNG_ACTIVE = 1;
-*/
+const unsigned SPRITE_TILE_W = 32;
+const unsigned SPRITE_TILE_H = 32;
 
+const std::map<unsigned,unsigned>resourceBeingNumSpriteVariants
+{
+    // In total. Not counting from zero.
+    {ANCESTRY_VERIT, 2},
+    {ANCESTRY_YETI, 2},
+    {ANCESTRY_MAKHI, 2},
+    {ANCESTRY_BEYU, 2},
+    {ANCESTRY_MESERA, 2},
+    {ANCESTRY_ORDON, 2},
+    {ANCESTRY_HAPHAE, 2}
+};
+const unsigned resourceBeingNumWalkFrames = 2;
 
 const int BUILTIN_TEXT_HEIGHT = 8;
 extern ALLEGRO_FONT *builtin;
 
 extern ALLEGRO_BITMAP *overworldPlacePng;
 
-//extern ALLEGRO_BITMAP *backgroundPng;
-//extern ALLEGRO_BITMAP *placePng[3];
+extern ALLEGRO_BITMAP *beingsPng;
+extern ALLEGRO_BITMAP *beingPng[NUM_ANCESTRIES];
 
-/*
-extern ALLEGRO_BITMAP *UIPlaceButtonPng;
-extern ALLEGRO_BITMAP *UIBarterTabPng[2];
-extern ALLEGRO_BITMAP *UICrewTabPng[2];
-*/
-
-extern ALLEGRO_BITMAP *beingPng[NUM_RACES];
-/*
-extern ALLEGRO_BITMAP *beingPortraitPng;
-extern ALLEGRO_BITMAP *skillSquarePng;
-*/
 
 extern ALLEGRO_BITMAP *expertiseIconPng;
 
 extern ALLEGRO_BITMAP *miniCargoPng;
 extern ALLEGRO_BITMAP *cargoPng;
-
-extern ALLEGRO_BITMAP *consumptionTierIcon;
 
 extern ALLEGRO_BITMAP *redArrowPng;
 extern ALLEGRO_BITMAP *redTransparentXPng;

@@ -3,69 +3,33 @@
 
 #include <map>
 
-enum enumRace
+enum enumBeingAncestries
 {
-    RACE_VERIT = 0,   // Hares of Verus
-    RACE_YETI = 1,    // Greathares of Rumnir
-    RACE_MAKHI = 2,   // Dwarves of Makhia
-    RACE_BEYU = 3,    // Catfish of the thousand isles
-    RACE_HAPHAE = 4,  // Birds of Haphaedee
-    RACE_MESERA = 5,  // Plants of Hathsera
-    RACE_ORDON = 6   // Salamanders of Ordozaal
-};
-const int RACE_MARKER_FIRST = RACE_VERIT;
-const int RACE_MARKER_LAST = RACE_ORDON;
-const int NUM_RACES = RACE_MARKER_LAST+1;
-
-const std::map<int,std::string>raceNames
-{
-    {RACE_VERIT, "Verit"},
-    {RACE_YETI, "Yeti"},
-    {RACE_MAKHI, "Makhi"},
-    {RACE_BEYU, "Beyu"},
-    {RACE_HAPHAE, "Haphae"},
-    {RACE_MESERA, "Mesera"},
-    {RACE_ORDON, "Ordon"}
-};
-
-/*
-
-const int NUM_SKILLS = 20;
-enum enumSkillKeys
-{
-    SK_VERESE = 0,
-    SK_XENIAN = 1,
-    SK_RUMNIRI = 2,
-    SK_MAKHIAN = 3,
-    SK_REACH_COMMON = 4,
-    SK_YULMERESE = 5,
-    SK_KARUN = 6,
-    SK_HAPHAE = 7,
-    SK_MESEREN = 8,
-    SK_ZAALTONGUE = 9,
-
-    SK_HARVEST_LORE = 10,
-    SK_MINERAL_LORE = 11,
-    SK_BEAST_LORE = 12,
-    SK_SORCERY_LORE = 13,
-    SK_DIVINE_LORE = 14,
-    SK_MARTIAL_LORE = 15,
-    SK_MACHINE_LORE = 16,
-
-    SK_TUNDRA_SURVIVAL = 17,
-    SK_DESERT_SURVIVAL = 18,
-    SK_SWAMP_SURVIVAL = 19,
-    SK_OCEAN_SURVIVAL = 20
+    ANCESTRY_VERIT = 0,   // Hares of Verus
+    ANCESTRY_YETI = 1,    // Greathares of Rumnir
+    ANCESTRY_MAKHI = 2,   // Felines of Xenia
+    ANCESTRY_BEYU = 3,    // Anglerfish of the thousand isles
+    ANCESTRY_MESERA = 4,  // Plants of Hathsera
+    ANCESTRY_ORDON = 5,   // Salamanders of Ordozaal
+    ANCESTRY_HAPHAE = 6   // Avians of Haphaedee
 
 };
+const int ANCESTRY_MARKER_FIRST = ANCESTRY_VERIT;
+const int ANCESTRY_MARKER_LAST = ANCESTRY_HAPHAE;
+const int NUM_ANCESTRIES = ANCESTRY_MARKER_LAST+1;
 
-const std::string skillNames[NUM_SKILLS] =
+const std::map<unsigned,std::string>beingAncestryNames
 {
-
+    {ANCESTRY_VERIT, "Verit"},
+    {ANCESTRY_YETI, "Yeti"},
+    {ANCESTRY_MAKHI, "Makhi"},
+    {ANCESTRY_BEYU, "Beyu"},
+    {ANCESTRY_MESERA, "Mesera"},
+    {ANCESTRY_ORDON, "Ordon"},
+    {ANCESTRY_HAPHAE, "Haphae"}
 };
-*/
 
-enum enumActivities
+enum enumBeingActivities
 {
     ACT_WALKING = 0
 };
