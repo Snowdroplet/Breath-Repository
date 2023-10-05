@@ -6,19 +6,12 @@ bool gameExit = false;
 /// Drawing
 bool redraw = true;
 
-/*
-/// Location
-bool playerAtPlace = true;
-int playerLocation = PL_ERICENNES;
+ALLEGRO_TRANSFORM cameraZoom;
+float cameraZoomScale = 1.0;
+float cameraZoomTranslateX = 0;
+float cameraZoomTranslateY = 0;
 
-/// Barter Control
-bool barterKeyInputNPCSide = false;
-int barterItemQuantity = 1;
-int barterItemType;
-*/
-
-
-/// Allegro
+/// Events and event sources
 ALLEGRO_TIMER *FPSTimer;
 ALLEGRO_EVENT_QUEUE *eventQueue;
 ALLEGRO_DISPLAY *display;

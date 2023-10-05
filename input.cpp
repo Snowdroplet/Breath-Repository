@@ -21,7 +21,6 @@ bool keyInput[] =
     false, false, false, false, false,          //01234
     false, false, false, false, false,          //56789
     false, false, false, false,                 //ULDR
-    false,                                      //Shift
 
     false                                       //Esc
 
@@ -187,12 +186,7 @@ void InputKeydown()
         case ALLEGRO_KEY_RIGHT:
             keyInput[KEY_RIGHT] = true;
             break;
-        case ALLEGRO_KEY_LSHIFT:
-            keyInput[KEY_SHIFT] = true;
-            break;
-        case ALLEGRO_KEY_RSHIFT:
-            keyInput[KEY_SHIFT] = true;
-            break;
+
         case ALLEGRO_KEY_ESCAPE:
             keyInput[KEY_ESC] = true;
             break;
@@ -359,12 +353,7 @@ void InputKeyup()
         case ALLEGRO_KEY_ENTER:
             keyInput[KEY_ENTER] = false;
             break;
-        case ALLEGRO_KEY_LSHIFT:
-            keyInput[KEY_SHIFT] = false;
-            break;
-        case ALLEGRO_KEY_RSHIFT:
-            keyInput[KEY_SHIFT] = false;
-            break;
+
         case ALLEGRO_KEY_ESCAPE:
             keyInput[KEY_ESC] = false;
             break;

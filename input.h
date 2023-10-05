@@ -3,7 +3,7 @@
 
 #include "gamestate.h"
 
-enum enumInputKeys
+enum enumInputKeys // use KEYMODs instead of putting alt, Lshift, Rshift, Lctrl, Rctrl, ect. here
 {
     KEY_A = 0,  KEY_B = 1,  KEY_C = 2,
     KEY_D = 3,  KEY_E = 4,  KEY_F = 5,
@@ -24,7 +24,7 @@ enum enumInputKeys
     KEY_0, KEY_1, KEY_2, KEY_3, KEY_4,
     KEY_5, KEY_6, KEY_7, KEY_8, KEY_9,
     KEY_UP, KEY_LEFT, KEY_DOWN, KEY_RIGHT,
-    KEY_SHIFT,
+
 
     KEY_ESC
 };

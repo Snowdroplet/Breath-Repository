@@ -143,6 +143,26 @@ int main(int argc, char *argv[])
 
 void InterpretInput()
 {
+    if(keyInput [KEY_UP] && cameraZoomScale < CAMERA_SCALE_MAX)
+    {
+        cameraZoomScale += 0.1;
+        cameraZoomTranslateX -= SCREEN_W*0.05;
+        cameraZoomTranslateY -= SCREEN_H*0.05;
+    }
+    if(keyInput [KEY_DOWN] && cameraZoomScale > CAMERA_SCALE_MIN)
+    {
+        cameraZoomScale -= 0.1;
+        cameraZoomTranslateX += SCREEN_W*0.05;
+        cameraZoomTranslateY += SCREEN_H*0.05;
+    }
+    if(keyInput[KEY_LEFT] || keyInput[KEY_RIGHT])
+    {
+        cameraZoomScale = 1;
+        cameraZoomTranslateX = 0;
+        cameraZoomTranslateY = 0;
+    }
+
+
     if(activeUI == UI_OVERWORLD)
     {
         if(!overworldCameraLocked)
@@ -206,170 +226,6 @@ void InterpretInput()
 
         if(!UIChangeDelay)
         {
-
-            /*
-            if(activeUI == UI_PLACE)
-            {
-                if(activeSubUI == SUB_PLACE_NONE)
-                {
-                    if(keyInput[KEY_1])
-                    {
-                        ChangeUI(UI_BARTER, SUB_BARTER_NONE,TAB_BARTER_ALL);
-                    }
-                    else if(keyInput[KEY_2])
-                    {
-
-                    }
-                    else if(keyInput[KEY_3])
-                        ChangeUI(UI_CREW,SUB_CREW_NONE,TAB_CREW_YOUR_CREW);
-                }
-                else if(activeSubUI == SUB_PLACE_DEPART_CONFIRMATION)
-                {
-                    if(keyInput[KEY_Y])
-                    {
-                        ChangeUI(UI_TRAVEL,SUB_TRAVEL_NONE,TAB_TRAVEL_NONE);
-                    }
-                    else if(keyInput[KEY_N] || keyInput[KEY_ESC])
-                    {
-                        activeSubUI = SUB_PLACE_NONE;
-                    }
-                }
-            }
-            */
-
-            /*
-            else if(activeUI == UI_BARTER)
-            {
-                if(activeSubUI == SUB_BARTER_NONE)
-                {
-                    if(keyInput[KEY_ESC])
-                        ChangeUI(UI_PLACE,SUB_PLACE_NONE,TAB_PLACE_NONE);
-
-                    for(unsigned k = KEY_1; k <= KEY_7; k++)
-                    {
-                        if(keyInput[k])
-                        {
-                            ChangeUI(UI_BARTER, SUB_BARTER_NONE, k-KEY_1);
-                            break;
-                        }
-                    }
-
-                    if(keyInput[KEY_LEFT])
-                        barterKeyInputNPCSide = false;
-
-                    else if(keyInput[KEY_RIGHT])
-                        barterKeyInputNPCSide = true;
-
-                    else if(keyInput[KEY_UP])
-                    {
-                        // Scroll inventory up
-                    }
-                    else if(keyInput[KEY_DOWN])
-                    {
-                        // Scroll inventory down
-                    }
-
-                    for(unsigned k = KEY_A; k <= KEY_T; k++)
-                    {
-                        if(keyInput[k])
-                        {
-                            if(barterKeyInputNPCSide)
-                            {
-                                barterItemType = playerLocationPtr->inventory.GetItemTypeAtInput(k-KEY_A);
-                            }
-                            else
-                            {
-                                barterItemType = playerCrew->inventory.GetItemTypeAtInput(k-KEY_A);
-                            }
-
-                            if(barterItemType != IT_NONE)
-                            {
-                                ChangeUI(UI_BARTER, SUB_BARTER_QUANTITY, activeTab);
-                            }
-                        }
-                    }
-
-
-                }
-                else if(activeSubUI == SUB_BARTER_QUANTITY)
-                {
-                    if(keyInput[KEY_ESC])
-                    {
-                        ChangeUI(UI_BARTER, SUB_BARTER_NONE, activeTab);
-                    }
-                    if(keyInput[KEY_UP])
-                    {
-                        barterItemQuantity ++;
-                    }
-                    else if(keyInput[KEY_DOWN])
-                    {
-                        barterItemQuantity --;
-                    }
-                    else if(keyInput[KEY_LEFT])
-                    {
-                        barterItemQuantity -= 5;
-                    }
-                    else if(keyInput[KEY_RIGHT])
-                    {
-                        barterItemQuantity += 5;
-                    }
-
-                }
-            }
-            */
-
-            /*
-            else if(activeUI == UI_CREW)
-            {
-                if(keyInput[KEY_ESC])
-                {
-                    if(playerAtPlace)
-                        ChangeUI(UI_PLACE,SUB_PLACE_NONE,TAB_PLACE_NONE);
-                    else
-                        ChangeUI(UI_TRAVEL,SUB_TRAVEL_NONE,TAB_TRAVEL_NONE);
-                }
-
-                else if(keyInput[KEY_1])
-                    activeTab = TAB_CREW_YOUR_CREW;
-
-                else if(keyInput[KEY_2])
-                    activeTab = TAB_CREW_AVAILABLE;
-
-                else
-                {
-                    for(unsigned k = KEY_A; k < KEY_J; k++) // 0-10
-                    {
-                        if(keyInput[k])
-                        {
-                            if(activeTab == TAB_CREW_YOUR_CREW && k < playerCrew->members.size())
-                            {
-                                ChangeUI(UI_CREW_DETAILED, SUB_CREW_DETAILED_NONE, TAB_CREW_DETAILED_NONE);
-
-                                crewDetailPtr = playerCrew->members[k];
-                            }
-
-                            else if(activeTab == TAB_CREW_AVAILABLE && k < playerLocationPtr->availableCrew.size())
-                            {
-                                ChangeUI(UI_CREW_DETAILED, SUB_CREW_DETAILED_NONE, TAB_CREW_DETAILED_NONE);
-
-                                crewDetailPtr = playerLocationPtr->availableCrew[k];
-                            }
-
-                            break;
-                        }
-                    }
-                }
-            }
-
-            else if(activeUI == UI_CREW_DETAILED)
-            {
-                if(keyInput[KEY_ESC])
-                {
-                    ChangeUI(UI_CREW, SUB_CREW_NONE, previousActiveTab);
-                    crewDetailPtr = nullptr;
-                }
-            }
-            */
 
 
         }
@@ -467,32 +323,19 @@ void ChangeUI(int whichUI, int whichSubUI, int whichTab)
     {
         currentClearColor = COL_JADE_3;
     }
-
-    /*
-    if(activeUI == UI_BARTER)
-    {
-        playerCrew->inventory.RefreshCargoInTab();
-        playerLocationPtr->inventory.RefreshCargoInTab();
-    }
-    */
 }
 
-
-/*
-void ChangePlayerLocation(int whichLocation)
-{
-    if(whichLocation != PL_NONE)
-        playerAtPlace = true;
-
-    playerLocation = whichLocation;
-    playerLocationPtr = Place::places[whichLocation];
-}
-*/
 
 void DrawUI()
 {
     if(activeUI == UI_OVERWORLD)
     {
+
+        al_identity_transform(&cameraZoom);
+        al_scale_transform(&cameraZoom,cameraZoomScale,cameraZoomScale);
+        al_translate_transform(&cameraZoom,cameraZoomTranslateX,cameraZoomTranslateY);
+        al_use_transform(&cameraZoom);
+
         OverworldDrawGridUnderlay();
 
         for(unsigned i = 0; i < Place::places.size(); i++)
@@ -506,6 +349,9 @@ void DrawUI()
 
         for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
             (*it).second->DrawFlyingTexts();
+
+        al_identity_transform(&cameraZoom);
+        al_use_transform(&cameraZoom);
 
         if(overworldCameraPlace != nullptr)
         {

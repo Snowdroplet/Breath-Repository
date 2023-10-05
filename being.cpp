@@ -73,19 +73,23 @@ void Being::DrawName(float x, float y, int flags)
 
 void Being::DrawActivity(float x, float y)
 {
-    int f = 0;
-    if(!facingLeft)
-        f = ALLEGRO_FLIP_HORIZONTAL;
+    if(x > OVERWORLD_MIN_DRAW_X && x < OVERWORLD_MAX_DRAW_X
+            && y > OVERWORLD_MIN_DRAW_Y && y < OVERWORLD_MAX_DRAW_Y)
+    {
+        int f = 0;
+        if(!facingLeft)
+            f = ALLEGRO_FLIP_HORIZONTAL;
 
-    if(activity == ACT_WALKING)
-        al_draw_bitmap_region(beingPng[ancestry],
-                          spriteVariant*resourceBeingNumWalkFrames*spriteWidth + spriteWidth*currentFrame,
-                          spriteHeight*activity,
-                          spriteWidth,
-                          spriteHeight,
-                          x - (spriteWidth/2),
-                          y - (spriteHeight/2),
-                          f);
+        if(activity == ACT_WALKING)
+            al_draw_bitmap_region(beingPng[ancestry],
+                                  spriteVariant*resourceBeingNumWalkFrames*spriteWidth + spriteWidth*currentFrame,
+                                  spriteHeight*activity,
+                                  spriteWidth,
+                                  spriteHeight,
+                                  x - (spriteWidth/2),
+                                  y - (spriteHeight/2),
+                                  f);
+    }
 }
 
 void Being::ProgressAnimation()

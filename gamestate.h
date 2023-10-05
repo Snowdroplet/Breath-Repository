@@ -23,21 +23,18 @@ extern bool redraw;
 
 extern ALLEGRO_COLOR currentClearColor;
 
-/*
-extern bool playerAtPlace;
-extern int playerLocation;
+extern ALLEGRO_TRANSFORM cameraZoom;
+extern float cameraZoomScale;
+extern float cameraZoomTranslateX;
+extern float cameraZoomTranslateY;
 
-/// Barter Control
-extern bool barterKeyInputNPCSide;
-extern int barterItemQuantity;
-extern int barterItemType;
-*/
+const float CAMERA_SCALE_MIN = 1.0;
+const float CAMERA_SCALE_MAX = 2.0;
 
-/// Allegro
+/// Events and event sources
 extern ALLEGRO_TIMER *FPSTimer;
 extern ALLEGRO_EVENT_QUEUE *eventQueue;
 extern ALLEGRO_DISPLAY *display;
 extern ALLEGRO_EVENT event;
-
 
 #endif // GAMESTATE_H_INCLUDED
