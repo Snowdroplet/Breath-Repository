@@ -484,7 +484,7 @@ void Place::UnloadCaravanToMarketBuffer(Caravan *c)
                 {
                     c->UpdateTradeRecordQuantities(*it,transferQuantity*(-1));
                     TransferCaravanStockToMarketBufferStock(c, *it, transferQuantity);
-                    QueueUpFlyingText(*it, "+" + std::to_string(transferQuantity), overworldXPosition, overworldYPosition);
+                    ///QueueUpFlyingText(*it, "+" + std::to_string(transferQuantity), overworldXPosition, overworldYPosition);
                 }
             }
         }
@@ -507,7 +507,7 @@ void Place::UnloadCaravanToMarketBuffer(Caravan *c)
                 {
                     c->UpdateTradeRecordQuantities(*rit,transferQuantity*(-1));
                     TransferCaravanStockToMarketBufferStock(c, *rit, transferQuantity);
-                    QueueUpFlyingText(*rit, "+" + std::to_string(transferQuantity), overworldXPosition, overworldYPosition);
+                    ///QueueUpFlyingText(*rit, "+" + std::to_string(transferQuantity), overworldXPosition, overworldYPosition);
                 }
             }
 
@@ -556,7 +556,7 @@ void Place::LoadCaravan(Caravan *c)
                     // Must record transaction before transfering items out of city market inventory or it'll record quantity as zero.
                     c->UpdateTradeRecordQuantities(*it, transferQuantity);
                     TransferMarketStockToCaravanStock(c, *it, transferQuantity);
-                    QueueDownFlyingText(*it, "-" + std::to_string(transferQuantity), overworldXPosition, overworldYPosition);
+                    ///QueueDownFlyingText(*it, "-" + std::to_string(transferQuantity), overworldXPosition, overworldYPosition);
                 }
             }
         }
@@ -1199,8 +1199,8 @@ void Place::QueueDownFlyingText(int ic, std::string t, float x, float y)
 {
     downFlyingTexts.push_back(new FlyingText(ic, t, x, y, false));
 
-    for(std::vector<FlyingText*>::iterator it = downFlyingTexts.begin(); it != downFlyingTexts.end(); ++it)
-        (*it)->overworldYPosition -= 2*MINI_TILE_H;
+    //for(std::vector<FlyingText*>::iterator it = downFlyingTexts.begin(); it != downFlyingTexts.end(); ++it)
+      //  (*it)->overworldYPosition += MINI_TILE_H;
 }
 
 void Place::ProgressFlyingTexts()

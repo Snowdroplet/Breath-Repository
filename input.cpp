@@ -26,6 +26,24 @@ bool keyInput[] =
 
 };
 
+float mouseX;
+float mouseY;
+
+bool mouseInput[] =
+{
+    false, // nothing
+
+    false, // LEFT
+    false, // RIGHT
+    false  // MIDDLE
+};
+
+bool mousewheelInput[] =
+{
+    false, // Wheel up
+    false  // Wheel down
+};
+
 void InputKeydown()
 {
     switch(event.keyboard.keycode)
@@ -360,5 +378,53 @@ void InputKeyup()
     }
 }
 
+void InputMouseXY()
+{
+    mouseX = event.mouse.x;
+    mouseY = event.mouse.y;
+}
 
+void InputMouseDown()
+{
+    switch(event.mouse.button)
+    {
+    case MOUSE_LEFT:
+        mouseInput[MOUSE_LEFT] = true;
+        break;
+    case MOUSE_RIGHT:
+        mouseInput[MOUSE_RIGHT] = true;
+        break;
+    case MOUSE_MIDDLE:
+        mouseInput[MOUSE_MIDDLE] = true;
+        break;
+    }
+}
 
+void InputMouseUp()
+{
+    switch(event.mouse.button)
+    {
+    case MOUSE_LEFT:
+        mouseInput[MOUSE_LEFT] = false;
+        break;
+    case MOUSE_RIGHT:
+        mouseInput[MOUSE_RIGHT] = false;
+        break;
+    case MOUSE_MIDDLE:
+        mouseInput[MOUSE_MIDDLE] = false;
+        break;
+    }
+}
+
+void InputMousewheel()
+{
+    if(event.mouse.z > 0)
+        mousewheelInput[MOUSEWHEEL_UP] = true;
+    else
+        mousewheelInput[MOUSEWHEEL_UP] = false;
+
+    if(event.mouse.z < 0)
+        mousewheelInput[MOUSEWHEEL_DOWN] = true;
+    else
+        mousewheelInput[MOUSEWHEEL_DOWN] = false;
+}

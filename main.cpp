@@ -17,16 +17,14 @@
 #include "place.h"
 #include "overworld.h"
 #include "calendar.h"
+#include "encyclopedia.h"
 
-//Place *playerLocationPtr = nullptr;
-//Caravan *playerCrew = nullptr;
 
 void InterpretInput();
 void ProgressWorld();
 void UpdateUI();
 
 void ChangeUI(int whichUI, int whichSubUI, int whichTab);
-//void ChangePlayerLocation(int whichLocation);
 
 void DrawUI();
 
@@ -70,8 +68,9 @@ int main(int argc, char *argv[])
     al_register_event_source(eventQueue, al_get_display_event_source(display));
     al_register_event_source(eventQueue, al_get_timer_event_source(FPSTimer));
     al_register_event_source(eventQueue, al_get_keyboard_event_source());
-    //al_register_event_source(eventQueue, al_get_mouse_event_source());
+    al_register_event_source(eventQueue, al_get_mouse_event_source());
 
+    al_hide_mouse_cursor(display);
 
     PHYSFS_init(argv[0]);
     if(!PHYSFS_mount("./gamedata.zip", "/", 1))
@@ -105,6 +104,18 @@ int main(int argc, char *argv[])
 
         if(event.type == ALLEGRO_EVENT_KEY_UP)
             InputKeyup();
+
+        if(event.type == ALLEGRO_EVENT_MOUSE_AXES)
+        {
+            InputMouseXY();
+            InputMousewheel();
+        }
+
+        if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
+            InputMouseDown();
+
+        if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP)
+            InputMouseUp();
 
         if(event.type == ALLEGRO_EVENT_TIMER)
         {
@@ -143,25 +154,45 @@ int main(int argc, char *argv[])
 
 void InterpretInput()
 {
-    if(keyInput [KEY_UP] && cameraZoomScale < CAMERA_SCALE_MAX)
+
+    if(mousewheelInput[MOUSEWHEEL_UP])
     {
-        cameraZoomScale += 0.1;
-        cameraZoomTranslateX -= SCREEN_W*0.05;
-        cameraZoomTranslateY -= SCREEN_H*0.05;
+        if(cameraZoomScale < CAMERA_SCALE_MAX)
+        {
+            cameraZoomScale += 0.1;
+            cameraZoomTranslateX -= SCREEN_W*0.05; // Ten 0.05s = 0.5
+            cameraZoomTranslateY -= SCREEN_H*0.05;
+        }
+
+        al_set_mouse_z(0);
     }
-    if(keyInput [KEY_DOWN] && cameraZoomScale > CAMERA_SCALE_MIN)
+    else if(mousewheelInput[MOUSEWHEEL_DOWN])
     {
-        cameraZoomScale -= 0.1;
-        cameraZoomTranslateX += SCREEN_W*0.05;
-        cameraZoomTranslateY += SCREEN_H*0.05;
+        if(cameraZoomScale > CAMERA_SCALE_MIN)
+        {
+            cameraZoomScale -= 0.1;
+            cameraZoomTranslateX += SCREEN_W*0.05;
+            cameraZoomTranslateY += SCREEN_H*0.05;
+        }
+
+        al_set_mouse_z(0);
     }
-    if(keyInput[KEY_LEFT] || keyInput[KEY_RIGHT])
+    else if(mouseInput[MOUSE_MIDDLE])
     {
         cameraZoomScale = 1;
         cameraZoomTranslateX = 0;
         cameraZoomTranslateY = 0;
     }
 
+    if(mouseInput[MOUSE_LEFT])
+    {
+        //std::cout << "Mouse test: LEFT" << std::endl;
+    }
+
+    if(mouseInput[MOUSE_RIGHT])
+    {
+        //std::cout << "Mouse test: RIGHT" << std::endl;
+    }
 
     if(activeUI == UI_OVERWORLD)
     {
@@ -221,6 +252,16 @@ void InterpretInput()
         {
             if(keyInput[KEY_ESC])
                 OverworldUnlockCamera();
+
+            if(overworldCameraLockedOnPlace)
+            {
+
+            }
+
+            if(overworldCameraLockedOnCaravan)
+            {
+
+            }
         }
 
 
@@ -337,6 +378,7 @@ void DrawUI()
         al_use_transform(&cameraZoom);
 
         OverworldDrawGridUnderlay();
+        OverworldDrawGridCameraCrosshair();
 
         for(unsigned i = 0; i < Place::places.size(); i++)
             Place::places[i]->DrawSpriteOnOverworld();
@@ -383,138 +425,12 @@ void DrawUI()
             }
         }
 
+        OverworldDrawGridMouseCrosshair(mouseX, mouseY);
 
-/// End Draw Bubbles
+        OverworldDrawGridText(mouseX, mouseY);
 
         DrawCalendar();
     }
-    /*
-    else if(activeUI == UI_PLACE)
-    {
-        if(activeSubUI == SUB_PLACE_NONE)
-        {
-            al_draw_bitmap(placePng[playerLocation],0,0,0);
-
-            al_draw_text(builtin, al_map_rgb(0,0,0),
-                         UI_PLACE_NAME_CENTRE_X,
-                         UI_PLACE_NAME_CENTRE_Y,
-                         ALLEGRO_ALIGN_CENTER,
-                         UIPlaceNames[playerLocation].c_str());
-
-            for(int i = 0; i < UI_PLACE_NUM_BUTTONS; i++)
-            {
-                al_draw_bitmap(UIPlaceButtonPng,
-                               UI_PLACE_BUTTON_X,
-                               UI_PLACE_BUTTON_Y + i*UI_PLACE_BUTTON_Y_SPACING,
-                               0);
-                al_draw_text(builtin, al_map_rgb(0,0,0),
-                             UI_PLACE_BUTTON_CENTRE_X,
-                             UI_PLACE_BUTTON_CENTRE_Y + i*UI_PLACE_BUTTON_Y_SPACING,
-                             ALLEGRO_ALIGN_CENTER,
-                             UIPlaceButtonLabels[i].c_str());
-            }
-        }
-        else if(activeSubUI == SUB_PLACE_DEPART_CONFIRMATION)
-        {
-
-        }
-
-    }
-
-    else if(activeUI == UI_BARTER)
-    {
-        for(int i = 0; i < UI_BARTER_NUM_TABS; i++)
-        {
-            if(i == activeTab)
-                al_draw_bitmap(UIBarterTabPng[PNG_ACTIVE],
-                               UI_BARTER_TAB_X + i*UI_BARTER_TAB_X_SPACING,
-                               UI_BARTER_TAB_Y,
-                               0);
-
-            else
-                al_draw_bitmap(UIBarterTabPng[PNG_INACTIVE],
-                               UI_BARTER_TAB_X + i*UI_BARTER_TAB_X_SPACING,
-                               UI_BARTER_TAB_Y,
-                               0);
-
-            al_draw_text(builtin, al_map_rgb(0,0,0),
-                         UI_BARTER_TAB_CENTRE_X + i*UI_BARTER_TAB_X_SPACING,
-                         UI_BARTER_TAB_CENTRE_Y,
-                         ALLEGRO_ALIGN_CENTRE,
-                         UIBarterTabLabels[i].c_str());
-
-
-
-            playerCrew->inventory.DrawVertical(UI_BARTER_INVENTORY_ROWS, UI_BARTER_INVENTORY_1_X, UI_BARTER_INVENTORY_1_Y);
-
-            playerLocationPtr->inventory.DrawVertical(UI_BARTER_INVENTORY_ROWS, UI_BARTER_INVENTORY_2_X, UI_BARTER_INVENTORY_2_Y);
-
-        }
-
-        if(activeSubUI == SUB_BARTER_QUANTITY)
-        {
-            //al_draw_text(builtin, al_map_rgb(0,0,0),
-                       //  UI_BARTER_QUANTITY_)
-        }
-    }
-
-    else if(activeUI == UI_CREW)
-    {
-        for(int i = 0; i < UI_CREW_NUM_TABS; i++)
-        {
-            if(i == activeTab)
-                al_draw_bitmap(UICrewTabPng[PNG_ACTIVE],
-                               UI_CREW_TAB_X + i*UI_CREW_TAB_X_SPACING,
-                               UI_CREW_TAB_Y,
-                               0);
-            else
-                al_draw_bitmap(UICrewTabPng[PNG_INACTIVE],
-                               UI_CREW_TAB_X + i*UI_CREW_TAB_X_SPACING,
-                               UI_CREW_TAB_Y,
-                               0);
-
-
-            al_draw_text(builtin, al_map_rgb(0,0,0),
-                         UI_CREW_TAB_CENTRE_X + i*UI_CREW_TAB_X_SPACING,
-                         UI_CREW_TAB_CENTRE_Y,
-                         ALLEGRO_ALIGN_CENTRE,
-                         UICrewTabLabels[i].c_str());
-        }
-
-        if(activeTab == TAB_CREW_YOUR_CREW)
-        {
-            for(unsigned i = 0; i < playerCrew->members.size(); i++)
-            {
-                Being*member = playerCrew->members[i];
-                member->DrawPortrait(UI_CREW_PORTRAIT_X, UI_CREW_PORTRAIT_Y + i*UI_CREW_PORTRAIT_Y_SPACING);
-
-                member->DrawName(UI_CREW_NAME_X, UI_CREW_NAME_Y + i*UI_CREW_NAME_Y_SPACING, 0);
-
-                member->DrawSkills(UI_CREW_SKILL_SQUARE_X, UI_CREW_SKILL_SQUARE_Y + i*UI_CREW_SKILL_SQUARE_Y_SPACING);
-
-            }
-        }
-        else if(activeTab == TAB_CREW_AVAILABLE)
-        {
-            for(unsigned i = 0; i < playerLocationPtr->availableCrew.size(); i++)
-            {
-                Being*candidate = playerLocationPtr->availableCrew[i];
-                candidate->DrawPortrait(UI_CREW_PORTRAIT_X, UI_CREW_PORTRAIT_Y + i*UI_CREW_PORTRAIT_Y_SPACING);
-
-                candidate->DrawName(UI_CREW_NAME_X, UI_CREW_NAME_Y + i*UI_CREW_NAME_Y_SPACING, 0);
-
-                candidate->DrawSkills(UI_CREW_SKILL_SQUARE_X, UI_CREW_SKILL_SQUARE_Y + i*UI_CREW_SKILL_SQUARE_Y_SPACING);
-            }
-        }
-    }
-
-    else if(activeUI == UI_CREW_DETAILED)
-    {
-        crewDetailPtr->DrawPortrait(UI_CREW_DETAILED_PORTRAIT_X - BEING_PORTRAIT_W/2, UI_CREW_DETAILED_PORTRAIT_Y - BEING_PORTRAIT_H/2);
-        crewDetailPtr->DrawName(UI_CREW_DETAILED_NAME_X, UI_CREW_DETAILED_NAME_Y, ALLEGRO_ALIGN_CENTRE);
-        crewDetailPtr->DrawSkillsDetailed(UI_CREW_DETAILED_SKILL_SQUARE_X, UI_CREW_DETAILED_SKILL_SQUARE_Y);
-    }
-    */
 }
 
 void InitObjects()

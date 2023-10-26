@@ -38,27 +38,61 @@ void OverworldDrawGridUnderlay()
                              y*TILE_H - owcyp%th,
                              COLKEY_DEBUG_GRID_UNDERLAY,1);
     }
+}
 
-
-    int crosshairXPosition = overworldCameraXPosition+SCREEN_W/2;
-    int crosshairYPosition = overworldCameraYPosition+SCREEN_H/2;
-
-    int crosshairXPositionCell = crosshairXPosition/TILE_W;
-    int crosshairYPositionCell = crosshairYPosition/TILE_H;
-
-    std::string positionString = "(" + std::to_string(crosshairXPosition) + ", " + std::to_string(crosshairYPosition) + ") : (" + std::to_string(crosshairXPositionCell) + ", " + std::to_string(crosshairYPositionCell) + ")";
+void OverworldDrawGridCameraCrosshair()
+{
     if(!overworldCameraLocked)
     {
-        string_al_draw_text(builtin,COLKEY_CAMERA_CROSSHAIR_FREE,0,0,ALLEGRO_ALIGN_LEFT,positionString);
         al_draw_line(SCREEN_W/2,0,SCREEN_W/2,SCREEN_H,COLKEY_CAMERA_CROSSHAIR_FREE,1);
         al_draw_line(0,SCREEN_H/2,SCREEN_W,SCREEN_H/2,COLKEY_CAMERA_CROSSHAIR_FREE,1);
     }
     else
     {
-        string_al_draw_text(builtin,COLKEY_CAMERA_CROSSHAIR_LOCKED,0,0,ALLEGRO_ALIGN_LEFT,positionString);
         al_draw_line(SCREEN_W/2,0,SCREEN_W/2,SCREEN_H,COLKEY_CAMERA_CROSSHAIR_LOCKED,1);
         al_draw_line(0,SCREEN_H/2,SCREEN_W,SCREEN_H/2,COLKEY_CAMERA_CROSSHAIR_LOCKED,1);
     }
+}
+
+void OverworldDrawGridMouseCrosshair(float mouseX, float mouseY)
+{
+
+    al_draw_line(mouseX, 0, mouseX, SCREEN_H, COLKEY_MOUSE_CROSSHAIR,1);
+    al_draw_line(0, mouseY, SCREEN_W, mouseY, COLKEY_MOUSE_CROSSHAIR,1);
+}
+
+void OverworldDrawGridText(float mouseX, float mouseY)
+{
+    int cameraCrosshairXPosition = overworldCameraXPosition+SCREEN_W/2;
+    int cameraCrosshairYPosition = overworldCameraYPosition+SCREEN_H/2;
+
+    int cameraCrosshairXPositionCell = cameraCrosshairXPosition/TILE_W;
+    int cameraCrosshairYPositionCell = cameraCrosshairYPosition/TILE_H;
+
+    int mouseCrosshairXPosition = overworldCameraXPosition+mouseX;
+    int mouseCrosshairYPosition = overworldCameraYPosition+mouseY;
+
+    int mouseCrosshairXPositionCell = mouseCrosshairXPosition/TILE_W;
+    int mouseCrosshairYPositionCell = mouseCrosshairYPosition/TILE_H;
+
+    int zoomPercentage = cameraZoomScale*100;
+
+    std::string cameraCrosshairPositionString = "CAMERA: (" + std::to_string(cameraCrosshairXPosition) + ", " + std::to_string(cameraCrosshairYPosition) + ") : ("
+    + std::to_string(cameraCrosshairXPositionCell) + ", " + std::to_string(cameraCrosshairYPositionCell) + ") "
+    + std::to_string(zoomPercentage) + "%";
+
+    std::string mouseCrosshairPositionString = "MOUSE:  (" + std::to_string(mouseCrosshairXPosition) + ", " + std::to_string(mouseCrosshairYPosition) + ") : ("
+    + std::to_string(mouseCrosshairXPositionCell) + ", " + std::to_string(mouseCrosshairYPositionCell) + ") "
+    + std::to_string(zoomPercentage) + "%";
+
+    if(!overworldCameraLocked)
+        string_al_draw_text(builtin,COLKEY_CAMERA_CROSSHAIR_FREE,0,0,ALLEGRO_ALIGN_LEFT,cameraCrosshairPositionString);
+    else
+        string_al_draw_text(builtin,COLKEY_CAMERA_CROSSHAIR_LOCKED,0,0,ALLEGRO_ALIGN_LEFT,cameraCrosshairPositionString);
+
+    string_al_draw_text(builtin,COLKEY_MOUSE_CROSSHAIR,0,BUILTIN_TEXT_HEIGHT,ALLEGRO_ALIGN_LEFT,mouseCrosshairPositionString);
+
+
 }
 
 void OverworldLockCameraPlace(Place *whichPlace)

@@ -18,17 +18,17 @@ public:
 
     std::string text;
 
-    const float scrollUpSpeed = 0.4;
+    const float scrollUpSpeed = 0.2;
     const float scrollUpXDisplacement = TILE_W*0.5;
     const float scrollUpYDisplacement = TILE_H*(-1.5);
-    const float scrollDownSpeed = 0.32;
+    const float scrollDownSpeed = 0.2;
     const float scrollDownXDisplacement = TILE_W*(-1.5);
-    const float scrollDownYDisplacement = TILE_H*(-2);
+    const float scrollDownYDisplacement = TILE_H*(-2.5);
 
     bool scrollUp;
     float overworldXPosition, overworldYPosition;
 
-    const int distanceFlownLimit = TILE_H*1.5;
+    const int distanceFlownLimit = TILE_H*1;
     int distanceFlown;
 
     FlyingText(int ic, std::string t, float x, float y, bool up);

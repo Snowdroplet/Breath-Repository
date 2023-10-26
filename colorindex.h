@@ -23,5 +23,7 @@
 #define COLKEY_CAMERA_CROSSHAIR_FREE                        COL_OCEAN_3
 #define COLKEY_CAMERA_CROSSHAIR_LOCKED                      COL_FLAME_3
 
+#define COLKEY_MOUSE_CROSSHAIR                              COL_VIOLET_3
+
 
 #endif // COLORINDEX_H_INCLUDED

@@ -115,12 +115,14 @@ void Caravan::OverworldLogic()
         if(hourChangeTick)
         {
             /// debug
+            /*
             if(currentHoursAtPlace > 20)
             {
                 std::cout << "Debug: " << caravanLeader->name << " spent " << currentHoursAtPlace << "/" << thresholdHoursAtPlace <<" hours at " << placeNames.at(whichPlace->placeIdentity) << std::endl;
                 std::cout << "Number of destinations on path: " << worldGraph.path.size() << std::endl;
                 std::cout << "Hometown: " << placeNames.at(hometownID) << std::endl;
             }
+            */
             /// ---
 
             currentHoursAtPlace++;

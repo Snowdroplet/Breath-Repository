@@ -19,7 +19,7 @@ const int inventoryRange[UI_BARTER_NUM_TABS][2] =
     {IT_BERRIES, IT_ETHER},  // Plant
     {IT_CLAY, IT_METEORITE},  // Mineral
     {IT_BEAST_BLOOD, IT_CHITIN},  // Beast
-    {IT_ALCOHOL, IT_CLOCKWORK},  // Artificial
+    {IT_BRANDY, IT_CLOCKWORK},  // Artificial
     {IT_SALVE, IT_AUTOMATON}, // Trade
     {IT_WAYBREAD, IT_CURE_CORRUPTION}  // Tools
 };

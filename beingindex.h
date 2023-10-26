@@ -5,6 +5,8 @@
 
 enum enumBeingAncestries
 {
+    ANCESTRY_GENERAL = -4,
+
     ANCESTRY_VERIT = 0,   // Hares of Verus
     ANCESTRY_YETI = 1,    // Greathares of Rumnir
     ANCESTRY_MAKHI = 2,   // Felines of Xenia

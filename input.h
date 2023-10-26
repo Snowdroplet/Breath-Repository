@@ -29,11 +29,33 @@ enum enumInputKeys // use KEYMODs instead of putting alt, Lshift, Rshift, Lctrl,
     KEY_ESC
 };
 
+enum enumInputMouseButtons
+{
+    MOUSE_NOTHING = 0, // Allegro mouse buttons start counting from 1 for some reason, so this really is just filler.
+
+    MOUSE_LEFT = 1,
+    MOUSE_RIGHT = 2,
+    MOUSE_MIDDLE = 3
+};
+
+enum enumInputMouseWheel
+{
+    MOUSEWHEEL_UP = 0,
+    MOUSEWHEEL_DOWN = 1
+};
+
+extern float mouseX;
+extern float mouseY;
+
 extern bool keyInput[];
+extern bool mouseInput[];
+extern bool mousewheelInput[];
 
 void InputKeydown();
 void InputKeyup();
-
-
+void InputMouseXY();
+void InputMouseDown();
+void InputMouseUp();
+void InputMousewheel();
 
 #endif // INPUT_H_INCLUDED
