@@ -24,12 +24,23 @@ void InterpretInput();
 void ProgressWorld();
 void UpdateUI();
 
-void ChangeUI(int whichUI, int whichSubUI, int whichTab);
+void ChangeUI(int whichUI, int whichSubUI);
 
 void DrawUI();
 
 void InitObjects();
 void CleanupObjects();
+
+void MouseLeftOnCaravanInventoryBubble();
+void MouseLeftOnCaravanTradeRecordsBubble();
+void MouseLeftOnCaravanPathfindingBubble();
+
+void MouseLeftOnPlacePopulationBubble();
+void MouseLeftOnPlaceCaravanseraiBubble();
+void MouseLeftOnPlaceSurplusBubble();
+void MouseLeftOnPlaceDeficitBubble();
+void MouseLeftOnPlaceMarketBubble();
+void MouseLeftOnPlaceIndustriesBubble();
 
 int main(int argc, char *argv[])
 {
@@ -70,8 +81,6 @@ int main(int argc, char *argv[])
     al_register_event_source(eventQueue, al_get_keyboard_event_source());
     al_register_event_source(eventQueue, al_get_mouse_event_source());
 
-    al_hide_mouse_cursor(display);
-
     PHYSFS_init(argv[0]);
     if(!PHYSFS_mount("./gamedata.zip", "/", 1))
     {
@@ -88,7 +97,7 @@ int main(int argc, char *argv[])
 
     InitObjects();
 
-    ChangeUI(UI_OVERWORLD,SUB_OVERWORLD_NONE, TAB_OVERWORLD_NONE);
+    ChangeUI(UI_OVERWORLD,SUBUI_OVERWORLD_NONE);
 
     al_start_timer(FPSTimer);
 
@@ -112,7 +121,9 @@ int main(int argc, char *argv[])
         }
 
         if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
+        {
             InputMouseDown();
+        }
 
         if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP)
             InputMouseUp();
@@ -184,15 +195,6 @@ void InterpretInput()
         cameraZoomTranslateY = 0;
     }
 
-    if(mouseInput[MOUSE_LEFT])
-    {
-        //std::cout << "Mouse test: LEFT" << std::endl;
-    }
-
-    if(mouseInput[MOUSE_RIGHT])
-    {
-        //std::cout << "Mouse test: RIGHT" << std::endl;
-    }
 
     if(activeUI == UI_OVERWORLD)
     {
@@ -253,15 +255,30 @@ void InterpretInput()
             if(keyInput[KEY_ESC])
                 OverworldUnlockCamera();
 
-            if(overworldCameraLockedOnPlace)
+            if(mouseInput[MOUSE_LEFT])
             {
+                if(caravanInventoryBubbleOpen)
+                    MouseLeftOnCaravanInventoryBubble();
+                if(caravanTradeRecordsBubbleOpen)
+                    MouseLeftOnCaravanTradeRecordsBubble();
+                if(caravanPathfindingBubbleOpen)
+                    MouseLeftOnCaravanPathfindingBubble();
+
+                //if(placePopulationBubbleOpen)
+
+                //if(placeCaravanseraiBubbleOpen)
+
+                //if(placeSurplusBubbleOpen)
+
+                //if(placeDeficitBubbleOpen)
+
+                //if(placeMarketBubbleOpen)
+
+                //if(placeIndustriesBubbleOpen)
+
 
             }
 
-            if(overworldCameraLockedOnCaravan)
-            {
-
-            }
         }
 
 
@@ -285,7 +302,7 @@ void ProgressWorld()
         for(std::map<int,Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
         {
             ((*it).second)->ProgressFlyingTexts();
-            ((*it).second)->ProgressIndustriesBubbleProgressBars();
+            ((*it).second)->ProgressPlaceIndustriesBubbleProgressBars();
 
             if(hourChangeTick)
             {
@@ -305,10 +322,12 @@ void ProgressWorld()
 
         }
 
+        /*
         for(std::map<int,Road*>::iterator it = Road::roads.begin(); it != Road::roads.end(); ++it)
         {
 
         }
+        */
 
         for(std::vector<Being*>::iterator it = Being::people.begin(); it != Being::people.end(); ++it)
         {
@@ -345,7 +364,7 @@ void UpdateUI()
 }
 
 
-void ChangeUI(int whichUI, int whichSubUI, int whichTab)
+void ChangeUI(int whichUI, int whichSubUI)
 {
     UIChangeDelay = true;
 
@@ -353,12 +372,9 @@ void ChangeUI(int whichUI, int whichSubUI, int whichTab)
         previousActiveUI = activeUI;
     if(whichSubUI != activeSubUI)
         previousActiveSubUI = activeSubUI;
-    if(whichTab != activeTab)
-        previousActiveTab = activeTab;
 
     activeUI = whichUI;
     activeSubUI = whichSubUI;
-    activeTab = whichTab;
 
     if(activeUI == UI_OVERWORLD)
     {
@@ -397,35 +413,35 @@ void DrawUI()
 
         if(overworldCameraPlace != nullptr)
         {
-            overworldCameraPlace->DrawPopulationBubble();
-            overworldCameraPlace->DrawCaravanseraiBubble();
+            overworldCameraPlace->DrawPlacePopulationBubble();
+            overworldCameraPlace->DrawPlaceCaravanseraiBubble();
 
-            overworldCameraPlace->DrawSurplusBubble();
-            overworldCameraPlace->DrawDeficitBubble();
+            overworldCameraPlace->DrawPlaceSurplusBubble();
+            overworldCameraPlace->DrawPlaceDeficitBubble();
 
-            overworldCameraPlace->DrawMarketBubble();
-            overworldCameraPlace->DrawIndustriesBubble();
+            overworldCameraPlace->DrawPlaceMarketBubble();
+            overworldCameraPlace->DrawPlaceIndustriesBubble();
         }
         else if(overworldCameraCaravan != nullptr)
         {
-            overworldCameraCaravan->DrawInventoryBubble();
-            overworldCameraCaravan->DrawTradeRecordsBubble();
-            overworldCameraCaravan->DrawPathfindingBubble();
+            overworldCameraCaravan->DrawCaravanInventoryBubble();
+            overworldCameraCaravan->DrawCaravanTradeRecordsBubble();
+            overworldCameraCaravan->DrawCaravanPathfindingBubble();
 
             if(overworldCameraCaravan->atPlace)
             {
-                overworldCameraCaravan->whichPlace->DrawPopulationBubble();
-                overworldCameraCaravan->whichPlace->DrawCaravanseraiBubble();
+                overworldCameraCaravan->whichPlace->DrawPlacePopulationBubble();
+                overworldCameraCaravan->whichPlace->DrawPlaceCaravanseraiBubble();
 
-                overworldCameraCaravan->whichPlace->DrawSurplusBubble();
-                overworldCameraCaravan->whichPlace->DrawDeficitBubble();
+                overworldCameraCaravan->whichPlace->DrawPlaceSurplusBubble();
+                overworldCameraCaravan->whichPlace->DrawPlaceDeficitBubble();
 
-                overworldCameraCaravan->whichPlace->DrawMarketBubble();
-                overworldCameraCaravan->whichPlace->DrawIndustriesBubble();
+                overworldCameraCaravan->whichPlace->DrawPlaceMarketBubble();
+                overworldCameraCaravan->whichPlace->DrawPlaceIndustriesBubble();
             }
         }
 
-        OverworldDrawGridMouseCrosshair(mouseX, mouseY);
+        //OverworldDrawGridMouseCrosshair(mouseX, mouseY);
 
         OverworldDrawGridText(mouseX, mouseY);
 
@@ -507,4 +523,71 @@ void CleanupObjects()
     for(std::map<int, Road*>::iterator it = Road::roads.begin(); it != Road::roads.end(); ++it)
         delete it->second;
     Road::roads.clear();
+}
+
+void MouseLeftOnCaravanInventoryBubble()
+{
+    if(mouseX > caravanInventoryBubbleDrawX
+       && mouseX < caravanInventoryBubbleDrawX + overworldCameraCaravan->caravanInventoryBubbleWidth
+       && mouseY > caravanInventoryBubbleDrawY
+       && mouseY < caravanInventoryBubbleDrawY + overworldCameraCaravan->caravanInventoryBubbleHeight)
+    {
+        int x = mouseX - caravanInventoryBubbleDrawX;
+        int y = mouseY - caravanInventoryBubbleDrawY;
+
+        int xCell = x/TILE_W;
+        int yCell = y/(TILE_H+caravanInventoryBubbleRowSpacing);
+
+        unsigned position = yCell*(overworldCameraCaravan->caravanInventoryBubbleNumCols) + xCell;
+
+        std::cout << "Test: clicky clicky " << position << std::endl;
+
+        if(position < overworldCameraCaravan->inventory.cargo.size())
+        {
+            std::map<int,float>::iterator it = overworldCameraCaravan->inventory.cargo.begin();
+            std::advance(it, position);
+
+            std::cout << itemNames.at((*it).first) << std::endl;
+        }
+    }
+}
+
+void MouseLeftOnCaravanTradeRecordsBubble()
+{
+
+}
+
+void MouseLeftOnCaravanPathfindingBubble()
+{
+
+}
+
+void MouseLeftOnPlacePopulationBubble()
+{
+
+}
+
+void MouseLeftOnPlaceCaravanseraiBubble()
+{
+
+}
+
+void MouseLeftOnPlaceSurplusBubble()
+{
+
+}
+
+void MouseLeftOnPlaceDeficitBubble()
+{
+
+}
+
+void MouseLeftOnPlaceMarketBubble()
+{
+
+}
+
+void MouseLeftOnPlaceIndustriesBubble()
+{
+
 }

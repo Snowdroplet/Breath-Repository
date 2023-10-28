@@ -75,37 +75,43 @@ public:
     const unsigned tradeRecordsMaxRows = 9;
 
 /// Bubbles
+/*
     const float bubblePadding = TILE_W/4;
     const float bubbleCornerRadius = 8;
 
-    const float inventoryBubbleDrawX = SCREEN_W*1/40;
-    const float inventoryBubbleDrawY = SCREEN_H*8/40;
-    const float inventoryBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
-    const float inventoryBubbleBaseCols = 7;
-    const float inventoryBubbleBaseRows = 1;
-    unsigned inventoryBubbleNumCols;
-    unsigned inventoryBubbleNumRows;
-    float inventoryBubbleWidth, inventoryBubbleHeight;
+    const float caravanInventoryBubbleDrawX = SCREEN_W*1/40;
+    const float caravanInventoryBubbleDrawY = SCREEN_H*8/40;
+    const float caravanInventoryBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
+    const float caravanInventoryBubbleBaseCols = 7;
+    const float caravanInventoryBubbleBaseRows = 1;
+*/
+    unsigned caravanInventoryBubbleNumCols;
+    unsigned caravanInventoryBubbleNumRows;
+    float caravanInventoryBubbleWidth, caravanInventoryBubbleHeight;
 
-    const float tradeRecordsBubbleDrawX = SCREEN_W*1/40;
-    const float tradeRecordsBubbleDrawY = SCREEN_H*14/40;
-    const float tradeRecordsBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
-    const unsigned tradeRecordsBubbleBaseRows = 1;
-    const float tradeRecordsBubbleWidth = TILE_W*7;
-    unsigned tradeRecordsBubbleNumRows;
-    const float tradeRecordsBubbleNumIconCols = 4;
-    float tradeRecordsBubbleHeight;
-    const float tradeRecordsBubblePlaceNameWidth = TILE_W*3;
+/*
+    const float caravanTradeRecordsBubbleDrawX = SCREEN_W*1/40;
+    const float caravanTradeRecordsBubbleDrawY = SCREEN_H*14/40;
+    const float caravanTradeRecordsBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
+    const unsigned caravanTradeRecordsBubbleBaseRows = 1;
+    const float caravanTradeRecordsBubbleWidth = TILE_W*7;
+    const float caravanTradeRecordsBubbleNumIconCols = 4;
+    const float caravanTradeRecordsBubblePlaceNameWidth = TILE_W*3;
+*/
+    unsigned caravanTradeRecordsBubbleNumRows;
+    float caravanTradeRecordsBubbleHeight;
 
-    const float pathfindingBubbleColSpacing = TILE_W;
-    const float pathfindingBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
-    const float pathfindingBubbleDrawX = SCREEN_W*1/40;
-    const float pathfindingBubbleDrawY = SCREEN_H*35/40;
-    const unsigned pathfindingBubbleBaseCols = 1;
-    const unsigned pathfindingBubbleBaseRows = 1;
-    unsigned pathfindingBubbleNumCols;
-    unsigned pathfindingBubbleNumRows;
-    float pathfindingBubbleWidth, pathfindingBubbleHeight;
+/*
+    const float caravanPathfindingBubbleColSpacing = TILE_W;
+    const float caravanPathfindingBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
+    const float caravanPathfindingBubbleDrawX = SCREEN_W*1/40;
+    const float caravanPathfindingBubbleDrawY = SCREEN_H*35/40;
+    const unsigned caravanPathfindingBubbleBaseCols = 1;
+    const unsigned caravanPathfindingBubbleBaseRows = 1;
+*/
+    unsigned caravanPathfindingBubbleNumCols;
+    unsigned caravanPathfindingBubbleNumRows;
+    float caravanPathfindingBubbleWidth, caravanPathfindingBubbleHeight;
 
 /// Constructor
     Caravan();
@@ -148,16 +154,16 @@ public:
     void CheckTradeRecordsRowLimit();
 
 /// Bubble functions
-    void UpdateInventoryBubble();
-    void UpdatePathfindingBubble();
-    void UpdateTradeRecordsBubble();
+    void UpdateCaravanInventoryBubble();
+    void UpdateCaravanPathfindingBubble();
+    void UpdateCaravanTradeRecordsBubble();
 
 /// Drawing functions
     void DrawSpriteOnOverworld();
     void DrawActivity(float x, float y);
-    void DrawInventoryBubble();
-    void DrawTradeRecordsBubble();
-    void DrawPathfindingBubble();
+    void DrawCaravanInventoryBubble();
+    void DrawCaravanTradeRecordsBubble();
+    void DrawCaravanPathfindingBubble();
 };
 
 #endif // CARAVAN_H_INCLUDED

@@ -6,8 +6,20 @@ bool UIChangeDelay = false;
 int activeUI = UI_OVERWORLD;
 int previousActiveUI = UI_OVERWORLD;
 
-int activeSubUI = SUB_OVERWORLD_NONE;
-int previousActiveSubUI = SUB_OVERWORLD_NONE;
+int activeSubUI = SUBUI_OVERWORLD_NONE;
+int previousActiveSubUI = SUBUI_OVERWORLD_NONE;
 
-int activeTab = TAB_OVERWORLD_NONE;
-int previousActiveTab = TAB_OVERWORLD_NONE;
+
+/// Bubble View
+bool caravanInventoryBubbleOpen;
+bool caravanTradeRecordsBubbleOpen;
+bool caravanPathfindingBubbleOpen;
+
+bool placePopulationBubbleOpen;
+bool placeCaravanseraiBubbleOpen;
+bool placeSurplusBubbleOpen;
+bool placeDeficitBubbleOpen;
+bool placeMarketBubbleOpen;
+bool placeIndustriesBubbleOpen;
+
+bool encyclopediaBubbleOpen;

@@ -103,4 +103,6 @@ const std::map<int, std::string>factionLore =
     {SOV_THOUSAND_ISLES,"The Convocation of The Thousand Isles was originally an economic alliance between the Beyu island states of Reach, Karune and Yulmer, before the advent of tethercraft made "}
 };
 
+
+
 #endif // ENCYCLOPEDIA_H_INCLUDED

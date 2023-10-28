@@ -112,71 +112,32 @@ public:
     const float bubbleCornerRadius = 8;
 
 /// Bubbles -- Population
-    const std::string populationBubbleLabel = "Population";
-    const std::string populationBubbleEmptyText = "<None>";
-    const float populationBubbleDrawX = SCREEN_W*26/40;
-    const float populationBubbleDrawY = SCREEN_H*4/40;
-    const int populationBubbleBaseCols = 1;
-    const float populationBubbleHeight = TILE_H;
-    float populationBubbleWidth;
-    unsigned populationBubbleNumCols;
+    float placePopulationBubbleWidth;
+    unsigned placePopulationBubbleNumCols;
 
 /// Bubbles -- Caravanserai
-    const std::string caravanseraiBubbleLabel = "Caravanserai";
-    const std::string caravanseraiBubbleEmptyText = "<Empty>";
-    const float caravanseraiBubbleDrawX = SCREEN_W*33/40;
-    const float caravanseraiBubbleDrawY = SCREEN_H*24/40;
-    const unsigned caravanseraiBubbleBaseCols = 6;
-    const unsigned caravanseraiBubbleBaseRows = 1;
-    unsigned caravanseraiBubbleNumCols;
-    unsigned caravanseraiBubbleNumRows;
-    float caravanseraiBubbleWidth;
-    float caravanseraiBubbleHeight;
+    unsigned placeCaravanseraiNumCols;
+    unsigned placeCaravanseraiNumRows;
+    float placeCaravanseraiWidth;
+    float placeCaravanseraiHeight;
 
 
 /// Bubbles -- Surplus and Deficit
-    const std::string surplusBubbleLabel = "Surplus";
-    const float surplusBubbleDrawX = SCREEN_W*33/40;
-    const float surplusBubbleDrawY = SCREEN_H*8/40;
-    const unsigned surplusBubbleBaseCols = 1;
-    const unsigned surplusBubbleBaseRows = 1;
-    const unsigned surplusBubbleMaxRows = 8;
-    unsigned surplusBubbleNumCols, surplusBubbleNumRows;
-    float surplusBubbleWidth, surplusBubbleHeight; // Width extended by TILE_W*1.5 in UpdateSurplusBubble()
+    unsigned placeSurplusBubbleNumCols, placeSurplusBubbleNumRows;
+    float placeSurplusBubbleWidth, placeSurplusBubbleHeight; // Width extended by TILE_W*1.5 in UpdateplaceSurplusBubble()
 
-    const std::string deficitBubbleLabel = "Deficit";
-    const float deficitBubbleDrawX = SCREEN_W*37/40 - TILE_W/2;
-    const float deficitBubbleDrawY = SCREEN_H*8/40;
-    const unsigned deficitBubbleBaseCols = 1;
-    const unsigned deficitBubbleBaseRows = 1;
-    const unsigned deficitBubbleMaxRows = 8;
-    unsigned deficitBubbleNumCols, deficitBubbleNumRows;
-    float deficitBubbleWidth, deficitBubbleHeight; // Width extended by TILE_W*1.5 in UpdateDeficitBubble()
+    unsigned placeDeficitBubbleNumCols, placeDeficitBubbleNumRows;
+    float placeDeficitBubbleWidth, placeDeficitBubbleHeight; // Width extended by TILE_W*1.5 in UpdateplaceDeficitBubble()
 
 
 /// Bubbles -- Market
-    const std::string marketBubbleLabel = "Market";
-    const std::string marketBubbleEmptyText = "<No inventory>";
-    const float marketBubbleDrawX       = SCREEN_W*26/40;
-    const float marketBubbleDrawY       = SCREEN_H*8/40;
-    const float marketBubbleRowSpacing  = BUILTIN_TEXT_HEIGHT;
-    const unsigned marketBubbleBaseCols = 6;
-    const unsigned marketBubbleBaseRows = 1;
-    unsigned marketBubbleNumCols;
-    unsigned marketBubbleNumRows;
-    float marketBubbleWidth;
-    float marketBubbleHeight;
+    unsigned placeMarketBubbleNumCols;
+    unsigned placeMarketBubbleNumRows;
+    float placeMarketBubbleWidth;
+    float placeMarketBubbleHeight;
 
 /// Bubbles -- Industry
-    const std::string industriesBubbleLabel = "Local Industries";
-    const std::string industriesBubbleEmptyText = "<No industries>";
-    const float industriesBubbleDrawX = SCREEN_W*26/40;
-    const float industriesBubbleDrawY = SCREEN_H*24/40;
-    const float industriesBubbleRowSpacing = 4; // Arbitrary gap
-    const float industriesBubbleWidth = TILE_W*6; //+ bubblePadding;
-    float industriesBubbleHeight;
-    const float industriesBubbleProgressBarOffset = 2.5*TILE_W;
-    const float industriesBubbleProgressBarWidth = industriesBubbleWidth - industriesBubbleProgressBarOffset;
+    float placeIndustriesBubbleHeight;
 
 /// Flying text
     std::vector<FlyingText*>upFlyingTexts;
@@ -258,16 +219,16 @@ public:
 
 /// Bubble functions
     void UpdateAllBubbles();
-    void UpdatePopulationBubble();
+    void UpdatePlacePopulationBubble();
     void UpdateCitizensBubble();
-    void UpdateCaravanseraiBubble();
+    void UpdatePlaceCaravanseraiBubble();
 
-    void UpdateSurplusBubble();
-    void UpdateDeficitBubble();
+    void UpdatePlaceSurplusBubble();
+    void UpdatePlaceDeficitBubble();
 
-    void UpdateMarketBubble();
-    void UpdateIndustriesBubble(); // Only called when industrial activity updated
-    void ProgressIndustriesBubbleProgressBars(); // Called on timer tick
+    void UpdatePlaceMarketBubble();
+    void UpdatePlaceIndustriesBubble(); // Only called when industrial activity updated
+    void ProgressPlaceIndustriesBubbleProgressBars(); // Called on timer tick
 
 /// Flying text functions
     void QueueUpFlyingText(int icon, std::string text, float x, float y);
@@ -276,16 +237,16 @@ public:
 
 /// Overworld drawing functions
     void DrawSpriteOnOverworld();
-    void DrawPopulationBubble();
+    void DrawPlacePopulationBubble();
     void DrawCitizensBubble();
-    void DrawCaravanseraiBubble();
+    void DrawPlaceCaravanseraiBubble();
 
-    void DrawSurplusBubble();
-    void DrawDeficitBubble();
+    void DrawPlaceSurplusBubble();
+    void DrawPlaceDeficitBubble();
 
     ///void DrawInventoryBubbles();
-    void DrawMarketBubble();
-    void DrawIndustriesBubble();
+    void DrawPlaceMarketBubble();
+    void DrawPlaceIndustriesBubble();
     void DrawFlyingTexts();
 };
 

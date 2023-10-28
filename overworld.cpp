@@ -56,7 +56,6 @@ void OverworldDrawGridCameraCrosshair()
 
 void OverworldDrawGridMouseCrosshair(float mouseX, float mouseY)
 {
-
     al_draw_line(mouseX, 0, mouseX, SCREEN_H, COLKEY_MOUSE_CROSSHAIR,1);
     al_draw_line(0, mouseY, SCREEN_W, mouseY, COLKEY_MOUSE_CROSSHAIR,1);
 }
@@ -102,6 +101,13 @@ void OverworldLockCameraPlace(Place *whichPlace)
     overworldCameraPlace = whichPlace;
     overworldCameraLockedOnPlace = true;
     overworldCameraLocked = true;
+
+    placePopulationBubbleOpen = true;
+    placeCaravanseraiBubbleOpen = true;
+    placeSurplusBubbleOpen = true;
+    placeDeficitBubbleOpen = true;
+    placeMarketBubbleOpen = true;
+    placeIndustriesBubbleOpen = true;
 }
 
 void OverworldLockCameraCaravan(Caravan *whichCaravan)
@@ -111,18 +117,33 @@ void OverworldLockCameraCaravan(Caravan *whichCaravan)
     overworldCameraCaravan = whichCaravan;
     overworldCameraLockedOnCaravan = true;
     overworldCameraLocked = true;
+
+    caravanInventoryBubbleOpen = true;
+    caravanTradeRecordsBubbleOpen = true;
+    caravanPathfindingBubbleOpen = true;
 }
 
 void OverworldUnlockCameraCaravan()
 {
     overworldCameraCaravan = nullptr;
     overworldCameraLockedOnCaravan = false;
+
+    caravanInventoryBubbleOpen = false;
+    caravanTradeRecordsBubbleOpen = false;
+    caravanPathfindingBubbleOpen = false;
 }
 
 void OverworldUnlockCameraPlace()
 {
     overworldCameraPlace = nullptr;
     overworldCameraLockedOnPlace = false;
+
+    placePopulationBubbleOpen = false;
+    placeCaravanseraiBubbleOpen = false;
+    placeSurplusBubbleOpen = false;
+    placeDeficitBubbleOpen = false;
+    placeMarketBubbleOpen = false;
+    placeIndustriesBubbleOpen = false;
 }
 
 void OverworldUnlockCamera()

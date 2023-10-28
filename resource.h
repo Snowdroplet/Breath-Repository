@@ -23,14 +23,12 @@ const std::map<unsigned,unsigned>resourceBeingNumSpriteVariants
 };
 const unsigned resourceBeingNumWalkFrames = 2;
 
-const int BUILTIN_TEXT_HEIGHT = 8;
 extern ALLEGRO_FONT *builtin;
 
 extern ALLEGRO_BITMAP *overworldPlacePng;
 
 extern ALLEGRO_BITMAP *beingsPng;
 extern ALLEGRO_BITMAP *beingPng[NUM_ANCESTRIES];
-
 
 extern ALLEGRO_BITMAP *expertiseIconPng;
 
