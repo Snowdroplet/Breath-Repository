@@ -22,6 +22,8 @@ const int NUM_ANCESTRIES = ANCESTRY_MARKER_LAST+1;
 
 const std::map<unsigned,std::string>beingAncestryNames
 {
+    {ANCESTRY_GENERAL, "Leykin"},
+
     {ANCESTRY_VERIT, "Verit"},
     {ANCESTRY_YETI, "Yeti"},
     {ANCESTRY_MAKHI, "Makhi"},

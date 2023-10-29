@@ -91,7 +91,6 @@ void OverworldDrawGridText(float mouseX, float mouseY)
 
     string_al_draw_text(builtin,COLKEY_MOUSE_CROSSHAIR,0,BUILTIN_TEXT_HEIGHT,ALLEGRO_ALIGN_LEFT,mouseCrosshairPositionString);
 
-
 }
 
 void OverworldLockCameraPlace(Place *whichPlace)

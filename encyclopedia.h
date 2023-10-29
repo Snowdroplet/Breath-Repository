@@ -4,42 +4,20 @@
 #include <map>
 #include <string>
 
+#include "beingindex.h"
+#include "sovereigntyindex.h"
+#include "placeindex.h"
 #include "inventoryindex.h"
 
-const std::map<int, std::string>cargoLore =
+enum enumEncyclopediaCategories
 {
-    {IT_CORPUS, "Flesh shed by beasts, whose essences inhabit bodies only in passing."},
-    {IT_PLASM, "Luminescent mold that grows on creatures who consort with spirits."},
-    {IT_OCULUS, "Uncanny stone that forms within the brains of creatures in long seclusion."},
-    {IT_STRANGE_EGG, "Transmigratory vessel to which all beasts eventually return."},
-
-    {IT_BERRIES, "Lacking seed or flower, their propagation remains a mystery."},
-    {IT_HERBS, "Tea brewed from these bitter leaves fortify the constitution."},
-    {IT_MUSHROOMS, "Secretes a long-burning, aromatic oil when heated."},
-    {IT_SPICE, "Fiery repast that opens the airways and lends fullness to every breath."},
-
-    {IT_CLAY, "Sacred earth left over from creation, still abundant today."},
-    {IT_COPPER, "Machinists impart memories unto these reddish metal plates."},
-    {IT_IRON, "Anima-dampening metal essential for safely handling soulmasses."},
-    {IT_LEYSTONE, "Fragments from the same crystal resonate with each other other across vast distances."},
-
-    {IT_BRANDY, "Mellow beverage distilled by leykin since time immemorial."},
-    {IT_MEDICINE, "Salve that soothes aches, prevents infections and promotes healing."},
-    {IT_ETHER, "Induces a long dream that effaces pain and trauma."},
-    {IT_COUNTERAGENT, "Sublime distillate with the power to suspend fate."},
-
-    {IT_EFFIGY, "Resilient golem intended for manual labour."},
-    {IT_CONTRACT, "Accords between the capricious drawn up in fadeless pigment."},
-    {IT_VESSEL, "Artificial egg created to carry immaterial things."},
-    {IT_GRIMOIRE, "Tome that records the true intents behind one's words."},
-
-    {IT_FUEL, "Substance refined from mushroom oil to power automata."},
-    {IT_CLOCKWORK, "Highly reconfigurable but delicate machine parts."},
-    {IT_TOOLS, "Poor artificers blame their tools; prosperous artificers improve them."},
-    {IT_AUTOMATON, "Handheld mechanical effigy that excels at calculations."}
+    EN_CAT_LEYKIN = 0,
+    EN_CAT_FACTIONS = 1,
+    EN_CAT_PLACES = 2,
+    EN_CAT_CARGO = 3
 };
 
-const std::map<int, std::string>leykinLore =
+const std::map<int, std::string>encyclopediaLeykinLore =
 {
     {ANCESTRY_GENERAL, "Leykin are creatures capable of traversing the leylines that thread the Bottled World's domains together. Their ancestors emerged from veins of sacred earth to inherit the ruins of cities too grand even for all their number. Yet, the day will come that the Leykin outgrow this Bottled World, returning to clay to be sculpted anew once more."},
 
@@ -52,7 +30,16 @@ const std::map<int, std::string>leykinLore =
     {ANCESTRY_HAPHAE, "Inquisitive but ever-forgetful, the adventurous Hapahae descend from their unchanging mountain villages in pursuit of experiences worth remembering."}
 };
 
-const std::map<int, std::string>placeLore =
+const std::map<int, std::string>encyclopediaFactionLore =
+{
+    {SOV_NULL, "This area is not recognized as soverign territory."},
+    {SOV_VERUS,"The Republic of Verus is symbolically overseen by a parliament of academics responsible for updating the 'Annual Consensus of Philosophy'. This monolithic, self-contradictory text is a survey of national ideals as voted upon by citizens, and serves as a means for individuals to compare the strength of personal beliefs against the norm. The Consensus regularly conflates moral and physical principles as a matter of style, acknowledging that all understanding can be suborned to the preservation of the Republic's incredibly diverse society. Because the Consensus acts as a standard for discourse, citizens can involve themselves in civic life simply by airing their opinions, the most agreeable of which will invariably become reflected in national writ."},
+    {SOV_SHARUMNIR, "Sharumnir Assembly represents the secular leadership of its territories. Its laws are few and succinct, concerned with minimums that every citizen is expected to surpass. Though rarely called for, Sharumnir's justice widely engages community support for the counsel and reconciliation of offenders to victims. /// Sharmunir's religious mission is led by the Apostles, chosen messengers who travel between Yeti communities at home and abroad to deliver sermons of encouragement. The Apostles have no formal powers, but are revered as exemplary practitioners of The Creed."},
+    {SOV_XENIA, "Xenia is a desert kingdom occupying the domains of the lost technological civilization Makhia, from whom the present-day Makhii claim descent. Power is exercised through the Four Corners, magi-mechanical thrones that greatly extended their occupants' lifespan. Because the thrones select capable leaders and reject them "},
+    {SOV_THOUSAND_ISLES,"The Convocation of The Thousand Isles was originally an economic alliance between the Beyu island states of Reach, Karune and Yulmer, before the advent of tethercraft made "}
+};
+
+const std::map<int, std::string>encyclopediaPlaceLore =
 {
     {PL_ERICENNES, "The City of Gates, capital of The Republic of Verus. Ericennes has been the seat of several once-great civilizations, owing to its uniquely well-connected position on the leyways. Many of its ancient monuments still endure, warning against the follies that brought their builders to ruin."},
     {PL_CHORAS, "Countless generations of stoneshapers have carved their legacies into the grand terraces of the Canyon City, poetically dubbed the Stairways to Heaven. Its walls are steeped in age-old mysteries that the ever foward-looking Republic tend to overlook."},
@@ -94,13 +81,45 @@ const std::map<int, std::string>placeLore =
     {PL_ETRURI, "<Etruri>"}
 };
 
-const std::map<int, std::string>factionLore =
+const std::map<int, std::string>encyclopediaCargoLore =
 {
-    {SOV_NULL, "This area is not recognized as soverign territory."},
-    {SOV_VERUS,"The Republic of Verus is symbolically overseen by a parliament of academics responsible for updating the 'Annual Consensus of Philosophy'. This monolithic, self-contradictory text is a survey of national ideals as voted upon by citizens, and serves as a means for individuals to compare the strength of personal beliefs against the norm. The Consensus regularly conflates moral and physical principles as a matter of style, acknowledging that all understanding can be suborned to the preservation of the Republic's incredibly diverse society. Because the Consensus acts as a standard for discourse, citizens can involve themselves in civic life simply by airing their opinions, the most agreeable of which will invariably become reflected in national writ."},
-    {SOV_SHARUMNIR, "Sharumnir Assembly represents the secular leadership of its territories. Its laws are few and succinct, concerned with minimums that every citizen is expected to surpass. Though rarely called for, Sharumnir's justice widely engages community support for the counsel and reconciliation of offenders to victims. /// Sharmunir's religious mission is led by the Apostles, chosen messengers who travel between Yeti communities at home and abroad to deliver sermons of encouragement. The Apostles have no formal powers, but are revered as exemplary practitioners of The Creed."},
-    {SOV_XENIA, "Xenia is a desert kingdom occupying the domains of the lost technological civilization Makhia, from whom the present-day Makhii claim descent. Power is exercised through the Four Corners, magi-mechanical thrones that greatly extended their occupants' lifespan. Because the thrones select capable leaders and reject them "},
-    {SOV_THOUSAND_ISLES,"The Convocation of The Thousand Isles was originally an economic alliance between the Beyu island states of Reach, Karune and Yulmer, before the advent of tethercraft made "}
+    {IT_CORPUS, "Flesh shed by beasts, whose essences inhabit bodies only in passing."},
+    {IT_PLASM, "Luminescent mold that grows on creatures who consort with spirits."},
+    {IT_OCULUS, "Uncanny stone that forms within the brains of creatures in long seclusion."},
+    {IT_STRANGE_EGG, "Transmigratory vessel to which all beasts eventually return."},
+
+    {IT_BERRIES, "Lacking seeds or flowers, the propagation of these fruits remain a mystery."},
+    {IT_HERBS, "Tea brewed from these bitter leaves fortify the constitution."},
+    {IT_MUSHROOMS, "Secretes a long-burning, aromatic oil when heated."},
+    {IT_SPICE, "Fiery repast that opens the airways and lends fullness to every breath."},
+
+    {IT_CLAY, "Sacred earth left over from creation, still abundant today."},
+    {IT_COPPER, "Machinists know the techniques for imparting memories unto these reddish metal plates."},
+    {IT_IRON, "Anima-dampening metal essential for safely handling soulmasses."},
+    {IT_LEYSTONE, "Fragments from the same crystal resonate with each other other across vast distances."},
+
+    {IT_BRANDY, "Mellow fruit beverage distilled by leykin since time immemorial."},
+    {IT_MEDICINE, "Salve that soothes aches, prevents infections and promotes healing."},
+    {IT_ETHER, "Induces a long dream that effaces pain and trauma."},
+    {IT_COUNTERAGENT, "Sublime distillate with the power to suspend fate."},
+
+    {IT_EFFIGY, "Resilient golem intended for manual labour."},
+    {IT_CONTRACT, "Accords between the capricious drawn up in fadeless pigment."},
+    {IT_VESSEL, "Artificial egg created to carry immaterial things."},
+    {IT_GRIMOIRE, "Tome that records the true intents behind one's words."},
+
+    {IT_FUEL, "Substance refined from mushroom oil to power automata."},
+    {IT_CLOCKWORK, "Highly reconfigurable but delicate machine parts."},
+    {IT_TOOLS, "Poor artificers blame their tools; prosperous artificers improve them."},
+    {IT_AUTOMATON, "Handheld mechanical effigy that excels at calculations."}
+};
+
+const std::map<int,std::map<int, std::string>>encyclopedia =
+{
+    {EN_CAT_LEYKIN, encyclopediaLeykinLore},
+    {EN_CAT_FACTIONS, encyclopediaFactionLore},
+    {EN_CAT_PLACES, encyclopediaPlaceLore},
+    {EN_CAT_CARGO, encyclopediaCargoLore}
 };
 
 

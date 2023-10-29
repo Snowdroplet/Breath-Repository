@@ -19,7 +19,6 @@
 #include "calendar.h"
 #include "encyclopedia.h"
 
-
 void InterpretInput();
 void ProgressWorld();
 void UpdateUI();
@@ -253,7 +252,12 @@ void InterpretInput()
         else if(overworldCameraLocked)
         {
             if(keyInput[KEY_ESC])
+            {
                 OverworldUnlockCamera();
+
+                if(encyclopediaBubbleOpen)
+                    CloseEncyclopediaBubble();
+            }
 
             if(mouseInput[MOUSE_LEFT])
             {
@@ -441,11 +445,13 @@ void DrawUI()
             }
         }
 
-        //OverworldDrawGridMouseCrosshair(mouseX, mouseY);
-
-        OverworldDrawGridText(mouseX, mouseY);
+        if(encyclopediaBubbleOpen)
+            DrawEncyclopediaBubble();
 
         DrawCalendar();
+        //OverworldDrawGridMouseCrosshair(mouseX, mouseY);
+        OverworldDrawGridText(mouseX, mouseY);
+
     }
 }
 
@@ -540,14 +546,15 @@ void MouseLeftOnCaravanInventoryBubble()
 
         unsigned position = yCell*(overworldCameraCaravan->caravanInventoryBubbleNumCols) + xCell;
 
-        std::cout << "Test: clicky clicky " << position << std::endl;
+        //std::cout << "Test: clicky clicky " << position << std::endl;
 
         if(position < overworldCameraCaravan->inventory.cargo.size())
         {
             std::map<int,float>::iterator it = overworldCameraCaravan->inventory.cargo.begin();
             std::advance(it, position);
 
-            std::cout << itemNames.at((*it).first) << std::endl;
+            //std::cout << itemNames.at((*it).first) << std::endl;
+            OpenEncyclopediaBubble(mouseX, mouseY, EN_CAT_CARGO, (*it).first);
         }
     }
 }

@@ -3,6 +3,13 @@
 
 #include <string>
 
+#include <allegro5/allegro_primitives.h>
+
+#include "resource.h"
+
+#include "encyclopedia.h"
+#include "colorindex.h"
+
 /// Tiles
 const float SCREEN_W = 1280;
 const float SCREEN_H = 800;
@@ -14,7 +21,7 @@ const float MINI_TILE_W = 16; // Width of half-sized versions of sprites meant t
 const float MINI_TILE_H = 16;
 
 /// Text
-const unsigned BUILTIN_TEXT_HEIGHT = 8;
+const float BUILTIN_TEXT_HEIGHT = 8;
 
 /// UI
 extern bool UIChangeDelay;
@@ -129,26 +136,20 @@ const float placeIndustriesBubbleProgressBarOffset = 2.5*TILE_W;
 const float placeIndustriesBubbleProgressBarWidth = placeIndustriesBubbleWidth - placeIndustriesBubbleProgressBarOffset;
 
 /// Encyclopedia bubble
-
+extern int encyclopediaCurrentCategory;
+extern int encyclopediaCurrentIndex;
+extern std::string encyclopediaBubbleEntryName;
+extern std::string encyclopediaBubbleEntryText;
 
 const std::string encyclopediaBubbleLabel = "Encyclopedia";
-const float encyclopediaBubbleDrawX = SCREEN_W*10/40;
-const float encyclopediaBubbleDrawY = SCREEN_H* 8/40;
+const float encyclopediaBubbleWidth = TILE_W*8;
 
-const float encyclopediaBubbleIndexTabWidth = TILE_W*4;
-const float encyclopediaBubbleIndexTabHeight = TILE_H;
-const float encyclopediaBubbleIndexPartitionX = encyclopediaBubbleDrawX;
-const float encyclopediaBubbleIndexPartitionY = encyclopediaBubbleDrawY;
+extern float encyclopediaBubbleDrawX;
+extern float encyclopediaBubbleDrawY;
+extern float encyclopediaBubbleHeight;
 
-const float encyclopediaBubbleCategoriesTabWidth = TILE_W*4;
-const float encyclopediaBubbleCategoriesTabHeight = TILE_H;
-const float encyclopediaBubbleCategoriesPartitionX = encyclopediaBubbleDrawX;
-const float encyclopediaBubbleCategoriesPartitionY = encyclopediaBubbleDrawY - TILE_H;
-
-const float encyclopediaBubbleEntryPartitionWidth = TILE_W*20;
-const float encyclopediaBubbleEntryPartitionHeight = TILE_H*15;
-const float encyclopediaBubbleEntryPartitionX = encyclopediaBubbleDrawX + encyclopediaBubbleIndexTabWidth + TILE_W;
-const float encyclopediaBubbleEntryPartitionY = encyclopediaBubbleDrawY + TILE_H;
-
+void OpenEncyclopediaBubble(float x, float y, unsigned category, unsigned index);
+void CloseEncyclopediaBubble();
+void DrawEncyclopediaBubble();
 
 #endif // UI_H_INCLUDED
