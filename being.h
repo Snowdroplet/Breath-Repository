@@ -35,7 +35,7 @@ public:
 
 /// Drawing
     bool facingLeft;
-    const int beingSpriteNumVariants = 2; // In total. Not counting from zero.
+    //const int beingSpriteNumVariants = 2; // In total. Not counting from zero.
     int spriteVariant;
     int spriteWidth, spriteHeight;
     int currentFrame, maxFrame;

@@ -11,6 +11,10 @@ int previousActiveSubUI = SUBUI_OVERWORLD_NONE;
 
 
 /// Bubble View
+Caravan* bubbleViewCaravan;
+Place* bubbleViewPlace;
+
+/*
 bool caravanInventoryBubbleOpen = false;
 bool caravanTradeRecordsBubbleOpen = false;
 bool caravanPathfindingBubbleOpen = false;
@@ -21,8 +25,68 @@ bool placeSurplusBubbleOpen = false;
 bool placeDeficitBubbleOpen = false;
 bool placeMarketBubbleOpen = false;
 bool placeIndustriesBubbleOpen = false;
+*/
 
 bool encyclopediaBubbleOpen = false;
+
+/*
+void OpenAllCaravanBubbles()
+{
+    caravanInventoryBubbleOpen = true;
+    caravanTradeRecordsBubbleOpen = true;
+    caravanPathfindingBubbleOpen = true;
+}
+
+void CloseAllCaravanBubbles()
+{
+    caravanInventoryBubbleOpen = false;
+    caravanTradeRecordsBubbleOpen = false;
+    caravanPathfindingBubbleOpen = false;
+}
+
+void OpenAllPlaceBubbles()
+{
+    placePopulationBubbleOpen = true;
+    placeCaravanseraiBubbleOpen = true;
+    placeSurplusBubbleOpen = true;
+    placeDeficitBubbleOpen = true;
+    placeMarketBubbleOpen = true;
+    placeIndustriesBubbleOpen = true;
+}
+
+void CloseAllPlaceBubbles()
+{
+    placePopulationBubbleOpen = false;
+    placeCaravanseraiBubbleOpen = false;
+    placeSurplusBubbleOpen = false;
+    placeDeficitBubbleOpen = false;
+    placeMarketBubbleOpen = false;
+    placeIndustriesBubbleOpen = false;
+}
+*/
+
+void SetBubbleViewCaravan(Caravan *c)
+{
+    bubbleViewCaravan = c;
+
+    /*
+    if(bubbleViewCaravan == nullptr)
+        CloseAllCaravanBubbles();
+    else
+        OpenAllCaravanBubbles();
+        */
+}
+
+void SetBubbleViewPlace(Place *p)
+{
+    bubbleViewPlace = p;
+    /*
+    if(bubbleViewPlace == nullptr)
+        CloseAllPlaceBubbles();
+    else
+        OpenAllPlaceBubbles();
+        */
+}
 
 /// Encyclopedia bubble
 int encyclopediaCurrentCategory; // = EN_CAT_LEYKIN;
@@ -62,10 +126,11 @@ void OpenEncyclopediaBubble(float x, float y, unsigned category, unsigned index)
 
     encyclopediaBubbleEntryText = encyclopedia.at(encyclopediaCurrentCategory).at(encyclopediaCurrentIndex);
 
-    encyclopediaBubbleHeight = BUILTIN_TEXT_HEIGHT * (3 + string_al_get_text_width(builtin,encyclopediaBubbleEntryText)/encyclopediaBubbleWidth);
+    int num_lines = count_num_lines_will_render(builtin, encyclopediaBubbleWidth, encyclopediaBubbleEntryText);
+    encyclopediaBubbleHeight = BUILTIN_TEXT_HEIGHT * (2 + num_lines);
 
-
-
+    if(encyclopediaBubbleDrawY + (encyclopediaBubbleHeight + 2*bubblePadding) > SCREEN_H)
+        encyclopediaBubbleDrawY = SCREEN_H - encyclopediaBubbleHeight + bubblePadding;
 }
 
 void CloseEncyclopediaBubble()
@@ -102,6 +167,5 @@ void DrawEncyclopediaBubble()
                                   BUILTIN_TEXT_HEIGHT,
                                   ALLEGRO_ALIGN_LEFT,
                                   encyclopediaBubbleEntryText);
-
 
 }

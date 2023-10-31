@@ -83,18 +83,18 @@ const std::map<int, std::string>encyclopediaPlaceLore =
 
 const std::map<int, std::string>encyclopediaCargoLore =
 {
-    {IT_CORPUS, "Flesh shed by beasts, whose essences inhabit bodies only in passing."},
-    {IT_PLASM, "Luminescent mold that grows on creatures who consort with spirits."},
-    {IT_OCULUS, "Uncanny stone that forms within the brains of creatures in long seclusion."},
-    {IT_STRANGE_EGG, "Transmigratory vessel to which all beasts eventually return."},
+    {IT_CORPUS, "Flesh shed by beasts, whose essences inhabit bodies only in passing."}, // Whereas Leykin experiences are confined to flesh, beasts exist as both corpus and spiritus.
+    {IT_PLASM, "Luminescent mold that grows on creatures who consort with spirits."}, // Leykin who prefer the company of ghosts develop something like a soul, but the infection is expelled as plasm.
+    {IT_OCULUS, "Uncanny stone that forms within the brains of creatures in long seclusion."}, // Said to be eyes of otherworldly beings, though there is no evidence that occuli perceive anything.
+    {IT_STRANGE_EGG, "Transmigratory vessel to which all beasts eventually return."}, // Eggs eventually hatch into forms suited to their domain, but the process takes decades to centuries.
 
-    {IT_BERRIES, "Lacking seeds or flowers, the propagation of these fruits remain a mystery."},
-    {IT_HERBS, "Tea brewed from these bitter leaves fortify the constitution."},
-    {IT_MUSHROOMS, "Secretes a long-burning, aromatic oil when heated."},
-    {IT_SPICE, "Fiery repast that opens the airways and lends fullness to every breath."},
+    {IT_BERRIES, "Lacking seeds or flowers, the propagation of these fruits remain a mystery."}, // The leylines are said to be their vines and roots, but from what source do leys convey nourishment?
+    {IT_HERBS, "Tea brewed from these bitter leaves fortify the constitution."}, // Temporary wakefulness . Some develop a dependency on herbs, feeling
+    {IT_MUSHROOMS, "Secretes a long-burning, aromatic oil when heated."}, // Careful storage is necessary
+    {IT_SPICE, "Fiery seasoning that opens the airways and lends life-affirming fullness to every breath."}, // Potent even in small amounts, but some make a show of consuming spices in excess. Curiously, that which makes one feel most alive is often the most harrowing.
 
-    {IT_CLAY, "Sacred earth left over from creation, still abundant today."},
-    {IT_COPPER, "Machinists know the techniques for imparting memories unto these reddish metal plates."},
+    {IT_CLAY, "Sacred earth left over from creation, still abundant to this day."}, // All life has its origins in clay, but
+    {IT_COPPER, "Machinists know the techniques for imparting memories unto these reddish metal plates.\n\nDetailed craft information placeholder.\n\nSupplied by cities placeholder.\n\niDemanded by cities placeholder."},
     {IT_IRON, "Anima-dampening metal essential for safely handling soulmasses."},
     {IT_LEYSTONE, "Fragments from the same crystal resonate with each other other across vast distances."},
 

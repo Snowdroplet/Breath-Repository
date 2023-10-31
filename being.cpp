@@ -7,9 +7,6 @@ Being::Being()
     SetActive(true);
 
     SetActivity(ACT_WALKING);
-    spriteWidth = SPRITE_TILE_W;
-    spriteHeight = SPRITE_TILE_H;
-    spriteVariant = rand()%beingSpriteNumVariants;
 
     travelSpeed = 1.0;
 
@@ -48,6 +45,9 @@ void Being::SetName(std::string n)
 void Being::SetAncestry(int a)
 {
     ancestry = a;
+    spriteWidth = SPRITE_TILE_W;
+    spriteHeight = SPRITE_TILE_H;
+    spriteVariant = rand()% resourceBeingNumSpriteVariants.at(ancestry);
 }
 
 void Being::SetHometown(int h)

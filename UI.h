@@ -10,6 +10,9 @@
 #include "encyclopedia.h"
 #include "colorindex.h"
 
+class Caravan;
+class Place;
+
 /// Tiles
 const float SCREEN_W = 1280;
 const float SCREEN_H = 800;
@@ -43,6 +46,10 @@ extern int activeSubUI;
 extern int previousActiveSubUI;
 
 /// Bubble View
+extern Caravan* bubbleViewCaravan;
+extern Place* bubbleViewPlace;
+
+/*
 extern bool caravanInventoryBubbleOpen;
 extern bool caravanTradeRecordsBubbleOpen;
 extern bool caravanPathfindingBubbleOpen;
@@ -53,8 +60,19 @@ extern bool placeSurplusBubbleOpen;
 extern bool placeDeficitBubbleOpen;
 extern bool placeMarketBubbleOpen;
 extern bool placeIndustriesBubbleOpen;
+*/
 
 extern bool encyclopediaBubbleOpen;
+
+/*
+void OpenAllCaravanBubbles();
+void CloseAllCaravanBubbles();
+void OpenAllPlaceBubbles();
+void CloseAllPlaceBubbles();
+*/
+
+void SetBubbleViewCaravan(Caravan *c);
+void SetBubbleViewPlace(Place *p);
 
 /// Caravan Bubble
 const float bubblePadding = TILE_W/4;
@@ -88,6 +106,7 @@ const float caravanPathfindingBubbleDrawX = SCREEN_W*1/40;
 const float caravanPathfindingBubbleDrawY = SCREEN_H*35/40;
 const unsigned caravanPathfindingBubbleBaseCols = 1;
 const unsigned caravanPathfindingBubbleBaseRows = 1;
+const float caravanPathfindingBubbleHeight = 2*TILE_W + caravanPathfindingBubbleRowSpacing;
 
 /// Place Bubble
 const std::string placePopulationBubbleLabel = "Population";

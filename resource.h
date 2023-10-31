@@ -13,9 +13,9 @@ const unsigned SPRITE_TILE_H = 32;
 const std::map<unsigned,unsigned>resourceBeingNumSpriteVariants
 {
     // In total. Not counting from zero.
-    {ANCESTRY_VERIT, 2},
+    {ANCESTRY_VERIT, 4},
     {ANCESTRY_YETI, 2},
-    {ANCESTRY_MAKHI, 2},
+    {ANCESTRY_MAKHI, 3},
     {ANCESTRY_BEYU, 2},
     {ANCESTRY_MESERA, 2},
     {ANCESTRY_ORDON, 2},

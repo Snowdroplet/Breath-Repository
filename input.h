@@ -1,6 +1,8 @@
 #ifndef INPUT_H_INCLUDED
 #define INPUT_H_INCLUDED
 
+//#include <iostream>
+
 #include "gamestate.h"
 
 enum enumInputKeys // use KEYMODs instead of putting alt, Lshift, Rshift, Lctrl, Rctrl, ect. here
@@ -44,12 +46,17 @@ enum enumInputMouseWheel
     MOUSEWHEEL_DOWN = 1
 };
 
-extern float mouseX;
-extern float mouseY;
-
 extern bool keyInput[];
 extern bool mouseInput[];
 extern bool mousewheelInput[];
+
+extern float mouseX;
+extern float mouseY;
+
+const unsigned keyESCCooldown = 5; // 5 ticks, or 5 logic cycles.
+extern unsigned keyESCDelay;
+const unsigned mouseLeftCooldown = 5;
+extern unsigned mouseLeftDelay;
 
 void InputKeydown();
 void InputKeyup();
@@ -57,5 +64,7 @@ void InputMouseXY();
 void InputMouseDown();
 void InputMouseUp();
 void InputMousewheel();
+
+void InputCooldown();
 
 #endif // INPUT_H_INCLUDED

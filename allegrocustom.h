@@ -99,6 +99,10 @@ void string_al_draw_text(const ALLEGRO_FONT *font, ALLEGRO_COLOR color, float x,
 
 void string_al_draw_multiline_text(const ALLEGRO_FONT *font, ALLEGRO_COLOR color, float x, float y, float max_width, float line_height, int flags, std::string text);
 
+bool multiline_text_draw_callback(int line_num, const char* line, int size, void* user_data);
+
+int count_num_lines_will_render(ALLEGRO_FONT* font, float max_width, std::string text);
+
 /*
 int s_al_show_native_message_box(ALLEGRO_DISPLAY *display,
                                  std::string title, std::string heading, std::string text,

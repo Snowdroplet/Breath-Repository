@@ -120,9 +120,7 @@ int main(int argc, char *argv[])
         }
 
         if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
-        {
             InputMouseDown();
-        }
 
         if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP)
             InputMouseUp();
@@ -164,6 +162,7 @@ int main(int argc, char *argv[])
 
 void InterpretInput()
 {
+    InputCooldown();
 
     if(mousewheelInput[MOUSEWHEEL_UP])
     {
@@ -194,42 +193,32 @@ void InterpretInput()
         cameraZoomTranslateY = 0;
     }
 
-
     if(activeUI == UI_OVERWORLD)
     {
         if(!overworldCameraLocked)
         {
-            if(keyInput[KEY_PAD_8] || keyInput[KEY_PAD_7] || keyInput[KEY_PAD_9])
+            if(keyInput[KEY_ESC])
+            {
+                bubbleViewCaravan = nullptr;
+                bubbleViewPlace = nullptr;
+
+                keyInput[KEY_ESC] = false;
+            }
+
+            if(keyInput[KEY_PAD_8] || keyInput[KEY_PAD_7] || keyInput[KEY_PAD_9] || mouseY < 2*TILE_W)
                 overworldCameraYPosition -= overworldCameraYSensitivity;
 
-            if(keyInput[KEY_PAD_2] || keyInput[KEY_PAD_1] || keyInput[KEY_PAD_3])
+            if(keyInput[KEY_PAD_2] || keyInput[KEY_PAD_1] || keyInput[KEY_PAD_3] || mouseY > SCREEN_H - 2*TILE_H)
                 overworldCameraYPosition += overworldCameraYSensitivity;
 
-            if(keyInput[KEY_PAD_4] || keyInput[KEY_PAD_7] || keyInput[KEY_PAD_1])
+            if(keyInput[KEY_PAD_4] || keyInput[KEY_PAD_7] || keyInput[KEY_PAD_1] || mouseX < 2*TILE_H)
                 overworldCameraXPosition -= overworldCameraXSensitivity;
 
-            if(keyInput[KEY_PAD_6] || keyInput[KEY_PAD_9] || keyInput[KEY_PAD_3])
+            if(keyInput[KEY_PAD_6] || keyInput[KEY_PAD_9] || keyInput[KEY_PAD_3] || mouseX > SCREEN_W - 2*TILE_W)
                 overworldCameraXPosition += overworldCameraXSensitivity;
 
             if(keyInput[KEY_SPACE])
             {
-                for(std::vector<Caravan*>::iterator it = Caravan::caravans.begin(); it != Caravan::caravans.end(); ++it)
-                {
-                    float x = (*it)->overworldXPosition;
-                    float y = (*it)->overworldYPosition;
-                    float w = (*it)->caravanLeader->spriteWidth;
-                    float h = (*it)->caravanLeader->spriteHeight;
-
-                    if((overworldCameraXPosition + SCREEN_W/2) > x - w/2
-                            && (overworldCameraXPosition + SCREEN_W/2) < x + w/2
-                            && (overworldCameraYPosition + SCREEN_H/2) > y - h/2
-                            && (overworldCameraYPosition + SCREEN_H/2) < y + h/2)
-                    {
-                        OverworldLockCameraCaravan(*it);
-                        break;
-                    }
-                }
-
                 for(std::map<int,Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
                 {
                     float x = (*it).second->overworldXPosition;
@@ -243,10 +232,33 @@ void InterpretInput()
                             && (overworldCameraYPosition + SCREEN_H/2) < y + h/2)
                     {
                         OverworldLockCameraPlace((*it).second);
+                        SetBubbleViewPlace((*it).second);
                         (*it).second->UpdateAllBubbles();
                         break;
                     }
                 }
+
+                if(!overworldCameraLockedOnPlace) // If a Place wasn't locked on to, search for a caravan.
+                {
+                    for(std::vector<Caravan*>::iterator it = Caravan::caravans.begin(); it != Caravan::caravans.end(); ++it)
+                    {
+                        float x = (*it)->overworldXPosition;
+                        float y = (*it)->overworldYPosition;
+                        float w = (*it)->caravanLeader->spriteWidth;
+                        float h = (*it)->caravanLeader->spriteHeight;
+
+                        if((overworldCameraXPosition + SCREEN_W/2) > x - w/2
+                                && (overworldCameraXPosition + SCREEN_W/2) < x + w/2
+                                && (overworldCameraYPosition + SCREEN_H/2) > y - h/2
+                                && (overworldCameraYPosition + SCREEN_H/2) < y + h/2)
+                        {
+                            OverworldLockCameraCaravan(*it);
+                            SetBubbleViewCaravan(*it);
+                            break;
+                        }
+                    }
+                }
+
             }
         }
         else if(overworldCameraLocked)
@@ -257,32 +269,40 @@ void InterpretInput()
 
                 if(encyclopediaBubbleOpen)
                     CloseEncyclopediaBubble();
+
+                keyInput[KEY_ESC] = false;
             }
 
             if(mouseInput[MOUSE_LEFT])
             {
-                if(caravanInventoryBubbleOpen)
+                CloseEncyclopediaBubble();
+
+                if(bubbleViewCaravan != nullptr)
+                {
+
                     MouseLeftOnCaravanInventoryBubble();
-                if(caravanTradeRecordsBubbleOpen)
-                    MouseLeftOnCaravanTradeRecordsBubble();
-                if(caravanPathfindingBubbleOpen)
+                    //if(caravanTradeRecordsBubbleOpen)
+                    //MouseLeftOnCaravanTradeRecordsBubble();
+                    //if(caravanPathfindingBubbleOpen)
                     MouseLeftOnCaravanPathfindingBubble();
+                }
+                if(bubbleViewPlace != nullptr)
+                {
+                    //if(placePopulationBubbleOpen)
 
-                //if(placePopulationBubbleOpen)
+                    //if(placeCaravanseraiBubbleOpen)
 
-                //if(placeCaravanseraiBubbleOpen)
+                    //if(placeSurplusBubbleOpen)
 
-                //if(placeSurplusBubbleOpen)
+                    //if(placeDeficitBubbleOpen)
 
-                //if(placeDeficitBubbleOpen)
+                    //if(placeMarketBubbleOpen)
+                    MouseLeftOnPlaceMarketBubble();
+                    //if(placeIndustriesBubbleOpen)
+                }
 
-                //if(placeMarketBubbleOpen)
-
-                //if(placeIndustriesBubbleOpen)
-
-
+                mouseInput[MOUSE_LEFT] = false;
             }
-
         }
 
 
@@ -315,7 +335,6 @@ void ProgressWorld()
                 ((*it).second)->ProgressMaintainenceConsumption();
                 ((*it).second)->UpdateSurplusesDescending();
                 ((*it).second)->UpdateDeficitsDescending();
-
 
             }
 
@@ -412,9 +431,10 @@ void DrawUI()
         for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
             (*it).second->DrawFlyingTexts();
 
-        al_identity_transform(&cameraZoom);
+        al_identity_transform(&cameraZoom); // Reset to no transform
         al_use_transform(&cameraZoom);
 
+        /*
         if(overworldCameraPlace != nullptr)
         {
             overworldCameraPlace->DrawPlacePopulationBubble();
@@ -443,6 +463,25 @@ void DrawUI()
                 overworldCameraCaravan->whichPlace->DrawPlaceMarketBubble();
                 overworldCameraCaravan->whichPlace->DrawPlaceIndustriesBubble();
             }
+        }
+        */
+
+        if(bubbleViewCaravan != nullptr)
+        {
+            bubbleViewCaravan->DrawCaravanInventoryBubble();
+            bubbleViewCaravan->DrawCaravanTradeRecordsBubble();
+            bubbleViewCaravan->DrawCaravanPathfindingBubble();
+        }
+        if(bubbleViewPlace != nullptr)
+        {
+            bubbleViewPlace->DrawPlacePopulationBubble();
+            bubbleViewPlace->DrawPlaceCaravanseraiBubble();
+
+            bubbleViewPlace->DrawPlaceSurplusBubble();
+            bubbleViewPlace->DrawPlaceDeficitBubble();
+
+            bubbleViewPlace->DrawPlaceMarketBubble();
+            bubbleViewPlace->DrawPlaceIndustriesBubble();
         }
 
         if(encyclopediaBubbleOpen)
@@ -475,36 +514,8 @@ void InitObjects()
 
     for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
     {
-
         ((*it).second)->GenerateCitizenCaravans();
     }
-
-
-    /*
-    playerCrew = new Caravan;
-    Caravan::caravans.push_back(playerCrew);
-    */
-
-    /*
-    player = new Being;
-    player->SetName("Player");
-    player->SetAncestry(ANCESTRY_VERIT);
-    player->SetPortrait(ANCESTRY_VERIT,1);
-    Being::people.push_back(player);
-    */
-
-    /*
-    for(unsigned i = 0; i < Caravan::caravans.size(); i++)
-    {
-        for(unsigned j = 0; j < rand()%((unsigned)3+1); j++)
-        {
-            unsigned item = rand()%(IT_MARKER_FIRST + IT_MARKER_LAST + 1);
-            unsigned quanitity = rand()%9 + 1;
-            Caravan::caravans[i]->AddInventoryStock(item,quanitity);
-        }
-    }
-    */
-
 }
 
 void CleanupObjects()
@@ -534,9 +545,9 @@ void CleanupObjects()
 void MouseLeftOnCaravanInventoryBubble()
 {
     if(mouseX > caravanInventoryBubbleDrawX
-       && mouseX < caravanInventoryBubbleDrawX + overworldCameraCaravan->caravanInventoryBubbleWidth
-       && mouseY > caravanInventoryBubbleDrawY
-       && mouseY < caravanInventoryBubbleDrawY + overworldCameraCaravan->caravanInventoryBubbleHeight)
+            && mouseX < caravanInventoryBubbleDrawX + bubbleViewCaravan->caravanInventoryBubbleWidth
+            && mouseY > caravanInventoryBubbleDrawY
+            && mouseY < caravanInventoryBubbleDrawY + bubbleViewCaravan->caravanInventoryBubbleHeight)
     {
         int x = mouseX - caravanInventoryBubbleDrawX;
         int y = mouseY - caravanInventoryBubbleDrawY;
@@ -544,16 +555,13 @@ void MouseLeftOnCaravanInventoryBubble()
         int xCell = x/TILE_W;
         int yCell = y/(TILE_H+caravanInventoryBubbleRowSpacing);
 
-        unsigned position = yCell*(overworldCameraCaravan->caravanInventoryBubbleNumCols) + xCell;
+        unsigned position = yCell*(bubbleViewCaravan->caravanInventoryBubbleNumCols) + xCell;
 
-        //std::cout << "Test: clicky clicky " << position << std::endl;
-
-        if(position < overworldCameraCaravan->inventory.cargo.size())
+        if(position < bubbleViewCaravan->inventory.cargo.size())
         {
-            std::map<int,float>::iterator it = overworldCameraCaravan->inventory.cargo.begin();
+            std::map<int,float>::iterator it = bubbleViewCaravan->inventory.cargo.begin();
             std::advance(it, position);
 
-            //std::cout << itemNames.at((*it).first) << std::endl;
             OpenEncyclopediaBubble(mouseX, mouseY, EN_CAT_CARGO, (*it).first);
         }
     }
@@ -566,6 +574,28 @@ void MouseLeftOnCaravanTradeRecordsBubble()
 
 void MouseLeftOnCaravanPathfindingBubble()
 {
+    if(mouseX > caravanPathfindingBubbleDrawX
+            && mouseX < caravanPathfindingBubbleDrawX + bubbleViewCaravan->caravanPathfindingBubbleWidth
+            && mouseY > caravanPathfindingBubbleDrawY
+            && mouseY < caravanPathfindingBubbleDrawY + caravanPathfindingBubbleHeight - BUILTIN_TEXT_HEIGHT)
+    {
+        int x = mouseX - caravanPathfindingBubbleDrawX;
+
+        int xCell = x/TILE_W; // The representation of cities is two tiles wide; every third tile is the red arrow and should not be clickable.
+        if(xCell %3 != 2)
+        {
+            unsigned position = xCell/3;
+            int placeId = bubbleViewCaravan->worldGraph.path[position];
+
+            Place::places[placeId]->UpdateAllBubbles();
+            SetBubbleViewPlace(Place::places[placeId]); // Already unlocks camera from caravan
+
+            OpenEncyclopediaBubble(SCREEN_W/2 - encyclopediaBubbleWidth/2,
+                                   SCREEN_H/2 + 2*TILE_H,
+                                   EN_CAT_PLACES, placeId);
+        }
+    }
+
 
 }
 
@@ -591,7 +621,27 @@ void MouseLeftOnPlaceDeficitBubble()
 
 void MouseLeftOnPlaceMarketBubble()
 {
+    if(mouseX > placeMarketBubbleDrawX
+            && mouseX < placeMarketBubbleDrawX + bubbleViewPlace->placeMarketBubbleWidth
+            && mouseY > placeMarketBubbleDrawY
+            && mouseY < placeMarketBubbleDrawY + bubbleViewPlace->placeMarketBubbleHeight)
+    {
+        int x = mouseX - placeMarketBubbleDrawX;
+        int y = mouseY - placeMarketBubbleDrawY;
 
+        int xCell = x/TILE_W;
+        int yCell = y/(TILE_H+placeMarketBubbleRowSpacing);
+
+        unsigned position = yCell*(bubbleViewPlace->placeMarketBubbleNumCols) + xCell;
+
+        if(position < bubbleViewPlace->market.cargo.size())
+        {
+            std::map<int,float>::iterator it = bubbleViewPlace->market.cargo.begin();
+            std::advance(it, position);
+
+            OpenEncyclopediaBubble(mouseX, mouseY, EN_CAT_CARGO, (*it).first);
+        }
+    }
 }
 
 void MouseLeftOnPlaceIndustriesBubble()

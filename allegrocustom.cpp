@@ -194,6 +194,23 @@ void string_al_draw_multiline_text(const ALLEGRO_FONT *font, ALLEGRO_COLOR color
     al_draw_multiline_text(font, color, x, y, max_width, line_height, flags, c);
 }
 
+bool multiline_text_draw_callback(int line_num, const char* line, int size, void* user_data)
+{
+   *((int*)user_data) = line_num;
+   return true;
+}
+
+int count_num_lines_will_render(ALLEGRO_FONT* font, float max_width, std::string text)
+{
+   if (text.empty()) return 0;
+
+   int multiline_text_line_number = 0;
+   al_do_multiline_text(font, max_width, text.c_str(), multiline_text_draw_callback, &multiline_text_line_number);
+
+   // multiline_text_line_number is now modified, and should now be set to the number of lines drawn
+   return multiline_text_line_number + 1;
+}
+
 /*
 int s_al_show_native_message_box(ALLEGRO_DISPLAY *display,
                                  std::string title, std::string heading, std::string text,

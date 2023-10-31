@@ -157,6 +157,7 @@ public:
     void UpdateCaravanInventoryBubble();
     void UpdateCaravanPathfindingBubble();
     void UpdateCaravanTradeRecordsBubble();
+    void UpdateAllBubbles();
 
 /// Drawing functions
     void DrawSpriteOnOverworld();

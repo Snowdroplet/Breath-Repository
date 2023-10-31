@@ -26,9 +26,6 @@ bool keyInput[] =
 
 };
 
-float mouseX;
-float mouseY;
-
 bool mouseInput[] =
 {
     false, // nothing
@@ -43,6 +40,14 @@ bool mousewheelInput[] =
     false, // Wheel up
     false  // Wheel down
 };
+
+
+
+float mouseX;
+float mouseY;
+
+unsigned keyESCDelay = 0;
+unsigned mouseLeftDelay = 0;
 
 void InputKeydown()
 {
@@ -206,7 +211,11 @@ void InputKeydown()
             break;
 
         case ALLEGRO_KEY_ESCAPE:
-            keyInput[KEY_ESC] = true;
+            if(keyESCDelay == 0)
+            {
+                keyInput[KEY_ESC] = true;
+                keyESCDelay = keyESCCooldown;
+            }
             break;
     }
 }
@@ -389,7 +398,11 @@ void InputMouseDown()
     switch(event.mouse.button)
     {
     case MOUSE_LEFT:
-        mouseInput[MOUSE_LEFT] = true;
+        if(mouseLeftDelay == 0)
+        {
+            mouseInput[MOUSE_LEFT] = true;
+            mouseLeftDelay = mouseLeftCooldown;
+        }
         break;
     case MOUSE_RIGHT:
         mouseInput[MOUSE_RIGHT] = true;
@@ -427,4 +440,16 @@ void InputMousewheel()
         mousewheelInput[MOUSEWHEEL_DOWN] = true;
     else
         mousewheelInput[MOUSEWHEEL_DOWN] = false;
+}
+
+void InputCooldown()
+{
+    if(keyESCDelay > 0)
+    {
+        keyESCDelay --;
+    }
+    if(mouseLeftDelay > 0)
+    {
+        mouseLeftDelay --;
+    }
 }

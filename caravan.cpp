@@ -201,11 +201,14 @@ void Caravan::MoveToPlace(Place *p)
     if(caravanLeader != nullptr)
         caravanLeader->facingLeft = false;
 
+/// Effects on UI bubbles
+    if(overworldCameraCaravan == this)
+        bubbleViewPlace = p;
+
 }
 
 void Caravan::MoveToRoad(Road *r, bool isReverseRoad)
 {
-
     if(atPlace)
         whichPlace->RemoveFromCaravanserai(this);
 
@@ -233,6 +236,9 @@ void Caravan::MoveToRoad(Road *r, bool isReverseRoad)
 
     UpdateCaravanPathfindingBubble();
 
+/// Effects on UI bubbles
+    if(overworldCameraCaravan == this)
+        bubbleViewPlace = nullptr;
 }
 
 void Caravan::MoveToRoadSegment(int a, bool isReverseRoad)
@@ -347,45 +353,53 @@ void Caravan::CheckTradeRecordsRowLimit()
 
 void Caravan::UpdateCaravanInventoryBubble()
 {
-    caravanInventoryBubbleNumCols = caravanInventoryBubbleBaseCols;
-    caravanInventoryBubbleNumRows = caravanInventoryBubbleBaseRows;
+        caravanInventoryBubbleNumCols = caravanInventoryBubbleBaseCols;
+        caravanInventoryBubbleNumRows = caravanInventoryBubbleBaseRows;
 
-    while(inventory.cargo.size() > caravanInventoryBubbleNumCols*caravanInventoryBubbleNumRows)
-    {
-        if(caravanInventoryBubbleNumCols <= caravanInventoryBubbleNumRows)
-            caravanInventoryBubbleNumCols++;
-        else
-            caravanInventoryBubbleNumRows++;
-    }
+        while(inventory.cargo.size() > caravanInventoryBubbleNumCols*caravanInventoryBubbleNumRows)
+        {
+            if(caravanInventoryBubbleNumCols <= caravanInventoryBubbleNumRows)
+                caravanInventoryBubbleNumCols++;
+            else
+                caravanInventoryBubbleNumRows++;
+        }
 
-    caravanInventoryBubbleWidth = caravanInventoryBubbleNumCols*TILE_W;
-    caravanInventoryBubbleHeight = caravanInventoryBubbleNumRows*(TILE_H+caravanInventoryBubbleRowSpacing);
+        caravanInventoryBubbleWidth = caravanInventoryBubbleNumCols*TILE_W;
+        caravanInventoryBubbleHeight = caravanInventoryBubbleNumRows*(TILE_H+caravanInventoryBubbleRowSpacing);
 }
 
 void Caravan::UpdateCaravanTradeRecordsBubble()
 {
-    caravanTradeRecordsBubbleNumRows = caravanTradeRecordsBubbleBaseRows;
+        caravanTradeRecordsBubbleNumRows = caravanTradeRecordsBubbleBaseRows;
 
-    unsigned rowCount = 0;
-    for(std::vector<TradeRecord*>::iterator it = tradeRecords.begin(); it != tradeRecords.end(); ++it)
-        rowCount += (*it)->numRows;
+        unsigned rowCount = 0;
+        for(std::vector<TradeRecord*>::iterator it = tradeRecords.begin(); it != tradeRecords.end(); ++it)
+            rowCount += (*it)->numRows;
 
-    if(rowCount > caravanTradeRecordsBubbleBaseRows)
-        caravanTradeRecordsBubbleNumRows = rowCount;
+        if(rowCount > caravanTradeRecordsBubbleBaseRows)
+            caravanTradeRecordsBubbleNumRows = rowCount;
 
-    caravanTradeRecordsBubbleHeight = caravanTradeRecordsBubbleNumRows*(TILE_H+caravanTradeRecordsBubbleRowSpacing);
+        caravanTradeRecordsBubbleHeight = caravanTradeRecordsBubbleNumRows*(TILE_H+caravanTradeRecordsBubbleRowSpacing);
 }
 
 void Caravan::UpdateCaravanPathfindingBubble()
 {
-    caravanPathfindingBubbleNumCols = caravanPathfindingBubbleBaseCols;
-    caravanPathfindingBubbleNumRows = caravanPathfindingBubbleBaseRows;
 
-    if(worldGraph.path.size() > caravanPathfindingBubbleNumCols)
-        caravanPathfindingBubbleNumCols = worldGraph.path.size();
+        caravanPathfindingBubbleNumCols = caravanPathfindingBubbleBaseCols;
+        caravanPathfindingBubbleNumRows = caravanPathfindingBubbleBaseRows;
 
-    caravanPathfindingBubbleWidth = caravanPathfindingBubbleNumCols*(2*TILE_W+caravanPathfindingBubbleColSpacing) - caravanPathfindingBubbleColSpacing;
-    caravanPathfindingBubbleHeight = caravanPathfindingBubbleNumRows*(2*TILE_H+caravanPathfindingBubbleRowSpacing);
+        if(worldGraph.path.size() > caravanPathfindingBubbleNumCols)
+            caravanPathfindingBubbleNumCols = worldGraph.path.size();
+
+        caravanPathfindingBubbleWidth = caravanPathfindingBubbleNumCols*(2*TILE_W+caravanPathfindingBubbleColSpacing) - caravanPathfindingBubbleColSpacing;
+        caravanPathfindingBubbleHeight = caravanPathfindingBubbleNumRows*(2*TILE_H+caravanPathfindingBubbleRowSpacing);
+}
+
+void Caravan::UpdateAllBubbles()
+{
+    UpdateCaravanInventoryBubble();
+    UpdateCaravanTradeRecordsBubble();
+    UpdateCaravanPathfindingBubble();
 }
 
 void Caravan::DrawSpriteOnOverworld()
@@ -594,12 +608,12 @@ void Caravan::DrawCaravanPathfindingBubble()
     else
     {
         string_al_draw_text(builtin, COLKEY_TEXT,
-                     caravanPathfindingBubbleDrawX+caravanPathfindingBubbleWidth/2,
-                     caravanPathfindingBubbleDrawY+caravanPathfindingBubbleWidth/2 - BUILTIN_TEXT_HEIGHT,
-                     ALLEGRO_ALIGN_CENTER, caravanPathfindingBubbleLabel);
+                            caravanPathfindingBubbleDrawX+caravanPathfindingBubbleWidth/2,
+                            caravanPathfindingBubbleDrawY+caravanPathfindingBubbleWidth/2 - BUILTIN_TEXT_HEIGHT,
+                            ALLEGRO_ALIGN_CENTER, caravanPathfindingBubbleLabel);
     }
     string_al_draw_text(builtin,COLKEY_TEXT,
-                 caravanPathfindingBubbleDrawX,
-                 caravanPathfindingBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT,
-                 ALLEGRO_ALIGN_LEFT, caravanPathfindingBubbleLabel);
+                        caravanPathfindingBubbleDrawX,
+                        caravanPathfindingBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT,
+                        ALLEGRO_ALIGN_LEFT, caravanPathfindingBubbleLabel);
 }

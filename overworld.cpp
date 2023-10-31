@@ -101,12 +101,8 @@ void OverworldLockCameraPlace(Place *whichPlace)
     overworldCameraLockedOnPlace = true;
     overworldCameraLocked = true;
 
-    placePopulationBubbleOpen = true;
-    placeCaravanseraiBubbleOpen = true;
-    placeSurplusBubbleOpen = true;
-    placeDeficitBubbleOpen = true;
-    placeMarketBubbleOpen = true;
-    placeIndustriesBubbleOpen = true;
+    bubbleViewPlace = whichPlace;
+    //OpenAllPlaceBubbles();
 }
 
 void OverworldLockCameraCaravan(Caravan *whichCaravan)
@@ -117,9 +113,9 @@ void OverworldLockCameraCaravan(Caravan *whichCaravan)
     overworldCameraLockedOnCaravan = true;
     overworldCameraLocked = true;
 
-    caravanInventoryBubbleOpen = true;
-    caravanTradeRecordsBubbleOpen = true;
-    caravanPathfindingBubbleOpen = true;
+
+    bubbleViewCaravan = whichCaravan;
+    //OpenAllCaravanBubbles();
 }
 
 void OverworldUnlockCameraCaravan()
@@ -127,9 +123,7 @@ void OverworldUnlockCameraCaravan()
     overworldCameraCaravan = nullptr;
     overworldCameraLockedOnCaravan = false;
 
-    caravanInventoryBubbleOpen = false;
-    caravanTradeRecordsBubbleOpen = false;
-    caravanPathfindingBubbleOpen = false;
+    //CloseAllCaravanBubbles();
 }
 
 void OverworldUnlockCameraPlace()
@@ -137,12 +131,7 @@ void OverworldUnlockCameraPlace()
     overworldCameraPlace = nullptr;
     overworldCameraLockedOnPlace = false;
 
-    placePopulationBubbleOpen = false;
-    placeCaravanseraiBubbleOpen = false;
-    placeSurplusBubbleOpen = false;
-    placeDeficitBubbleOpen = false;
-    placeMarketBubbleOpen = false;
-    placeIndustriesBubbleOpen = false;
+    //CloseAllPlaceBubbles();
 }
 
 void OverworldUnlockCamera()
