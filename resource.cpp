@@ -1,6 +1,9 @@
 #include "resource.h"
 
-ALLEGRO_FONT *builtin;
+ALLEGRO_FONT *builtin8;
+//ALLEGRO_BITMAP *builtin16Tga;
+//ALLEGRO_FONT *builtin16;
+//ALLEGRO_FONT *spaceMono16;
 
 ALLEGRO_BITMAP *overworldPlacePng;
 
@@ -17,7 +20,21 @@ ALLEGRO_BITMAP *redTransparentXPng;
 
 void LoadResources()
 {
-    builtin = al_create_builtin_font();
+    /*
+    int fontRanges[] =
+    {
+       0x0020, 0x007F,  // ASCII
+       0x00A1, 0x00FF,  // Latin 1
+       0x0100, 0x017F,  // Extended-A
+       0x20AC, 0x20AC   // Euro
+    };
+    */
+
+    builtin8 = al_create_builtin_font();
+    //builtin16Tga = al_load_bitmap("a4_font_16.tga");
+    //builtin16 = al_grab_font_from_bitmap(builtin16Tga, 4, fontRanges);
+    //builtin16 = al_create_builtin_font();
+    //spaceMono16 = al_load_ttf_font("SpaceMono-Regular.ttf",16,0);
 
     overworldPlacePng = al_load_bitmap("placeholderOverworldPlace.png");
 
@@ -43,7 +60,10 @@ void LoadResources()
 
 void UnloadResources()
 {
-    al_destroy_font(builtin);
+    al_destroy_font(builtin8);
+    //al_destroy_bitmap(builtin16Tga);
+    //al_destroy_font(builtin16);
+    //al_destroy_font(spaceMono16);
 
     al_destroy_bitmap(overworldPlacePng);
 

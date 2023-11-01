@@ -59,7 +59,7 @@ void Inventory::DrawVertical(int rows, float x, float y)
                                   y + row*CARGO_H,
                                   0);
 
-            al_draw_text(builtin,
+            al_draw_text(builtin8,
                          al_map_rgb(255,255,255),
                          x + column*CARGO_W + CARGO_W,
                          y + row*CARGO_H + CARGO_H - FONT_BUILTIN_H,

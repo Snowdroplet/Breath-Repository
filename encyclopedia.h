@@ -83,10 +83,10 @@ const std::map<int, std::string>encyclopediaPlaceLore =
 
 const std::map<int, std::string>encyclopediaCargoLore =
 {
-    {IT_CORPUS, "Flesh shed by beasts, whose essences inhabit bodies only in passing."}, // Whereas Leykin experiences are confined to flesh, beasts exist as both corpus and spiritus.
-    {IT_PLASM, "Luminescent mold that grows on creatures who consort with spirits."}, // Leykin who prefer the company of ghosts develop something like a soul, but the infection is expelled as plasm.
-    {IT_OCULUS, "Uncanny stone that forms within the brains of creatures in long seclusion."}, // Said to be eyes of otherworldly beings, though there is no evidence that occuli perceive anything.
-    {IT_STRANGE_EGG, "Transmigratory vessel to which all beasts eventually return."}, // Eggs eventually hatch into forms suited to their domain, but the process takes decades to centuries.
+    {IT_CORPUS, "Flesh shed by beasts, whose essences inhabit bodies only in passing.\nWhereas the Leykin are confined to their flesh, beasts exist between corpus and spiritus."},
+    {IT_PLASM, "Luminescent mold that grows on creatures who consort with spirits.\nLeykin who prefer the company of ghosts develop something like a soul, but this nascent affinity is expelled as plasm."},
+    {IT_OCULUS, "Uncanny stone that forms within the brains of creatures in long seclusion.\nSaid to be eyes of otherworldly beings, though there is no evidence that occuli can perceive anything."},
+    {IT_DORMANT_EGG, "Transmigratory vessel to which all beasts eventually return."}, // Eggs eventually hatch into creatures suited to their domain, but the process is stunted by travel.
 
     {IT_BERRIES, "Lacking seeds or flowers, the propagation of these fruits remain a mystery."}, // The leylines are said to be their vines and roots, but from what source do leys convey nourishment?
     {IT_HERBS, "Tea brewed from these bitter leaves fortify the constitution."}, // Temporary wakefulness . Some develop a dependency on herbs, feeling
@@ -94,19 +94,19 @@ const std::map<int, std::string>encyclopediaCargoLore =
     {IT_SPICE, "Fiery seasoning that opens the airways and lends life-affirming fullness to every breath."}, // Potent even in small amounts, but some make a show of consuming spices in excess. Curiously, that which makes one feel most alive is often the most harrowing.
 
     {IT_CLAY, "Sacred earth left over from creation, still abundant to this day."}, // All life has its origins in clay, but
-    {IT_COPPER, "Machinists know the techniques for imparting memories unto these reddish metal plates.\n\nDetailed craft information placeholder.\n\nSupplied by cities placeholder.\n\niDemanded by cities placeholder."},
+    {IT_COPPER, "Machinists know the techniques for imparting memories unto these reddish metal plates.\n\nDetailed craft information placeholder.\n\nSupplied by cities placeholder.\n\nDemanded by cities placeholder."},
     {IT_IRON, "Anima-dampening metal essential for safely handling soulmasses."},
     {IT_LEYSTONE, "Fragments from the same crystal resonate with each other other across vast distances."},
 
     {IT_BRANDY, "Mellow fruit beverage distilled by leykin since time immemorial."},
     {IT_MEDICINE, "Salve that soothes aches, prevents infections and promotes healing."},
     {IT_ETHER, "Induces a long dream that effaces pain and trauma."},
-    {IT_COUNTERAGENT, "Sublime distillate with the power to suspend fate."},
+    {IT_COUNTERAGENT, "Sublime distillate with the power to suspend fate."}, // There is no question that
 
-    {IT_EFFIGY, "Resilient golem intended for manual labour."},
-    {IT_CONTRACT, "Accords between the capricious drawn up in fadeless pigment."},
+    {IT_EFFIGY, "Resilient golem intended for manual labour."}, // They draw their strength from
+    {IT_CONTRACT, "Accords drawn up in fadeless pigment."}, // Sorcerers are ever capricious,
     {IT_VESSEL, "Artificial egg created to carry immaterial things."},
-    {IT_GRIMOIRE, "Tome that records the true intents behind one's words."},
+    {IT_GRIMOIRE, "Tome devised to transcribe the true intents behind one's words."}, // Perfect fidelity averts misunderstandings, but what is discernment without room for interpretation?
 
     {IT_FUEL, "Substance refined from mushroom oil to power automata."},
     {IT_CLOCKWORK, "Highly reconfigurable but delicate machine parts."},

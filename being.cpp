@@ -68,7 +68,7 @@ void Being::Progress()
 
 void Being::DrawName(float x, float y, int flags)
 {
-    al_draw_text(builtin, al_map_rgb(0,0,0), x, y, flags, name.c_str());
+    al_draw_text(builtin8, al_map_rgb(0,0,0), x, y, flags, name.c_str());
 }
 
 void Being::DrawActivity(float x, float y)

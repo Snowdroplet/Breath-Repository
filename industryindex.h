@@ -7,7 +7,7 @@
 
 enum enumIndustries
 {
-    IND_HUNT_CORPUS  = 0, IND_HUNT_PLASM  = 1, IND_HUNT_OCULUS    = 2, IND_HUNT_STRANGE_EGG = 3,
+    IND_HUNT_CORPUS  = 0, IND_HUNT_PLASM  = 1, IND_HUNT_OCULUS    = 2, IND_HUNT_DORMANT_EGG = 3,
     IND_FARM_BERRIES = 4, IND_FARM_HERBS  = 5, IND_FARM_MUSHROOMS = 6, IND_FARM_SPICE       = 7,
     IND_MINE_CLAY    = 8, IND_MINE_COPPER = 9, IND_MINE_IRON     = 10, IND_MINE_LEYSTONE   = 11,
 
@@ -26,7 +26,7 @@ const int EXP_MARKER_LAST = EXP_MECHANICS;
 
 const std::map<int, float>baseProductionToComplete = // In hours
 {
-    {IND_HUNT_CORPUS,  4}, {IND_HUNT_PLASM,  4}, {IND_HUNT_OCULUS,    4}, {IND_HUNT_STRANGE_EGG, 16},
+    {IND_HUNT_CORPUS,  4}, {IND_HUNT_PLASM,  4}, {IND_HUNT_OCULUS,    4}, {IND_HUNT_DORMANT_EGG, 16},
     {IND_FARM_BERRIES, 4}, {IND_FARM_HERBS,  4}, {IND_FARM_MUSHROOMS, 4}, {IND_FARM_SPICE,       16},
     {IND_MINE_CLAY,    4}, {IND_MINE_COPPER, 4}, {IND_MINE_IRON,      4}, {IND_MINE_LEYSTONE,    16},
 
@@ -40,7 +40,7 @@ const std::map<int, std::map<int,float>>baseJobInputs =
     {IND_HUNT_CORPUS,      { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
     {IND_HUNT_PLASM,       { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
     {IND_HUNT_OCULUS,      { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
-    {IND_HUNT_STRANGE_EGG, { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
+    {IND_HUNT_DORMANT_EGG, { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
 
     {IND_FARM_BERRIES,     { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
     {IND_FARM_HERBS,       { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
@@ -74,7 +74,7 @@ const std::map<int, std::map<int,float>>baseJobOutputs =
     {IND_HUNT_CORPUS,      { { IT_CORPUS,      1.0} /*,{ IT_X, 0.0 }*/ } },
     {IND_HUNT_PLASM,       { { IT_PLASM,       1.0} /*,{ IT_X, 0.0 }*/ } },
     {IND_HUNT_OCULUS,      { { IT_OCULUS,      1.0} /*,{ IT_X, 0.0 }*/ } },
-    {IND_HUNT_STRANGE_EGG, { { IT_STRANGE_EGG, 1.0} /*,{ IT_X, 0.0 }*/ } },
+    {IND_HUNT_DORMANT_EGG, { { IT_DORMANT_EGG, 1.0} /*,{ IT_X, 0.0 }*/ } },
 
     {IND_FARM_BERRIES,     { { IT_BERRIES,     1.0} /*,{ IT_X, 0.0 }*/ } },
     {IND_FARM_HERBS,       { { IT_HERBS,       1.0} /*,{ IT_X, 0.0 }*/ } },

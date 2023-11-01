@@ -24,7 +24,9 @@ const float MINI_TILE_W = 16; // Width of half-sized versions of sprites meant t
 const float MINI_TILE_H = 16;
 
 /// Text
-const float BUILTIN_TEXT_HEIGHT = 8;
+const float TEXT_HEIGHT_8 = 8;
+const float TEXT_HEIGHT_12 = 12;
+const float TEXT_HEIGHT_16 = 16;
 
 /// UI
 extern bool UIChangeDelay;
@@ -82,7 +84,7 @@ const std::string caravanInventoryBubbleLabel = "Cargo:";
 const std::string caravanInventoryBubbleEmptyText = "<No cargo carried>";
 const float caravanInventoryBubbleDrawX = SCREEN_W*1/40;
 const float caravanInventoryBubbleDrawY = SCREEN_H*8/40;
-const float caravanInventoryBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
+const float caravanInventoryBubbleRowSpacing = TEXT_HEIGHT_8;
 const float caravanInventoryBubbleBaseCols = 7;
 const float caravanInventoryBubbleBaseRows = 1;
 
@@ -91,7 +93,7 @@ const std::string caravanTradeRecordsBubbleEmptyText = "<No records>";
 const std::string caravanTradeRecordsBubbleNoTransactionText = "<No transaction>";
 const float caravanTradeRecordsBubbleDrawX = SCREEN_W*1/40;
 const float caravanTradeRecordsBubbleDrawY = SCREEN_H*14/40;
-const float caravanTradeRecordsBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
+const float caravanTradeRecordsBubbleRowSpacing = TEXT_HEIGHT_8;
 const unsigned caravanTradeRecordsBubbleBaseRows = 1;
 const float caravanTradeRecordsBubbleWidth = TILE_W*7;
 const unsigned caravanTradeRecordsBubbleNumIconCols = 4;
@@ -101,7 +103,7 @@ const float caravanTradeRecordsBubblePlaceNameWidth = TILE_W*3;
 const std::string caravanPathfindingBubbleLabel = "Pathfinding:";
 const std::string caravanPathfindingBubbleEmptyText = "<No path>";
 const float caravanPathfindingBubbleColSpacing = TILE_W;
-const float caravanPathfindingBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
+const float caravanPathfindingBubbleRowSpacing = TEXT_HEIGHT_8;
 const float caravanPathfindingBubbleDrawX = SCREEN_W*1/40;
 const float caravanPathfindingBubbleDrawY = SCREEN_H*35/40;
 const unsigned caravanPathfindingBubbleBaseCols = 1;
@@ -141,7 +143,7 @@ const std::string placeMarketBubbleLabel = "Market";
 const std::string placeMarketBubbleEmptyText = "<No inventory>";
 const float placeMarketBubbleDrawX       = SCREEN_W*26/40;
 const float placeMarketBubbleDrawY       = SCREEN_H* 8/40;
-const float placeMarketBubbleRowSpacing  = BUILTIN_TEXT_HEIGHT;
+const float placeMarketBubbleRowSpacing  = TEXT_HEIGHT_8;
 const unsigned placeMarketBubbleBaseCols = 6;
 const unsigned placeMarketBubbleBaseRows = 1;
 

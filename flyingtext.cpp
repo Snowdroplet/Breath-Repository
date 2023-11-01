@@ -64,8 +64,8 @@ void FlyingText::DrawOnOverworld()
                               0);
 
         if(scrollUp)
-            string_al_draw_text(builtin,COLKEY_TEXT,drawX+MINI_TILE_W,drawY,ALLEGRO_ALIGN_LEFT,text);
+            string_al_draw_text(builtin8,COLKEY_TEXT,drawX+MINI_TILE_W,drawY,ALLEGRO_ALIGN_LEFT,text);
         else //scroll down
-            string_al_draw_text(builtin,COLKEY_FLYINGTEXT_DOWN,drawX+MINI_TILE_W,drawY,ALLEGRO_ALIGN_LEFT,text);
+            string_al_draw_text(builtin8,COLKEY_FLYINGTEXT_DOWN,drawX+MINI_TILE_W,drawY,ALLEGRO_ALIGN_LEFT,text);
     }
 }

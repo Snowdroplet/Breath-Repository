@@ -23,7 +23,10 @@ const std::map<unsigned,unsigned>resourceBeingNumSpriteVariants
 };
 const unsigned resourceBeingNumWalkFrames = 2;
 
-extern ALLEGRO_FONT *builtin;
+extern ALLEGRO_FONT *builtin8;
+//extern ALLEGRO_BITMAP *builtin16Tga;
+//extern ALLEGRO_FONT *builtin16;
+//extern ALLEGRO_FONT *spaceMono16;
 
 extern ALLEGRO_BITMAP *overworldPlacePng;
 

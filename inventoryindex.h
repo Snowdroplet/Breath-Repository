@@ -8,7 +8,7 @@ const int IT_NONE = -1;
 
 enum enumItems
 {
-    IT_CORPUS  = 0, IT_PLASM  = 1, IT_OCULUS    = 2, IT_STRANGE_EGG  = 3,
+    IT_CORPUS  = 0, IT_PLASM  = 1, IT_OCULUS    = 2, IT_DORMANT_EGG  = 3,
     IT_BERRIES = 4, IT_HERBS  = 5, IT_MUSHROOMS = 6, IT_SPICE        = 7,
     IT_CLAY    = 8, IT_COPPER = 9, IT_IRON     = 10, IT_LEYSTONE    = 11,
 
@@ -21,7 +21,7 @@ const unsigned IT_MARKER_LAST = IT_AUTOMATON;
 
 const std::map<int,std::string>itemNames =
 {
-    {IT_CORPUS, "Corpus"}, {IT_PLASM, "Plasm"}, {IT_OCULUS, "Oculus"}, {IT_STRANGE_EGG, "Strange Egg"},
+    {IT_CORPUS, "Corpus"}, {IT_PLASM, "Plasm"}, {IT_OCULUS, "Oculus"}, {IT_DORMANT_EGG, "Dormant Egg"},
     {IT_BERRIES, "Berries"}, {IT_HERBS, "Herbs"}, {IT_MUSHROOMS, "Mushrooms"}, {IT_SPICE, "Spice"},
     {IT_CLAY, "Clay"}, {IT_COPPER, "Copper"}, {IT_IRON, "Iron"}, {IT_LEYSTONE, "Leystone"},
 

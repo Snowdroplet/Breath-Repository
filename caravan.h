@@ -81,7 +81,7 @@ public:
 
     const float caravanInventoryBubbleDrawX = SCREEN_W*1/40;
     const float caravanInventoryBubbleDrawY = SCREEN_H*8/40;
-    const float caravanInventoryBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
+    const float caravanInventoryBubbleRowSpacing = TEXT_HEIGHT_8;
     const float caravanInventoryBubbleBaseCols = 7;
     const float caravanInventoryBubbleBaseRows = 1;
 */
@@ -92,7 +92,7 @@ public:
 /*
     const float caravanTradeRecordsBubbleDrawX = SCREEN_W*1/40;
     const float caravanTradeRecordsBubbleDrawY = SCREEN_H*14/40;
-    const float caravanTradeRecordsBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
+    const float caravanTradeRecordsBubbleRowSpacing = TEXT_HEIGHT_8;
     const unsigned caravanTradeRecordsBubbleBaseRows = 1;
     const float caravanTradeRecordsBubbleWidth = TILE_W*7;
     const float caravanTradeRecordsBubbleNumIconCols = 4;
@@ -103,7 +103,7 @@ public:
 
 /*
     const float caravanPathfindingBubbleColSpacing = TILE_W;
-    const float caravanPathfindingBubbleRowSpacing = BUILTIN_TEXT_HEIGHT;
+    const float caravanPathfindingBubbleRowSpacing = TEXT_HEIGHT_8;
     const float caravanPathfindingBubbleDrawX = SCREEN_W*1/40;
     const float caravanPathfindingBubbleDrawY = SCREEN_H*35/40;
     const unsigned caravanPathfindingBubbleBaseCols = 1;

@@ -126,9 +126,10 @@ void OpenEncyclopediaBubble(float x, float y, unsigned category, unsigned index)
 
     encyclopediaBubbleEntryText = encyclopedia.at(encyclopediaCurrentCategory).at(encyclopediaCurrentIndex);
 
-    int num_lines = count_num_lines_will_render(builtin, encyclopediaBubbleWidth, encyclopediaBubbleEntryText);
-    encyclopediaBubbleHeight = BUILTIN_TEXT_HEIGHT * (2 + num_lines);
+    int num_lines = count_num_lines_will_render(builtin8, encyclopediaBubbleWidth, encyclopediaBubbleEntryText);
+    encyclopediaBubbleHeight = TEXT_HEIGHT_12 * (2 + num_lines); // Turns out the line spacing can be controlled by specifying a text height larger than the actual font size. Just remember to do the same in DrawEncyclopediaBubble()
 
+    // In case the bottom of the enyclopedia bubble would end up off-screen, adjust upwards.
     if(encyclopediaBubbleDrawY + (encyclopediaBubbleHeight + 2*bubblePadding) > SCREEN_H)
         encyclopediaBubbleDrawY = SCREEN_H - encyclopediaBubbleHeight + bubblePadding;
 }
@@ -158,13 +159,13 @@ void DrawEncyclopediaBubble()
                               4);
 
 
-    string_al_draw_text(builtin,COLKEY_TEXT,encyclopediaBubbleDrawX,encyclopediaBubbleDrawY,
+    string_al_draw_text(builtin8,COLKEY_TEXT,encyclopediaBubbleDrawX,encyclopediaBubbleDrawY,
                         ALLEGRO_ALIGN_LEFT,encyclopediaBubbleEntryName);
 
-    string_al_draw_multiline_text(builtin, COLKEY_TEXT,
-                                  encyclopediaBubbleDrawX,encyclopediaBubbleDrawY + 2*BUILTIN_TEXT_HEIGHT,
+    string_al_draw_multiline_text(builtin8, COLKEY_TEXT,
+                                  encyclopediaBubbleDrawX,encyclopediaBubbleDrawY + 2*TEXT_HEIGHT_12,
                                   encyclopediaBubbleWidth,
-                                  BUILTIN_TEXT_HEIGHT,
+                                  TEXT_HEIGHT_12, // Turns out the line spacing can be controlled by specifying a text height larger than the actual font size.
                                   ALLEGRO_ALIGN_LEFT,
                                   encyclopediaBubbleEntryText);
 

@@ -85,11 +85,11 @@ void OverworldDrawGridText(float mouseX, float mouseY)
     + std::to_string(zoomPercentage) + "%";
 
     if(!overworldCameraLocked)
-        string_al_draw_text(builtin,COLKEY_CAMERA_CROSSHAIR_FREE,0,0,ALLEGRO_ALIGN_LEFT,cameraCrosshairPositionString);
+        string_al_draw_text(builtin8,COLKEY_CAMERA_CROSSHAIR_FREE,0,0,ALLEGRO_ALIGN_LEFT,cameraCrosshairPositionString);
     else
-        string_al_draw_text(builtin,COLKEY_CAMERA_CROSSHAIR_LOCKED,0,0,ALLEGRO_ALIGN_LEFT,cameraCrosshairPositionString);
+        string_al_draw_text(builtin8,COLKEY_CAMERA_CROSSHAIR_LOCKED,0,0,ALLEGRO_ALIGN_LEFT,cameraCrosshairPositionString);
 
-    string_al_draw_text(builtin,COLKEY_MOUSE_CROSSHAIR,0,BUILTIN_TEXT_HEIGHT,ALLEGRO_ALIGN_LEFT,mouseCrosshairPositionString);
+    string_al_draw_text(builtin8,COLKEY_MOUSE_CROSSHAIR,0,TEXT_HEIGHT_8,ALLEGRO_ALIGN_LEFT,mouseCrosshairPositionString);
 
 }
 

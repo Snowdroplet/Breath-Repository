@@ -804,7 +804,7 @@ void Place::UpdatePlaceMarketBubble()
 
 void Place::UpdatePlaceIndustriesBubble()
 {
-    placeIndustriesBubbleHeight = industries.size()*(TILE_H+placeIndustriesBubbleRowSpacing + BUILTIN_TEXT_HEIGHT);
+    placeIndustriesBubbleHeight = industries.size()*(TILE_H+placeIndustriesBubbleRowSpacing + TEXT_HEIGHT_8);
 }
 
 void Place::ProgressPlaceIndustriesBubbleProgressBars()
@@ -831,7 +831,7 @@ void Place::DrawSpriteOnOverworld()
                               drawY,
                               0);
 
-        string_al_draw_text(builtin, COLKEY_TEXT, nameDrawX, nameDrawY, ALLEGRO_ALIGN_CENTER, name);
+        string_al_draw_text(builtin8, COLKEY_TEXT, nameDrawX, nameDrawY, ALLEGRO_ALIGN_CENTER, name);
     }
 }
 
@@ -863,11 +863,11 @@ void Place::DrawPlacePopulationBubble()
                               placePopulationBubbleDrawY,
                               0);
 
-        string_al_draw_text(builtin,COLKEY_TEXT, placePopulationBubbleDrawX + i*TILE_W + TILE_W, placePopulationBubbleDrawY+TILE_H,ALLEGRO_ALIGN_RIGHT,std::to_string((*it).second));
+        string_al_draw_text(builtin8,COLKEY_TEXT, placePopulationBubbleDrawX + i*TILE_W + TILE_W, placePopulationBubbleDrawY+TILE_H,ALLEGRO_ALIGN_RIGHT,std::to_string((*it).second));
         i++;
     }
 
-    string_al_draw_text(builtin,COLKEY_TEXT, placePopulationBubbleDrawX, placePopulationBubbleDrawY-bubblePadding-8, ALLEGRO_ALIGN_LEFT, placePopulationBubbleLabel);
+    string_al_draw_text(builtin8,COLKEY_TEXT, placePopulationBubbleDrawX, placePopulationBubbleDrawY-bubblePadding-8, ALLEGRO_ALIGN_LEFT, placePopulationBubbleLabel);
 }
 
 
@@ -890,7 +890,7 @@ void Place::DrawPlaceCaravanseraiBubble()
                               bubbleCornerRadius, bubbleCornerRadius,
                               COLKEY_UI_BUBBLE_FRAME, 4);
 
-    string_al_draw_text(builtin,COLKEY_TEXT,placeCaravanseraiDrawX, placeCaravanseraiDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, placeCaravanseraiLabel);
+    string_al_draw_text(builtin8,COLKEY_TEXT,placeCaravanseraiDrawX, placeCaravanseraiDrawY-bubblePadding-TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, placeCaravanseraiLabel);
 
     if(caravanserai.size() > 0)
     {
@@ -906,7 +906,7 @@ void Place::DrawPlaceCaravanseraiBubble()
         }
     }
     else
-        string_al_draw_text(builtin,COLKEY_TEXT,placeCaravanseraiDrawX,placeCaravanseraiDrawY,ALLEGRO_ALIGN_LEFT,placeCaravanseraiEmptyText);
+        string_al_draw_text(builtin8,COLKEY_TEXT,placeCaravanseraiDrawX,placeCaravanseraiDrawY,ALLEGRO_ALIGN_LEFT,placeCaravanseraiEmptyText);
 }
 
 
@@ -945,28 +945,28 @@ void Place::DrawPlaceSurplusBubble()
 
 
 #ifdef debug_output_place_calculate_and_draw_consumption
-        string_al_draw_text(builtin,COLKEY_UI_BUBBLE_TEXT_SURPLUS,
+        string_al_draw_text(builtin8,COLKEY_UI_BUBBLE_TEXT_SURPLUS,
                             placeSurplusBubbleDrawX + TILE_W*1.125,
                             placeSurplusBubbleDrawY + TILE_H*drawRow,
                             ALLEGRO_ALIGN_LEFT,roundedSurplusRatio.str());
 
         std::stringstream roundedDailyMC;
         roundedDailyMC << std::fixed << std::setprecision(2) << maintainenceConsumptionQuantityDaily.at(*it);
-        string_al_draw_text(builtin,COLKEY_UI_BUBBLE_TEXT_SURPLUS,
+        string_al_draw_text(builtin8,COLKEY_UI_BUBBLE_TEXT_SURPLUS,
                             placeSurplusBubbleDrawX + TILE_W*1.125,
-                            placeSurplusBubbleDrawY + TILE_H*drawRow + BUILTIN_TEXT_HEIGHT,
+                            placeSurplusBubbleDrawY + TILE_H*drawRow + TEXT_HEIGHT_8,
                             ALLEGRO_ALIGN_LEFT, "MC " + roundedDailyMC.str());
 
         std::stringstream roundedDailyIC;
         roundedDailyIC << std::fixed << std::setprecision(2) << industrialConsumptionQuantityDaily.at(*it);
-        string_al_draw_text(builtin,COLKEY_UI_BUBBLE_TEXT_SURPLUS,
+        string_al_draw_text(builtin8,COLKEY_UI_BUBBLE_TEXT_SURPLUS,
                             placeSurplusBubbleDrawX + TILE_W*1.125,
-                            placeSurplusBubbleDrawY + TILE_H*drawRow + BUILTIN_TEXT_HEIGHT*2,
+                            placeSurplusBubbleDrawY + TILE_H*drawRow + TEXT_HEIGHT_8*2,
                             ALLEGRO_ALIGN_LEFT, "IC " + roundedDailyIC.str());
 #else
-        string_al_draw_text(builtin,COLKEY_UI_BUBBLE_TEXT_SURPLUS,
+        string_al_draw_text(builtin8,COLKEY_UI_BUBBLE_TEXT_SURPLUS,
                             placeSurplusBubbleDrawX + TILE_W*1.125,
-                            placeSurplusBubbleDrawY + TILE_H*drawRow + TILE_H/2 - BUILTIN_TEXT_HEIGHT/2,
+                            placeSurplusBubbleDrawY + TILE_H*drawRow + TILE_H/2 - TEXT_HEIGHT_8/2,
                             ALLEGRO_ALIGN_LEFT,roundedSurplusRatio.str());
 
 #endif
@@ -974,7 +974,7 @@ void Place::DrawPlaceSurplusBubble()
         drawRow++;
     }
 
-    string_al_draw_text(builtin, COLKEY_TEXT, placeSurplusBubbleDrawX, placeSurplusBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, placeSurplusBubbleLabel);
+    string_al_draw_text(builtin8, COLKEY_TEXT, placeSurplusBubbleDrawX, placeSurplusBubbleDrawY-bubblePadding-TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, placeSurplusBubbleLabel);
 
 }
 
@@ -1011,28 +1011,28 @@ void Place::DrawPlaceDeficitBubble()
 
 
 #ifdef debug_output_place_calculate_and_draw_consumption
-        string_al_draw_text(builtin,COLKEY_UI_BUBBLE_TEXT_DEFICIT,
+        string_al_draw_text(builtin8,COLKEY_UI_BUBBLE_TEXT_DEFICIT,
                             placeDeficitBubbleDrawX + TILE_W*1.125,
                             placeDeficitBubbleDrawY + TILE_H*drawRow,
                             ALLEGRO_ALIGN_LEFT, roundedDeficitRatio.str());
 
         std::stringstream roundedDailyMC;
         roundedDailyMC << std::fixed << std::setprecision(2) << maintainenceConsumptionQuantityDaily.at(*it);
-        string_al_draw_text(builtin,COLKEY_UI_BUBBLE_TEXT_DEFICIT,
+        string_al_draw_text(builtin8,COLKEY_UI_BUBBLE_TEXT_DEFICIT,
                             placeDeficitBubbleDrawX + TILE_W*1.125,
-                            placeDeficitBubbleDrawY + TILE_H*drawRow + BUILTIN_TEXT_HEIGHT,
+                            placeDeficitBubbleDrawY + TILE_H*drawRow + TEXT_HEIGHT_8,
                             ALLEGRO_ALIGN_LEFT, "MC " + roundedDailyMC.str());
 
         std::stringstream roundedDailyIC;
         roundedDailyIC << std::fixed << std::setprecision(2) << industrialConsumptionQuantityDaily.at(*it);
-        string_al_draw_text(builtin,COLKEY_UI_BUBBLE_TEXT_DEFICIT,
+        string_al_draw_text(builtin8,COLKEY_UI_BUBBLE_TEXT_DEFICIT,
                             placeDeficitBubbleDrawX + TILE_W*1.125,
-                            placeDeficitBubbleDrawY + TILE_H*drawRow + BUILTIN_TEXT_HEIGHT*2,
+                            placeDeficitBubbleDrawY + TILE_H*drawRow + TEXT_HEIGHT_8*2,
                             ALLEGRO_ALIGN_LEFT, "IC " + roundedDailyIC.str());
 #else
-        string_al_draw_text(builtin,COLKEY_UI_BUBBLE_TEXT_DEFICIT,
+        string_al_draw_text(builtin8,COLKEY_UI_BUBBLE_TEXT_DEFICIT,
                             placeDeficitBubbleDrawX + TILE_W*1.125,
-                            placeDeficitBubbleDrawY + TILE_H*drawRow + TILE_W/2 - BUILTIN_TEXT_HEIGHT/2,
+                            placeDeficitBubbleDrawY + TILE_H*drawRow + TILE_W/2 - TEXT_HEIGHT_8/2,
                             ALLEGRO_ALIGN_LEFT, roundedDeficitRatio.str());
 
 #endif
@@ -1043,7 +1043,7 @@ void Place::DrawPlaceDeficitBubble()
 
     }
 
-    string_al_draw_text(builtin, COLKEY_TEXT, placeDeficitBubbleDrawX, placeDeficitBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, placeDeficitBubbleLabel);
+    string_al_draw_text(builtin8, COLKEY_TEXT, placeDeficitBubbleDrawX, placeDeficitBubbleDrawY-bubblePadding-TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, placeDeficitBubbleLabel);
 
 }
 
@@ -1064,7 +1064,7 @@ void Place::DrawPlaceMarketBubble()
                               bubbleCornerRadius, bubbleCornerRadius,
                               COLKEY_UI_BUBBLE_FRAME, 4);
 
-    string_al_draw_text(builtin,COLKEY_TEXT,placeMarketBubbleDrawX, placeMarketBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, placeMarketBubbleLabel);
+    string_al_draw_text(builtin8,COLKEY_TEXT,placeMarketBubbleDrawX, placeMarketBubbleDrawY-bubblePadding-TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, placeMarketBubbleLabel);
 
     if(market.cargo.size() > 0)
     {
@@ -1082,13 +1082,13 @@ void Place::DrawPlaceMarketBubble()
                                       drawX, drawY,
                                       0);
 
-                string_al_draw_text(builtin, COLKEY_TEXT, drawX+TILE_W, drawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
+                string_al_draw_text(builtin8, COLKEY_TEXT, drawX+TILE_W, drawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
                 s++;
             }
         }
     }
     else
-        string_al_draw_text(builtin,COLKEY_TEXT,placeMarketBubbleDrawX,placeMarketBubbleDrawY,ALLEGRO_ALIGN_LEFT,placeMarketBubbleEmptyText);
+        string_al_draw_text(builtin8,COLKEY_TEXT,placeMarketBubbleDrawX,placeMarketBubbleDrawY,ALLEGRO_ALIGN_LEFT,placeMarketBubbleEmptyText);
 }
 
 void Place::DrawPlaceIndustriesBubble()
@@ -1110,14 +1110,14 @@ void Place::DrawPlaceIndustriesBubble()
                               COLKEY_UI_BUBBLE_FRAME,
                               4);
 
-    string_al_draw_text(builtin,COLKEY_TEXT,placeIndustriesBubbleDrawX, placeIndustriesBubbleDrawY-bubblePadding-8, ALLEGRO_ALIGN_LEFT, placeIndustriesBubbleLabel);
+    string_al_draw_text(builtin8,COLKEY_TEXT,placeIndustriesBubbleDrawX, placeIndustriesBubbleDrawY-bubblePadding-8, ALLEGRO_ALIGN_LEFT, placeIndustriesBubbleLabel);
 
     if(industries.size() > 0)
     {
         for(unsigned i = 0; i < industries.size(); i++)
         {
             float drawX = placeIndustriesBubbleDrawX + placeIndustriesBubbleProgressBarOffset;
-            float drawY = placeIndustriesBubbleDrawY + i*(TILE_H + placeIndustriesBubbleRowSpacing + BUILTIN_TEXT_HEIGHT);
+            float drawY = placeIndustriesBubbleDrawY + i*(TILE_H + placeIndustriesBubbleRowSpacing + TEXT_HEIGHT_8);
 
 /// To do: Animation to fade through input/ouputs in sequence or rotate through them like cards in a stacked deck
 // Draw icon and quantity text for job output
@@ -1127,7 +1127,7 @@ void Place::DrawPlaceIndustriesBubble()
                                   placeIndustriesBubbleDrawX+TILE_W*1.5, drawY,
                                   0);
 
-            string_al_draw_text(builtin, COLKEY_TEXT,
+            string_al_draw_text(builtin8, COLKEY_TEXT,
                                 placeIndustriesBubbleDrawX + TILE_W*1.5 +TILE_W,
                                 drawY + TILE_H,
                                 ALLEGRO_ALIGN_RIGHT,
@@ -1143,7 +1143,7 @@ void Place::DrawPlaceIndustriesBubble()
                                       placeIndustriesBubbleDrawX, drawY,
                                       0);
 
-                string_al_draw_text(builtin, COLKEY_TEXT,
+                string_al_draw_text(builtin8, COLKEY_TEXT,
                                     placeIndustriesBubbleDrawX + TILE_W,
                                     drawY + TILE_H,
                                     ALLEGRO_ALIGN_RIGHT,
@@ -1187,14 +1187,14 @@ void Place::DrawPlaceIndustriesBubble()
                                   COLKEY_UI_BUBBLE_INDUSTRY_PROGRESS_FRAME,
                                   1);
 
-            string_al_draw_text(builtin, COLKEY_TEXT,
+            string_al_draw_text(builtin8, COLKEY_TEXT,
                                 placeIndustriesBubbleDrawX + 3*TILE_W,
-                                drawY + TILE_H/2-BUILTIN_TEXT_HEIGHT,
+                                drawY + TILE_H/2-TEXT_HEIGHT_8,
                                 ALLEGRO_ALIGN_LEFT, industries[i]->remainingTimeText);
         }
     }
     else
-        string_al_draw_text(builtin, COLKEY_TEXT, placeIndustriesBubbleDrawX,placeIndustriesBubbleDrawY,ALLEGRO_ALIGN_LEFT, placeIndustriesBubbleEmptyText);
+        string_al_draw_text(builtin8, COLKEY_TEXT, placeIndustriesBubbleDrawX,placeIndustriesBubbleDrawY,ALLEGRO_ALIGN_LEFT, placeIndustriesBubbleEmptyText);
 
 }
 

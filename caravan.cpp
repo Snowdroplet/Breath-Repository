@@ -440,7 +440,7 @@ void Caravan::DrawCaravanInventoryBubble()
                               COLKEY_UI_BUBBLE_FRAME,
                               4);
 
-    string_al_draw_text(builtin,COLKEY_TEXT,caravanInventoryBubbleDrawX, caravanInventoryBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, caravanInventoryBubbleLabel);
+    string_al_draw_text(builtin8,COLKEY_TEXT,caravanInventoryBubbleDrawX, caravanInventoryBubbleDrawY-bubblePadding-TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanInventoryBubbleLabel);
 
     if(inventory.cargo.size() > 0)
     {
@@ -456,15 +456,15 @@ void Caravan::DrawCaravanInventoryBubble()
                                   drawX, drawY,
                                   0);
 
-            string_al_draw_text(builtin, COLKEY_TEXT, drawX+TILE_W, drawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
+            string_al_draw_text(builtin8, COLKEY_TEXT, drawX+TILE_W, drawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
             i++;
         }
     }
     else
-        string_al_draw_text(builtin,COLKEY_TEXT,caravanInventoryBubbleDrawX,caravanInventoryBubbleDrawY,ALLEGRO_ALIGN_LEFT,caravanInventoryBubbleEmptyText);
+        string_al_draw_text(builtin8,COLKEY_TEXT,caravanInventoryBubbleDrawX,caravanInventoryBubbleDrawY,ALLEGRO_ALIGN_LEFT,caravanInventoryBubbleEmptyText);
 
-    string_al_draw_text(builtin,COLKEY_TEXT,caravanInventoryBubbleDrawX,
-                        caravanInventoryBubbleDrawY+caravanInventoryBubbleHeight + BUILTIN_TEXT_HEIGHT,
+    string_al_draw_text(builtin8,COLKEY_TEXT,caravanInventoryBubbleDrawX,
+                        caravanInventoryBubbleDrawY+caravanInventoryBubbleHeight + TEXT_HEIGHT_8,
                         ALLEGRO_ALIGN_LEFT,
                         "Weight: " + std::to_string((int)cargoWeight) + " / " + std::to_string((int)cargoWeightMax) );
 
@@ -490,7 +490,7 @@ void Caravan::DrawCaravanTradeRecordsBubble()
                               4);
 
 
-    string_al_draw_text(builtin, COLKEY_TEXT, caravanTradeRecordsBubbleDrawX, caravanTradeRecordsBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT, ALLEGRO_ALIGN_LEFT, caravanTradeRecordsBubbleLabel);
+    string_al_draw_text(builtin8, COLKEY_TEXT, caravanTradeRecordsBubbleDrawX, caravanTradeRecordsBubbleDrawY-bubblePadding-TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanTradeRecordsBubbleLabel);
 
     if(tradeRecords.size() > 0)
     {
@@ -499,8 +499,7 @@ void Caravan::DrawCaravanTradeRecordsBubble()
 
         for(std::vector<TradeRecord*>::reverse_iterator rit = tradeRecords.rbegin(); rit != tradeRecords.rend(); ++rit)
         {
-
-            string_al_draw_text(builtin, COLKEY_TEXT,
+            string_al_draw_text(builtin8, COLKEY_TEXT,
                                 caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubblePlaceNameWidth,
                                 caravanTradeRecordsBubbleDrawY + row*(TILE_H + caravanTradeRecordsBubbleRowSpacing),
                                 ALLEGRO_ALIGN_RIGHT,
@@ -536,7 +535,7 @@ void Caravan::DrawCaravanTradeRecordsBubble()
                                           iconDrawX, iconDrawY,
                                           0);
 
-                    string_al_draw_text(builtin, COLKEY_TEXT, iconDrawX+TILE_W, iconDrawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((*jt).second));
+                    string_al_draw_text(builtin8, COLKEY_TEXT, iconDrawX+TILE_W, iconDrawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((*jt).second));
 
                     col++;
                 }
@@ -544,9 +543,9 @@ void Caravan::DrawCaravanTradeRecordsBubble()
             }
             else if((*rit)->tradeQuantities.size() == 0) // tradeQuantities vector empty
             {
-                string_al_draw_text(builtin, COLKEY_TEXT,
+                string_al_draw_text(builtin8, COLKEY_TEXT,
                                     caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubblePlaceNameWidth + col*(TILE_W),
-                                    caravanTradeRecordsBubbleDrawY + row*(TILE_H + caravanTradeRecordsBubbleRowSpacing) + TILE_H/2 - BUILTIN_TEXT_HEIGHT/2,
+                                    caravanTradeRecordsBubbleDrawY + row*(TILE_H + caravanTradeRecordsBubbleRowSpacing) + TILE_H/2 - TEXT_HEIGHT_8/2,
                                     ALLEGRO_ALIGN_LEFT,
                                     caravanTradeRecordsBubbleNoTransactionText);
             }
@@ -556,7 +555,7 @@ void Caravan::DrawCaravanTradeRecordsBubble()
         }
     }
     else
-        string_al_draw_text(builtin,COLKEY_TEXT,caravanTradeRecordsBubbleDrawX, caravanTradeRecordsBubbleDrawY, ALLEGRO_ALIGN_LEFT, caravanTradeRecordsBubbleEmptyText);
+        string_al_draw_text(builtin8,COLKEY_TEXT,caravanTradeRecordsBubbleDrawX, caravanTradeRecordsBubbleDrawY, ALLEGRO_ALIGN_LEFT, caravanTradeRecordsBubbleEmptyText);
 }
 
 void Caravan::DrawCaravanPathfindingBubble()
@@ -591,7 +590,7 @@ void Caravan::DrawCaravanPathfindingBubble()
                                   drawX, drawY,
                                   0);
 
-            string_al_draw_text(builtin, COLKEY_TEXT,
+            string_al_draw_text(builtin8, COLKEY_TEXT,
                                 drawX + TILE_W, drawY + 2*TILE_H,
                                 ALLEGRO_ALIGN_CENTER,
                                 placeNames.at(worldGraph.path[i]));
@@ -607,13 +606,13 @@ void Caravan::DrawCaravanPathfindingBubble()
     }
     else
     {
-        string_al_draw_text(builtin, COLKEY_TEXT,
+        string_al_draw_text(builtin8, COLKEY_TEXT,
                             caravanPathfindingBubbleDrawX+caravanPathfindingBubbleWidth/2,
-                            caravanPathfindingBubbleDrawY+caravanPathfindingBubbleWidth/2 - BUILTIN_TEXT_HEIGHT,
+                            caravanPathfindingBubbleDrawY+caravanPathfindingBubbleWidth/2 - TEXT_HEIGHT_8,
                             ALLEGRO_ALIGN_CENTER, caravanPathfindingBubbleLabel);
     }
-    string_al_draw_text(builtin,COLKEY_TEXT,
+    string_al_draw_text(builtin8,COLKEY_TEXT,
                         caravanPathfindingBubbleDrawX,
-                        caravanPathfindingBubbleDrawY-bubblePadding-BUILTIN_TEXT_HEIGHT,
+                        caravanPathfindingBubbleDrawY-bubblePadding-TEXT_HEIGHT_8,
                         ALLEGRO_ALIGN_LEFT, caravanPathfindingBubbleLabel);
 }
