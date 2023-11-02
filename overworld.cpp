@@ -1,5 +1,7 @@
 #include "overworld.h"
 
+bool overworldCameraMousePanningDisabled = false;
+
 bool overworldCameraLocked = false;
 bool overworldCameraLockedOnPlace = false;
 Place *overworldCameraPlace = nullptr;
@@ -9,8 +11,12 @@ Caravan *overworldCameraCaravan = nullptr;
 float overworldCameraXPosition = 0;
 float overworldCameraYPosition = 0;
 
-int overworldCameraXSensitivity = 8;
-int overworldCameraYSensitivity = 8;
+bool overworldCameraApproachingDestination = false;
+float overworldCameraXDestination;
+float overworldCameraYDestination;
+
+int overworldCameraXSensitivity = 16;
+int overworldCameraYSensitivity = 16;
 
 void OverworldDrawGridUnderlay()
 {
@@ -93,6 +99,16 @@ void OverworldDrawGridText(float mouseX, float mouseY)
 
 }
 
+void OverworldApproachCameraDestination()
+{
+    if(overworldCameraXPosition != overworldCameraXDestination)
+        overworldCameraXPosition += (overworldCameraXDestination - overworldCameraXPosition)/2;
+
+    if(overworldCameraYPosition != overworldCameraYDestination)
+        overworldCameraYPosition += (overworldCameraYDestination - overworldCameraYPosition)/2;
+
+}
+
 void OverworldLockCameraPlace(Place *whichPlace)
 {
     OverworldUnlockCameraCaravan();
@@ -140,6 +156,8 @@ void OverworldUnlockCamera()
     OverworldUnlockCameraCaravan();
     overworldCameraLocked = false;
 
+    /*
     overworldCameraXPosition = overworldCameraXPosition/8*8; // rounds down to nearest 8 (truncates decimal)
     overworldCameraYPosition = overworldCameraYPosition/8*8;
+    */
 }

@@ -609,7 +609,7 @@ void Caravan::DrawCaravanPathfindingBubble()
         string_al_draw_text(builtin8, COLKEY_TEXT,
                             caravanPathfindingBubbleDrawX+caravanPathfindingBubbleWidth/2,
                             caravanPathfindingBubbleDrawY+caravanPathfindingBubbleWidth/2 - TEXT_HEIGHT_8,
-                            ALLEGRO_ALIGN_CENTER, caravanPathfindingBubbleLabel);
+                            ALLEGRO_ALIGN_CENTER, caravanPathfindingBubbleEmptyText);
     }
     string_al_draw_text(builtin8,COLKEY_TEXT,
                         caravanPathfindingBubbleDrawX,

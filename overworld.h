@@ -18,6 +18,8 @@
 class Place;
 class Caravan;
 
+extern bool overworldCameraMousePanningDisabled;
+
 extern bool overworldCameraLocked;
 extern bool overworldCameraLockedOnPlace;
 extern Place*overworldCameraPlace;
@@ -27,10 +29,14 @@ extern Caravan* overworldCameraCaravan;
 extern float overworldCameraXPosition;
 extern float overworldCameraYPosition;
 
+extern bool overworldCameraApproachingDestination; // When camera is not locked, rather than warping the camera instantly to location, approach it
+extern float overworldCameraXDestination;
+extern float overworldCameraYDestination;
+
 extern int overworldCameraXSensitivity;
 extern int overworldCameraYSensitivity;
 
-const int OVERWORLD_MIN_DRAW_X = 0 - TILE_W*2;
+const int OVERWORLD_MIN_DRAW_X = 0 - TILE_W*2; // Save drawing resources by not drawing places and beings outside this boundary
 const int OVERWORLD_MIN_DRAW_Y = 0 - TILE_H*2;
 const int OVERWORLD_MAX_DRAW_X = SCREEN_W + TILE_W*2;
 const int OVERWORLD_MAX_DRAW_Y = SCREEN_H + TILE_H*2;
@@ -40,6 +46,7 @@ void OverworldDrawGridCameraCrosshair();
 void OverworldDrawGridMouseCrosshair(float mouseX, float mouseY);
 void OverworldDrawGridText(float mouseX, float mouseY);
 
+void OverworldApproachCameraDestination();
 void OverworldLockCameraPlace(Place *whichPlace);
 void OverworldLockCameraCaravan(Caravan *whichCaravan);
 void OverworldUnlockCamera();

@@ -99,7 +99,6 @@ const float caravanTradeRecordsBubbleWidth = TILE_W*7;
 const unsigned caravanTradeRecordsBubbleNumIconCols = 4;
 const float caravanTradeRecordsBubblePlaceNameWidth = TILE_W*3;
 
-
 const std::string caravanPathfindingBubbleLabel = "Pathfinding:";
 const std::string caravanPathfindingBubbleEmptyText = "<No path>";
 const float caravanPathfindingBubbleColSpacing = TILE_W;
