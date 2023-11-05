@@ -4,6 +4,9 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_font.h>
 
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
+
 #include "UI.h"
 #include "beingindex.h"
 
@@ -41,7 +44,28 @@ extern ALLEGRO_BITMAP *cargoPng;
 extern ALLEGRO_BITMAP *redArrowPng;
 extern ALLEGRO_BITMAP *redTransparentXPng;
 
-void LoadResources();
-void UnloadResources();
+/*
+enum enumBackgroundTracks
+{
+    TRACK_MACLEOD_COTTAGES = 0,
+    TRACK_MACLEOD_MANOR    = 1
+};
+*/
+
+extern ALLEGRO_SAMPLE *cottagesMacLeodMp3;
+extern ALLEGRO_SAMPLE *manorMacLeodMp3;
+
+extern ALLEGRO_SAMPLE_INSTANCE *cottagesSampleInstance;
+extern ALLEGRO_SAMPLE_INSTANCE *manorSampleInstance;
+
+//extern std::map<int, *ALLEGRO_SAMPLE_INSTANCE>allegroSampleInstances;
+
+void LoadFontResources();
+void LoadImageResources();
+void LoadAudioResources();
+
+void UnloadFontResources();
+void UnloadImageResources();
+void UnloadAudioResources();
 
 #endif // RESOURCE_H_INCLUDED

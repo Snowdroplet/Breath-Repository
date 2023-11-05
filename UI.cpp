@@ -14,79 +14,7 @@ int previousActiveSubUI = SUBUI_OVERWORLD_NONE;
 Caravan* bubbleViewCaravan;
 Place* bubbleViewPlace;
 
-/*
-bool caravanInventoryBubbleOpen = false;
-bool caravanTradeRecordsBubbleOpen = false;
-bool caravanPathfindingBubbleOpen = false;
-
-bool placePopulationBubbleOpen = false;
-bool placeCaravanseraiBubbleOpen = false;
-bool placeSurplusBubbleOpen = false;
-bool placeDeficitBubbleOpen = false;
-bool placeMarketBubbleOpen = false;
-bool placeIndustriesBubbleOpen = false;
-*/
-
 bool encyclopediaBubbleOpen = false;
-
-/*
-void OpenAllCaravanBubbles()
-{
-    caravanInventoryBubbleOpen = true;
-    caravanTradeRecordsBubbleOpen = true;
-    caravanPathfindingBubbleOpen = true;
-}
-
-void CloseAllCaravanBubbles()
-{
-    caravanInventoryBubbleOpen = false;
-    caravanTradeRecordsBubbleOpen = false;
-    caravanPathfindingBubbleOpen = false;
-}
-
-void OpenAllPlaceBubbles()
-{
-    placePopulationBubbleOpen = true;
-    placeCaravanseraiBubbleOpen = true;
-    placeSurplusBubbleOpen = true;
-    placeDeficitBubbleOpen = true;
-    placeMarketBubbleOpen = true;
-    placeIndustriesBubbleOpen = true;
-}
-
-void CloseAllPlaceBubbles()
-{
-    placePopulationBubbleOpen = false;
-    placeCaravanseraiBubbleOpen = false;
-    placeSurplusBubbleOpen = false;
-    placeDeficitBubbleOpen = false;
-    placeMarketBubbleOpen = false;
-    placeIndustriesBubbleOpen = false;
-}
-*/
-
-void SetBubbleViewCaravan(Caravan *c)
-{
-    bubbleViewCaravan = c;
-
-    /*
-    if(bubbleViewCaravan == nullptr)
-        CloseAllCaravanBubbles();
-    else
-        OpenAllCaravanBubbles();
-        */
-}
-
-void SetBubbleViewPlace(Place *p)
-{
-    bubbleViewPlace = p;
-    /*
-    if(bubbleViewPlace == nullptr)
-        CloseAllPlaceBubbles();
-    else
-        OpenAllPlaceBubbles();
-        */
-}
 
 /// Encyclopedia bubble
 int encyclopediaCurrentCategory; // = EN_CAT_LEYKIN;

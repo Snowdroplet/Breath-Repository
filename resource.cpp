@@ -18,7 +18,15 @@ ALLEGRO_BITMAP *cargoPng;
 ALLEGRO_BITMAP *redArrowPng;
 ALLEGRO_BITMAP *redTransparentXPng;
 
-void LoadResources()
+ALLEGRO_SAMPLE *cottagesMacLeodMp3;
+ALLEGRO_SAMPLE *manorMacLeodMp3;
+
+ALLEGRO_SAMPLE_INSTANCE *cottagesSampleInstance;
+ALLEGRO_SAMPLE_INSTANCE *manorSampleInstance;
+
+//std::map<int, *ALLEGRO_SAMPLE_INSTANCE>allegro_sample_instances>;
+
+void LoadFontResources()
 {
     /*
     int fontRanges[] =
@@ -36,6 +44,10 @@ void LoadResources()
     //builtin16 = al_create_builtin_font();
     //spaceMono16 = al_load_ttf_font("SpaceMono-Regular.ttf",16,0);
 
+}
+
+void LoadImageResources()
+{
     overworldPlacePng = al_load_bitmap("placeholderOverworldPlace.png");
 
     beingsPng = al_load_bitmap("placeholderBeings.png");
@@ -58,13 +70,28 @@ void LoadResources()
     redTransparentXPng = al_load_bitmap("placeholderRedTransparentX.png");
 }
 
-void UnloadResources()
+void LoadAudioResources()
+{
+    al_reserve_samples(10); // Curiously, commenting out this line generates the above error ^^
+    cottagesMacLeodMp3 = al_load_sample("Magic Scout - Cottages.mp3");
+    manorMacLeodMp3    = al_load_sample("Magic Scout - Manor.mp3");
+
+    cottagesSampleInstance = al_create_sample_instance(cottagesMacLeodMp3);
+    manorSampleInstance    = al_create_sample_instance(manorMacLeodMp3);
+    al_attach_sample_instance_to_mixer(cottagesSampleInstance, al_get_default_mixer());
+    al_attach_sample_instance_to_mixer(manorSampleInstance,    al_get_default_mixer());
+}
+
+void UnloadFontResources()
 {
     al_destroy_font(builtin8);
     //al_destroy_bitmap(builtin16Tga);
     //al_destroy_font(builtin16);
     //al_destroy_font(spaceMono16);
+}
 
+void UnloadImageResources()
+{
     al_destroy_bitmap(overworldPlacePng);
 
     for(int i = 0; i <= ANCESTRY_MARKER_LAST; i++)
@@ -79,5 +106,13 @@ void UnloadResources()
 
     al_destroy_bitmap(redArrowPng);
     al_destroy_bitmap(redTransparentXPng);
+}
 
+void UnloadAudioResources()
+{
+    al_destroy_sample_instance(cottagesSampleInstance);
+    al_destroy_sample_instance(manorSampleInstance);
+
+    al_destroy_sample(cottagesMacLeodMp3);
+    al_destroy_sample(manorMacLeodMp3);
 }

@@ -194,6 +194,7 @@ void string_al_draw_multiline_text(const ALLEGRO_FONT *font, ALLEGRO_COLOR color
     al_draw_multiline_text(font, color, x, y, max_width, line_height, flags, c);
 }
 
+/// Mark Oates' do_multiline_text functions
 bool multiline_text_draw_callback(int line_num, const char* line, int size, void* user_data)
 {
    *((int*)user_data) = line_num;

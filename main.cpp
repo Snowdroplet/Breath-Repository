@@ -6,10 +6,22 @@ Obscure bugs list:
 
 */
 
+/**
+Todo next:
+-Multiple beings in one party
+-Caravan travel viewer bubble with parallax
+
+-Crosshair button to re-lockOn to the caravan viewed in bubble, but not currently locked on to (e.g. when perusing the pathfinding bubble's locations)
+
+-City and soverignty crests that can be clicked on to dispense the encyclopedia entry
+*/
+
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_physfs.h>
@@ -38,6 +50,7 @@ void DrawUI();
 void InitObjects();
 void CleanupObjects();
 
+bool MouseLeftOnCaravanCrewBubble();
 bool MouseLeftOnCaravanInventoryBubble();
 bool MouseLeftOnCaravanTradeRecordsBubble();
 bool MouseLeftOnCaravanPathfindingBubble();
@@ -79,6 +92,10 @@ int main(int argc, char *argv[])
 
     al_init_image_addon();
     al_init_primitives_addon();
+
+    al_install_audio();
+    al_init_acodec_addon();
+
     al_init_font_addon();
     al_init_ttf_addon();
 
@@ -101,7 +118,11 @@ int main(int argc, char *argv[])
     al_set_physfs_file_interface();
 
     AllegroCustomColours();
-    LoadResources();
+    LoadFontResources();
+    LoadImageResources();
+    LoadAudioResources();
+
+    //al_reserve_samples(2);
 
     InitCalendar(22,30,12,2023);
 
@@ -110,6 +131,21 @@ int main(int argc, char *argv[])
     ChangeUI(UI_OVERWORLD,SUBUI_OVERWORLD_NONE);
 
     al_start_timer(FPSTimer);
+
+    parallelSampleInstancesPosition = al_get_sample_instance_position(manorSampleInstance);
+    std::cout << parallelSampleInstancesPosition << std::endl;
+    al_stop_sample_instance(manorSampleInstance); // incorrect?
+    ///al_set_sample_instance_playing(manorSampleInstance, false); // Incorrect?
+
+    //al_set_sample_instance_gain(cottagesSampleInstance,    1.0);
+    //al_set_sample_instance_pan(cottagesSampleInstance,     0.0);
+    //al_set_sample_instance_speed(cottagesSampleInstance,   1.0);
+    al_set_sample_instance_position(cottagesSampleInstance,
+                                    parallelSampleInstancesPosition); // The docs really ought to specify the value is in seconds, milliseconds, whatever
+    al_set_sample_instance_playmode(cottagesSampleInstance, ALLEGRO_PLAYMODE_LOOP);
+
+    al_play_sample_instance(cottagesSampleInstance);
+    ///al_set_sample_instance_playing(cottagesSampleInstance, true); // incorrect - position not adjusted
 
     while(!gameExit)
     {
@@ -161,18 +197,23 @@ int main(int argc, char *argv[])
 
     }
 
+    al_stop_samples();
+
     CleanupObjects();
 
-    UnloadResources();
+    UnloadFontResources();
+    UnloadImageResources();
+    UnloadAudioResources();
 
     PHYSFS_deinit();
 
+    al_uninstall_audio();
     al_destroy_display(display);
     al_destroy_timer(FPSTimer);
     al_destroy_event_queue(eventQueue);
 
     al_shutdown_native_dialog_addon();
-    al_uninstall_system();
+    al_uninstall_system(); // Automatically al_uninstall_keyboard(),
 
     return 0;
 }
@@ -219,10 +260,11 @@ void InterpretInput()
 
         if(bubbleViewCaravan != nullptr)
         {
-            if(!MouseLeftOnCaravanInventoryBubble())
-                if(!MouseLeftOnCaravanTradeRecordsBubble())
-                    if(!MouseLeftOnCaravanPathfindingBubble())
-                        mouseLeftOnNoCaravanBubbles = true;
+            if(!MouseLeftOnCaravanCrewBubble())
+                if(!MouseLeftOnCaravanInventoryBubble())
+                    if(!MouseLeftOnCaravanTradeRecordsBubble())
+                        if(!MouseLeftOnCaravanPathfindingBubble())
+                            mouseLeftOnNoCaravanBubbles = true;
         }
         else // bubbleViewCaravan == nullptr
             mouseLeftOnNoCaravanBubbles = true;
@@ -419,6 +461,8 @@ void DrawUI()
 
         if(bubbleViewCaravan != nullptr)
         {
+            bubbleViewCaravan->DrawCaravanCrewBubble();
+            //bubbleViewCaravan->DrawCaravanTravelViewBubble();
             bubbleViewCaravan->DrawCaravanInventoryBubble();
             bubbleViewCaravan->DrawCaravanTradeRecordsBubble();
             bubbleViewCaravan->DrawCaravanPathfindingBubble();
@@ -491,6 +535,20 @@ void CleanupObjects()
     for(std::map<int, Road*>::iterator it = Road::roads.begin(); it != Road::roads.end(); ++it)
         delete it->second;
     Road::roads.clear();
+}
+
+bool MouseLeftOnCaravanCrewBubble()
+{
+    if(mouseX > caravanCrewBubbleDrawX
+            && mouseX < caravanCrewBubbleDrawX + bubbleViewCaravan->caravanCrewBubbleWidth
+            && mouseY > caravanCrewBubbleDrawY
+            && mouseY < caravanCrewBubbleDrawY + caravanCrewBubbleHeight)
+    {
+
+        return true;
+    }
+    else
+        return false;
 }
 
 bool MouseLeftOnCaravanInventoryBubble()
@@ -631,7 +689,8 @@ bool MouseLeftOnPlaceCaravanseraiBubble()
         if(position < bubbleViewPlace->caravanserai.size())
         {
             bubbleViewPlace->caravanserai[position]->UpdateAllBubbles();
-            OverworldLockCameraCaravan(bubbleViewPlace->caravanserai[position]); // Already unlocks camera from place
+            bubbleViewCaravan = bubbleViewPlace->caravanserai[position];
+            //OverworldLockCameraCaravan(bubbleViewPlace->caravanserai[position]); // Already unlocks camera from place
         }
 
         return true;
@@ -720,7 +779,7 @@ void AttemptCameraLockOn()
                 && (overworldCameraYPosition + SCREEN_H/2) < y + h/2)
         {
             OverworldLockCameraPlace((*it).second);
-            SetBubbleViewPlace((*it).second);
+            bubbleViewPlace = ((*it).second);
             (*it).second->UpdateAllBubbles();
 
             overworldCameraXPosition = x - SCREEN_W/2;
@@ -744,7 +803,7 @@ void AttemptCameraLockOn()
                     && (overworldCameraYPosition + SCREEN_H/2) < y + h/2)
             {
                 OverworldLockCameraCaravan(*it);
-                SetBubbleViewCaravan(*it);
+                bubbleViewCaravan = (*it);
                 break;
             }
         }

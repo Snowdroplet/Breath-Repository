@@ -51,34 +51,24 @@ extern int previousActiveSubUI;
 extern Caravan* bubbleViewCaravan;
 extern Place* bubbleViewPlace;
 
-/*
-extern bool caravanInventoryBubbleOpen;
-extern bool caravanTradeRecordsBubbleOpen;
-extern bool caravanPathfindingBubbleOpen;
-
-extern bool placePopulationBubbleOpen;
-extern bool placeCaravanseraiBubbleOpen;
-extern bool placeSurplusBubbleOpen;
-extern bool placeDeficitBubbleOpen;
-extern bool placeMarketBubbleOpen;
-extern bool placeIndustriesBubbleOpen;
-*/
-
 extern bool encyclopediaBubbleOpen;
-
-/*
-void OpenAllCaravanBubbles();
-void CloseAllCaravanBubbles();
-void OpenAllPlaceBubbles();
-void CloseAllPlaceBubbles();
-*/
-
-void SetBubbleViewCaravan(Caravan *c);
-void SetBubbleViewPlace(Place *p);
 
 /// Caravan Bubble
 const float bubblePadding = TILE_W/4;
 const float bubbleCornerRadius = 8;
+
+/*
+const float caravanTravelViewBubbleDrawX = SCREEN_W*10/40;
+const float caravanTravelViewBubbleDrawY = SCREEN_H*24/40;
+const float caravanTravelViewBubbleWidth = TILE_W*14;
+const float caravanTravelViewBubbleHeight = TILE_H*5;
+*/
+
+const std::string caravanCrewBubbleLabel = "Crew:";
+const std::string caravanCrewBubbleEmptyText = "<No Crew>"; // Though this ought not to pop up for more than one tick, since the caravan should disband and delete.
+const float caravanCrewBubbleDrawX = SCREEN_W*1/40;
+const float caravanCrewBubbleDrawY = SCREEN_H*4/40;
+const float caravanCrewBubbleHeight = TILE_H;
 
 const std::string caravanInventoryBubbleLabel = "Cargo:";
 const std::string caravanInventoryBubbleEmptyText = "<No cargo carried>";
@@ -91,7 +81,7 @@ const float caravanInventoryBubbleBaseRows = 1;
 const std::string caravanTradeRecordsBubbleLabel = "Trade Records:";
 const std::string caravanTradeRecordsBubbleEmptyText = "<No records>";
 const std::string caravanTradeRecordsBubbleNoTransactionText = "<No transaction>";
-const float caravanTradeRecordsBubbleDrawX = SCREEN_W*1/40;
+const float caravanTradeRecordsBubbleDrawX = SCREEN_W* 1/40;
 const float caravanTradeRecordsBubbleDrawY = SCREEN_H*14/40;
 const float caravanTradeRecordsBubbleRowSpacing = TEXT_HEIGHT_8;
 const unsigned caravanTradeRecordsBubbleBaseRows = 1;
