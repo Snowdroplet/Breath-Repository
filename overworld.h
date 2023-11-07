@@ -1,6 +1,7 @@
 #ifndef OVERWORLD_H_INCLUDED
 #define OVERWORLD_H_INCLUDED
 
+#include <iostream>
 #include <string>
 #include <cmath>
 
@@ -18,6 +19,9 @@
 /// Forward declaration
 class Place;
 class Caravan;
+
+/// Overworld Mouse
+
 
 /// Camera
 extern bool overworldCameraMousePanningDisabled;
@@ -45,13 +49,23 @@ const int OVERWORLD_MAX_DRAW_Y = SCREEN_H + TILE_H*2;
 
 
 /// Audio
-extern unsigned int parallelSampleInstancesPosition;
+enum enumOverworldParallelSampleParts
+{
+    OPS_COTTAGES = 0,
+    OPS_MANOR = 1
+};
+
+extern int overworldParallelSampleInstanceCurrentPart;
+//extern unsigned int overworldParallelSampleInstancePosition;
 
 /// Draw grid underlay functions
 void OverworldDrawGridUnderlay();
 void OverworldDrawGridCameraCrosshair();
-void OverworldDrawGridMouseCrosshair(float mouseX, float mouseY);
-void OverworldDrawGridText(float mouseX, float mouseY);
+//void OverworldDrawGridMouseCrosshair(float mouseZoomedX, float mouseZoomedY);
+void OverworldDrawGridText(float mouseTransformedX, float mouseTransformedY);
+
+/// Overworld mouse functions
+//void OverworldUpdateTransformedMouseCoords(float mX, float mY);
 
 /// Camera control functions
 void OverworldApproachCameraDestination();
@@ -62,6 +76,9 @@ void OverworldUnlockCameraCaravan();
 void OverworldUnlockCameraPlace();
 
 /// Audio control functions
+void OverworldAudioUpdate();
+void OverworldBeginParallelBackgroundAudio();
+void OverworldEndParallelBackgroundAudio();
 void OverworldSwapParallelBackgroundAudioToPlace();
 void OverworldSwapParallelBackgroundAudioToField();
 

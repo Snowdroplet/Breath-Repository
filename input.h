@@ -50,8 +50,8 @@ extern bool keyInput[];
 extern bool mouseInput[];
 extern bool mousewheelInput[];
 
-extern float mouseX;
-extern float mouseY;
+extern float mouseDisplayX;
+extern float mouseDisplayY;
 
 const unsigned keyESCCooldown = 5; // 5 ticks, or 5 logic cycles.
 extern unsigned keyESCDelay;

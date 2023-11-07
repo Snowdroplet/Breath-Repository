@@ -5,6 +5,8 @@
 
 #include "UI.h"
 
+//extern float executionTime; // not literal, since the timer doesn't begin until after loading resources
+
 /// Exit state
 extern bool gameExit;
 
@@ -18,6 +20,9 @@ extern ALLEGRO_TRANSFORM cameraZoom;
 extern float cameraZoomScale;
 extern float cameraZoomTranslateX;
 extern float cameraZoomTranslateY;
+
+extern float mouseZoomTranslateX;
+extern float mouseZoomTranslateY;
 
 const float CAMERA_SCALE_MIN = 1.0;
 const float CAMERA_SCALE_MAX = 2.0;

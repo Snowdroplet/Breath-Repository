@@ -43,8 +43,8 @@ bool mousewheelInput[] =
 
 
 
-float mouseX;
-float mouseY;
+float mouseDisplayX;
+float mouseDisplayY;
 
 unsigned keyESCDelay = 0;
 unsigned mouseLeftDelay = 0;
@@ -389,8 +389,8 @@ void InputKeyup()
 
 void InputMouseXY()
 {
-    mouseX = event.mouse.x;
-    mouseY = event.mouse.y;
+    mouseDisplayX = event.mouse.x;
+    mouseDisplayY = event.mouse.y;
 }
 
 void InputMouseDown()

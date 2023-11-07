@@ -72,7 +72,7 @@ void LoadImageResources()
 
 void LoadAudioResources()
 {
-    al_reserve_samples(10); // Curiously, commenting out this line generates the above error ^^
+    al_reserve_samples(10);
     cottagesMacLeodMp3 = al_load_sample("Magic Scout - Cottages.mp3");
     manorMacLeodMp3    = al_load_sample("Magic Scout - Manor.mp3");
 

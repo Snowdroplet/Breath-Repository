@@ -132,20 +132,7 @@ int main(int argc, char *argv[])
 
     al_start_timer(FPSTimer);
 
-    parallelSampleInstancesPosition = al_get_sample_instance_position(manorSampleInstance);
-    std::cout << parallelSampleInstancesPosition << std::endl;
-    al_stop_sample_instance(manorSampleInstance); // incorrect?
-    ///al_set_sample_instance_playing(manorSampleInstance, false); // Incorrect?
-
-    //al_set_sample_instance_gain(cottagesSampleInstance,    1.0);
-    //al_set_sample_instance_pan(cottagesSampleInstance,     0.0);
-    //al_set_sample_instance_speed(cottagesSampleInstance,   1.0);
-    al_set_sample_instance_position(cottagesSampleInstance,
-                                    parallelSampleInstancesPosition); // The docs really ought to specify the value is in seconds, milliseconds, whatever
-    al_set_sample_instance_playmode(cottagesSampleInstance, ALLEGRO_PLAYMODE_LOOP);
-
-    al_play_sample_instance(cottagesSampleInstance);
-    ///al_set_sample_instance_playing(cottagesSampleInstance, true); // incorrect - position not adjusted
+    OverworldBeginParallelBackgroundAudio();
 
     while(!gameExit)
     {
@@ -166,10 +153,14 @@ int main(int argc, char *argv[])
         if(event.type == ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY)
             overworldCameraMousePanningDisabled = true;
 
+
         if(event.type == ALLEGRO_EVENT_MOUSE_AXES)
         {
             InputMouseXY();
             InputMousewheel();
+
+           // if(activeUI == UI_OVERWORLD)
+                //OverworldUpdateTransformedMouseCoords(mouseDisplayX, mouseDisplayY);
         }
 
         if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
@@ -180,6 +171,8 @@ int main(int argc, char *argv[])
 
         if(event.type == ALLEGRO_EVENT_TIMER)
         {
+            //executionTime += (1.0/FPS);
+
             redraw = true;
 
             InterpretInput();
@@ -197,7 +190,7 @@ int main(int argc, char *argv[])
 
     }
 
-    al_stop_samples();
+    OverworldEndParallelBackgroundAudio();
 
     CleanupObjects();
 
@@ -213,7 +206,7 @@ int main(int argc, char *argv[])
     al_destroy_event_queue(eventQueue);
 
     al_shutdown_native_dialog_addon();
-    al_uninstall_system(); // Automatically al_uninstall_keyboard(),
+    al_uninstall_system();
 
     return 0;
 }
@@ -227,8 +220,14 @@ void InterpretInput()
         if(cameraZoomScale < CAMERA_SCALE_MAX)
         {
             cameraZoomScale += 0.1;
+
             cameraZoomTranslateX -= SCREEN_W*0.05; // Ten 0.05s = 0.5
             cameraZoomTranslateY -= SCREEN_H*0.05;
+
+            mouseZoomTranslateX -= 0; // ?
+            mouseZoomTranslateY -= 0; // ?
+
+            std::cout << "zoom scale " << cameraZoomScale << " (" << cameraZoomScale*100 << "%)" << std::endl;
         }
 
         al_set_mouse_z(0);
@@ -238,8 +237,14 @@ void InterpretInput()
         if(cameraZoomScale > CAMERA_SCALE_MIN)
         {
             cameraZoomScale -= 0.1;
-            cameraZoomTranslateX += SCREEN_W*0.05;
+
+            cameraZoomTranslateX += SCREEN_W*0.05; // Ten 0.05s = 0.5
             cameraZoomTranslateY += SCREEN_H*0.05;
+
+            mouseZoomTranslateX += 0; // ?
+            mouseZoomTranslateY += 0; // ?
+
+            std::cout << "zoom scale " << cameraZoomScale << " (" << cameraZoomScale*100 << "%)" << std::endl;
         }
 
         al_set_mouse_z(0);
@@ -283,7 +288,8 @@ void InterpretInput()
             mouseLeftOnNoPlaceBubbles = true;
 
         if(mouseLeftOnNoCaravanBubbles && mouseLeftOnNoPlaceBubbles)
-            SetCameraCenterDestination(overworldCameraXPosition + mouseX, overworldCameraYPosition + mouseY);
+            SetCameraCenterDestination(overworldCameraXPosition + mouseDisplayX + mouseZoomTranslateX,
+                                       overworldCameraYPosition + mouseDisplayY + mouseZoomTranslateY);
 
         mouseInput[MOUSE_LEFT] = false;
     }
@@ -312,13 +318,13 @@ void InterpretInput()
     {
         if(!overworldCameraMousePanningDisabled)
         {
-            if(mouseX < 2*TILE_W)
+            if(mouseDisplayX < 2*TILE_W)
                 overworldCameraXPosition -= overworldCameraXSensitivity;
-            if(mouseX > SCREEN_W - 2*TILE_W)
+            if(mouseDisplayX > SCREEN_W - 2*TILE_W)
                 overworldCameraXPosition += overworldCameraXSensitivity;
-            if(mouseY < 2*TILE_H)
+            if(mouseDisplayY < 2*TILE_H)
                 overworldCameraYPosition -= overworldCameraYSensitivity;
-            if(mouseY > SCREEN_H - 2*TILE_H)
+            if(mouseDisplayY > SCREEN_H - 2*TILE_H)
                 overworldCameraYPosition += overworldCameraYSensitivity;
         }
     }
@@ -408,6 +414,8 @@ void UpdateUI()
             }
 
         }
+
+         OverworldAudioUpdate();
     }
 }
 
@@ -440,6 +448,8 @@ void DrawUI()
         al_scale_transform(&cameraZoom,cameraZoomScale,cameraZoomScale);
         al_translate_transform(&cameraZoom,cameraZoomTranslateX,cameraZoomTranslateY);
         al_use_transform(&cameraZoom);
+
+        // draw stuff, then revert to identity_transform before drawing UI
 
         OverworldDrawGridUnderlay();
         OverworldDrawGridCameraCrosshair();
@@ -483,8 +493,8 @@ void DrawUI()
             DrawEncyclopediaBubble();
 
         DrawCalendar();
-        //OverworldDrawGridMouseCrosshair(mouseX, mouseY);
-        OverworldDrawGridText(mouseX, mouseY);
+        //OverworldDrawGridMouseCrosshair(mouseDisplayX, mouseDisplayY);
+        OverworldDrawGridText(mouseDisplayX, mouseDisplayY);
 
     }
 }
@@ -539,10 +549,10 @@ void CleanupObjects()
 
 bool MouseLeftOnCaravanCrewBubble()
 {
-    if(mouseX > caravanCrewBubbleDrawX
-            && mouseX < caravanCrewBubbleDrawX + bubbleViewCaravan->caravanCrewBubbleWidth
-            && mouseY > caravanCrewBubbleDrawY
-            && mouseY < caravanCrewBubbleDrawY + caravanCrewBubbleHeight)
+    if(mouseDisplayX > caravanCrewBubbleDrawX
+            && mouseDisplayX < caravanCrewBubbleDrawX + bubbleViewCaravan->caravanCrewBubbleWidth
+            && mouseDisplayY > caravanCrewBubbleDrawY
+            && mouseDisplayY < caravanCrewBubbleDrawY + caravanCrewBubbleHeight)
     {
 
         return true;
@@ -553,13 +563,13 @@ bool MouseLeftOnCaravanCrewBubble()
 
 bool MouseLeftOnCaravanInventoryBubble()
 {
-    if(mouseX > caravanInventoryBubbleDrawX
-            && mouseX < caravanInventoryBubbleDrawX + bubbleViewCaravan->caravanInventoryBubbleWidth
-            && mouseY > caravanInventoryBubbleDrawY
-            && mouseY < caravanInventoryBubbleDrawY + bubbleViewCaravan->caravanInventoryBubbleHeight)
+    if(mouseDisplayX > caravanInventoryBubbleDrawX
+            && mouseDisplayX < caravanInventoryBubbleDrawX + bubbleViewCaravan->caravanInventoryBubbleWidth
+            && mouseDisplayY > caravanInventoryBubbleDrawY
+            && mouseDisplayY < caravanInventoryBubbleDrawY + bubbleViewCaravan->caravanInventoryBubbleHeight)
     {
-        int x = mouseX - caravanInventoryBubbleDrawX;
-        int y = mouseY - caravanInventoryBubbleDrawY;
+        int x = mouseDisplayX - caravanInventoryBubbleDrawX;
+        int y = mouseDisplayY - caravanInventoryBubbleDrawY;
 
         int xCell = x/TILE_W;
         int yCell = y/(TILE_H+caravanInventoryBubbleRowSpacing);
@@ -571,7 +581,7 @@ bool MouseLeftOnCaravanInventoryBubble()
             std::map<int,float>::iterator it = bubbleViewCaravan->inventory.cargo.begin();
             std::advance(it, position);
 
-            OpenEncyclopediaBubble(mouseX, mouseY, EN_CAT_CARGO, (*it).first);
+            OpenEncyclopediaBubble(mouseDisplayX, mouseDisplayY, EN_CAT_CARGO, (*it).first);
         }
 
         return true;
@@ -582,13 +592,13 @@ bool MouseLeftOnCaravanInventoryBubble()
 
 bool MouseLeftOnCaravanTradeRecordsBubble()
 {
-    if(mouseX > caravanTradeRecordsBubbleDrawX
-            && mouseX < caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubbleWidth
-            && mouseY > caravanTradeRecordsBubbleDrawY
-            && mouseY < caravanTradeRecordsBubbleDrawY + bubbleViewCaravan->caravanTradeRecordsBubbleHeight)
+    if(mouseDisplayX > caravanTradeRecordsBubbleDrawX
+            && mouseDisplayX < caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubbleWidth
+            && mouseDisplayY > caravanTradeRecordsBubbleDrawY
+            && mouseDisplayY < caravanTradeRecordsBubbleDrawY + bubbleViewCaravan->caravanTradeRecordsBubbleHeight)
     {
-        int x = mouseX - caravanTradeRecordsBubbleDrawX;
-        int y = mouseY - caravanTradeRecordsBubbleDrawY;
+        int x = mouseDisplayX - caravanTradeRecordsBubbleDrawX;
+        int y = mouseDisplayY - caravanTradeRecordsBubbleDrawY;
 
         int xCell = x/TILE_W;
         int yCell = y/(TILE_H+caravanTradeRecordsBubbleRowSpacing);
@@ -620,7 +630,7 @@ bool MouseLeftOnCaravanTradeRecordsBubble()
                         std::map<int,int>::iterator it = (*rit)->tradeQuantities.begin();
                         std::advance(it, position);
 
-                        OpenEncyclopediaBubble(mouseX, mouseY, EN_CAT_CARGO, (*it).first);
+                        OpenEncyclopediaBubble(mouseDisplayX, mouseDisplayY, EN_CAT_CARGO, (*it).first);
                     }
                 }
                 break;
@@ -637,12 +647,12 @@ bool MouseLeftOnCaravanTradeRecordsBubble()
 
 bool MouseLeftOnCaravanPathfindingBubble()
 {
-    if(mouseX > caravanPathfindingBubbleDrawX
-            && mouseX < caravanPathfindingBubbleDrawX + bubbleViewCaravan->caravanPathfindingBubbleWidth
-            && mouseY > caravanPathfindingBubbleDrawY
-            && mouseY < caravanPathfindingBubbleDrawY + caravanPathfindingBubbleHeight - TEXT_HEIGHT_8)
+    if(mouseDisplayX > caravanPathfindingBubbleDrawX
+            && mouseDisplayX < caravanPathfindingBubbleDrawX + bubbleViewCaravan->caravanPathfindingBubbleWidth
+            && mouseDisplayY > caravanPathfindingBubbleDrawY
+            && mouseDisplayY < caravanPathfindingBubbleDrawY + caravanPathfindingBubbleHeight - TEXT_HEIGHT_8)
     {
-        int x = mouseX - caravanPathfindingBubbleDrawX;
+        int x = mouseDisplayX - caravanPathfindingBubbleDrawX;
 
         int xCell = x/TILE_W; // The representation of cities is two tiles wide; every third tile is the red arrow and should not be clickable.
         if(xCell %3 != 2)
@@ -673,13 +683,13 @@ bool MouseLeftOnPlacePopulationBubble()
 
 bool MouseLeftOnPlaceCaravanseraiBubble()
 {
-    if(mouseX > placeCaravanseraiDrawX
-            && mouseX < placeCaravanseraiDrawX + bubbleViewPlace->placeCaravanseraiWidth
-            && mouseY > placeCaravanseraiDrawY
-            && mouseY < placeCaravanseraiDrawY + bubbleViewPlace->placeCaravanseraiHeight)
+    if(mouseDisplayX > placeCaravanseraiDrawX
+            && mouseDisplayX < placeCaravanseraiDrawX + bubbleViewPlace->placeCaravanseraiWidth
+            && mouseDisplayY > placeCaravanseraiDrawY
+            && mouseDisplayY < placeCaravanseraiDrawY + bubbleViewPlace->placeCaravanseraiHeight)
     {
-        int x = mouseX - placeCaravanseraiDrawX;
-        int y = mouseY - placeCaravanseraiDrawY;
+        int x = mouseDisplayX - placeCaravanseraiDrawX;
+        int y = mouseDisplayY - placeCaravanseraiDrawY;
 
         int xCell = x/TILE_W;
         int yCell = y/TILE_H;
@@ -711,13 +721,13 @@ bool MouseLeftOnPlaceDeficitBubble()
 
 bool MouseLeftOnPlaceMarketBubble()
 {
-    if(mouseX > placeMarketBubbleDrawX
-            && mouseX < placeMarketBubbleDrawX + bubbleViewPlace->placeMarketBubbleWidth
-            && mouseY > placeMarketBubbleDrawY
-            && mouseY < placeMarketBubbleDrawY + bubbleViewPlace->placeMarketBubbleHeight)
+    if(mouseDisplayX > placeMarketBubbleDrawX
+            && mouseDisplayX < placeMarketBubbleDrawX + bubbleViewPlace->placeMarketBubbleWidth
+            && mouseDisplayY > placeMarketBubbleDrawY
+            && mouseDisplayY < placeMarketBubbleDrawY + bubbleViewPlace->placeMarketBubbleHeight)
     {
-        int x = mouseX - placeMarketBubbleDrawX;
-        int y = mouseY - placeMarketBubbleDrawY;
+        int x = mouseDisplayX - placeMarketBubbleDrawX;
+        int y = mouseDisplayY - placeMarketBubbleDrawY;
 
         int xCell = x/TILE_W;
         int yCell = y/(TILE_H+placeMarketBubbleRowSpacing);
@@ -729,7 +739,7 @@ bool MouseLeftOnPlaceMarketBubble()
             std::map<int,float>::iterator it = bubbleViewPlace->market.cargo.begin();
             std::advance(it, position);
 
-            OpenEncyclopediaBubble(mouseX, mouseY, EN_CAT_CARGO, (*it).first);
+            OpenEncyclopediaBubble(mouseDisplayX, mouseDisplayY, EN_CAT_CARGO, (*it).first);
         }
 
         return true;
@@ -740,10 +750,10 @@ bool MouseLeftOnPlaceMarketBubble()
 
 bool MouseLeftOnPlaceIndustriesBubble()
 {
-    if(mouseX > placeIndustriesBubbleDrawX
-            && mouseX < placeIndustriesBubbleDrawX + placeIndustriesBubbleWidth
-            && mouseY > placeIndustriesBubbleDrawY
-            && mouseY < placeIndustriesBubbleDrawY + bubbleViewPlace->placeIndustriesBubbleHeight)
+    if(mouseDisplayX > placeIndustriesBubbleDrawX
+            && mouseDisplayX < placeIndustriesBubbleDrawX + placeIndustriesBubbleWidth
+            && mouseDisplayY > placeIndustriesBubbleDrawY
+            && mouseDisplayY < placeIndustriesBubbleDrawY + bubbleViewPlace->placeIndustriesBubbleHeight)
     {
         std::cout << "Unimplemented" << std::endl;
 
@@ -759,8 +769,10 @@ void SetCameraCenterDestination(float x, float y)
     bubbleViewPlace = nullptr;
 
     OverworldUnlockCamera();
+
     overworldCameraXDestination = x - SCREEN_W/2;
     overworldCameraYDestination = y - SCREEN_H/2;
+
     overworldCameraApproachingDestination = true;
 }
 
