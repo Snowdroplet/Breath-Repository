@@ -33,6 +33,27 @@ public:
 
     float travelSpeed;
 
+/// Status
+    int mood; // Just some random emotion taking into account vitality, purpose and happiness.
+
+    float vitality;  // Depletes on the road. Depletes faster if unadapted to environment.
+                     // Replenished at cities.
+                     // Instant death at 0.
+
+    float purpose;   // Depletes gradually.
+                     // Greatly replenished by completing objectives.
+                     // Creates new caravan to returns home if 0 or less.
+
+    float happiness; // Depletes slowly. Depletes faster if vitality is low. Depletes faster if purpose is low.
+                     // Replenishes if both vitality and purpose are high.
+                     // Becomes a bandit at 0 or less.
+
+    int objectiveA;
+    int objectiveB;
+    int objectiveC;
+
+
+
 /// Drawing
     bool facingLeft;
     //const int beingSpriteNumVariants = 2; // In total. Not counting from zero.
@@ -49,19 +70,21 @@ public:
     Being();
     ~Being();
 
+/// State functions
     void SetActive(bool a);
     void SetActivity(int act);
-
+    bool IsActive();
+/// Biography functions
     void SetName(std::string n);
     void SetAncestry(int a);
 
     void SetHometown(int h);
 
-    bool IsActive();
-
 /// Progress
     void Progress();
 
+
+/// Drawing
     void DrawName(float x, float y, int flags);
 
     void DrawActivity(float x, float y);

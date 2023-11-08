@@ -16,13 +16,14 @@ extern bool redraw;
 
 extern ALLEGRO_COLOR currentClearColor;
 
+extern ALLEGRO_TRANSFORM cameraNoTransform; // identity transform
 extern ALLEGRO_TRANSFORM cameraZoom;
 extern float cameraZoomScale;
 extern float cameraZoomTranslateX;
 extern float cameraZoomTranslateY;
 
-extern float mouseZoomTranslateX;
-extern float mouseZoomTranslateY;
+extern float mouseTransformedX;
+extern float mouseTransformedY;
 
 const float CAMERA_SCALE_MIN = 1.0;
 const float CAMERA_SCALE_MAX = 2.0;

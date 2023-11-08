@@ -10,11 +10,47 @@ int activeSubUI = SUBUI_OVERWORLD_NONE;
 int previousActiveSubUI = SUBUI_OVERWORLD_NONE;
 
 
-/// Bubble View
+/// Bubble view
 Caravan* bubbleViewCaravan;
 Place* bubbleViewPlace;
+Being* bubbleViewBeing;
 
+bool beingStatusBubbleOpen = false;
 bool encyclopediaBubbleOpen = false;
+
+/// Being status bubble
+
+void OpenBeingStatusBubble(/*float x, float y,*/ Being *b)
+{
+    beingStatusBubbleOpen = true;
+
+    bubbleViewBeing = b;
+}
+
+void CloseBeingStatusBubble()
+{
+    beingStatusBubbleOpen = false;
+    bubbleViewBeing = nullptr;
+}
+
+void DrawBeingStatusBubble()
+{
+    al_draw_filled_rounded_rectangle(beingStatusBubbleDrawX - bubblePadding,
+                                     beingStatusBubbleDrawY - bubblePadding,
+                                     beingStatusBubbleDrawX + beingStatusBubbleWidth + bubblePadding,
+                                     beingStatusBubbleDrawY + beingStatusBubbleHeight + bubblePadding,
+                                     bubbleCornerRadius,
+                                     bubbleCornerRadius,
+                                     COLKEY_UI_BUBBLE_BODY);
+
+    al_draw_rounded_rectangle(beingStatusBubbleDrawX - bubblePadding,
+                                     beingStatusBubbleDrawY - bubblePadding,
+                                     beingStatusBubbleDrawX + beingStatusBubbleWidth + bubblePadding,
+                                     beingStatusBubbleDrawY + beingStatusBubbleHeight + bubblePadding,
+                                     bubbleCornerRadius,
+                                     bubbleCornerRadius,
+                                     COLKEY_UI_BUBBLE_FRAME, 4);
+}
 
 /// Encyclopedia bubble
 int encyclopediaCurrentCategory; // = EN_CAT_LEYKIN;
@@ -96,5 +132,4 @@ void DrawEncyclopediaBubble()
                                   TEXT_HEIGHT_12, // Turns out the line spacing can be controlled by specifying a text height larger than the actual font size.
                                   ALLEGRO_ALIGN_LEFT,
                                   encyclopediaBubbleEntryText);
-
 }

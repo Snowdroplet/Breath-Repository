@@ -12,6 +12,7 @@
 
 class Caravan;
 class Place;
+class Being;
 
 /// Tiles
 const float SCREEN_W = 1280;
@@ -50,7 +51,9 @@ extern int previousActiveSubUI;
 /// Bubble View
 extern Caravan* bubbleViewCaravan;
 extern Place* bubbleViewPlace;
+extern Being* bubbleViewBeing;
 
+extern bool beingStatusBubbleOpen;
 extern bool encyclopediaBubbleOpen;
 
 /// Caravan Bubble
@@ -144,6 +147,16 @@ const float placeIndustriesBubbleRowSpacing = 4; // Arbitrary gap
 const float placeIndustriesBubbleWidth = TILE_W*6; //+ bubblePadding;
 const float placeIndustriesBubbleProgressBarOffset = 2.5*TILE_W;
 const float placeIndustriesBubbleProgressBarWidth = placeIndustriesBubbleWidth - placeIndustriesBubbleProgressBarOffset;
+
+/// Being status bubble
+const float beingStatusBubbleDrawX = SCREEN_W*9/40;
+const float beingStatusBubbleDrawY = SCREEN_H*9/25;
+const float beingStatusBubbleWidth  = TILE_W*6;
+const float beingStatusBubbleHeight = TILE_H*10;
+
+void OpenBeingStatusBubble(/*float x, float y,*/ Being *b);
+void CloseBeingStatusBubble();
+void DrawBeingStatusBubble();
 
 /// Encyclopedia bubble
 extern int encyclopediaCurrentCategory;

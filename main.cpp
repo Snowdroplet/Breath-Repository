@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
     LoadImageResources();
     LoadAudioResources();
 
-    //al_reserve_samples(2);
+    al_identity_transform(&cameraNoTransform);
 
     InitCalendar(22,30,12,2023);
 
@@ -159,8 +159,8 @@ int main(int argc, char *argv[])
             InputMouseXY();
             InputMousewheel();
 
-           // if(activeUI == UI_OVERWORLD)
-                //OverworldUpdateTransformedMouseCoords(mouseDisplayX, mouseDisplayY);
+            // if(activeUI == UI_OVERWORLD)
+            //OverworldUpdateTransformedMouseCoords(mouseDisplayX, mouseDisplayY);
         }
 
         if(event.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
@@ -187,7 +187,6 @@ int main(int argc, char *argv[])
             DrawUI();
             al_flip_display();
         }
-
     }
 
     OverworldEndParallelBackgroundAudio();
@@ -224,9 +223,6 @@ void InterpretInput()
             cameraZoomTranslateX -= SCREEN_W*0.05; // Ten 0.05s = 0.5
             cameraZoomTranslateY -= SCREEN_H*0.05;
 
-            mouseZoomTranslateX -= 0; // ?
-            mouseZoomTranslateY -= 0; // ?
-
             std::cout << "zoom scale " << cameraZoomScale << " (" << cameraZoomScale*100 << "%)" << std::endl;
         }
 
@@ -240,9 +236,6 @@ void InterpretInput()
 
             cameraZoomTranslateX += SCREEN_W*0.05; // Ten 0.05s = 0.5
             cameraZoomTranslateY += SCREEN_H*0.05;
-
-            mouseZoomTranslateX += 0; // ?
-            mouseZoomTranslateY += 0; // ?
 
             std::cout << "zoom scale " << cameraZoomScale << " (" << cameraZoomScale*100 << "%)" << std::endl;
         }
@@ -259,6 +252,7 @@ void InterpretInput()
     if(mouseInput[MOUSE_LEFT])
     {
         CloseEncyclopediaBubble();
+        CloseBeingStatusBubble();
 
         bool mouseLeftOnNoCaravanBubbles = false;
         bool mouseLeftOnNoPlaceBubbles = false;
@@ -288,26 +282,38 @@ void InterpretInput()
             mouseLeftOnNoPlaceBubbles = true;
 
         if(mouseLeftOnNoCaravanBubbles && mouseLeftOnNoPlaceBubbles)
-            SetCameraCenterDestination(overworldCameraXPosition + mouseDisplayX + mouseZoomTranslateX,
-                                       overworldCameraYPosition + mouseDisplayY + mouseZoomTranslateY);
+        {
+            mouseTransformedX = mouseDisplayX;
+            mouseTransformedY = mouseDisplayY;
+            al_invert_transform(&cameraZoom); // Don't need to invert a second time, by the way. On redraw, cameraZoom will be reset to identity_transform anyway
+            al_transform_coordinates(&cameraZoom,&mouseTransformedX,&mouseTransformedY);
+            SetCameraCenterDestination(overworldCameraXPosition + mouseTransformedX,
+                                       overworldCameraYPosition + mouseTransformedY);
+        }
 
         mouseInput[MOUSE_LEFT] = false;
     }
 
     if(keyInput[KEY_ESC])
     {
-        // Priority: 1) Close enyclopedia. 2) Close bubbles. 3) Unlock camera.
+        // Priority: 1) Close enyclopedia. 2) Close being status bubble. 2) Close caravan/place bubbles. 3) Unlock camera.
+
         if(encyclopediaBubbleOpen)
             CloseEncyclopediaBubble();
         else // ! EncyclopediaBubbleOpen
         {
-            if(bubbleViewCaravan != nullptr || bubbleViewPlace != nullptr)
+            if(beingStatusBubbleOpen)
+                CloseBeingStatusBubble();
+            else // ! beingStatusBubbleOpen
             {
-                bubbleViewCaravan = nullptr;
-                bubbleViewPlace = nullptr;
+                if(bubbleViewCaravan != nullptr || bubbleViewPlace != nullptr) // either caravan/place bubbles are open
+                {
+                    bubbleViewCaravan = nullptr;
+                    bubbleViewPlace = nullptr;
+                }
+                else // no bubbles are open
+                    OverworldUnlockCamera();
             }
-            else
-                OverworldUnlockCamera();
         }
         keyInput[KEY_ESC] = false;
     }
@@ -415,7 +421,7 @@ void UpdateUI()
 
         }
 
-         OverworldAudioUpdate();
+        OverworldAudioUpdate();
     }
 }
 
@@ -443,7 +449,6 @@ void DrawUI()
 {
     if(activeUI == UI_OVERWORLD)
     {
-
         al_identity_transform(&cameraZoom);
         al_scale_transform(&cameraZoom,cameraZoomScale,cameraZoomScale);
         al_translate_transform(&cameraZoom,cameraZoomTranslateX,cameraZoomTranslateY);
@@ -466,8 +471,7 @@ void DrawUI()
         for(std::map<int, Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
             (*it).second->DrawFlyingTexts();
 
-        al_identity_transform(&cameraZoom); // Reset to no transform
-        al_use_transform(&cameraZoom);
+        al_use_transform(&cameraNoTransform);
 
         if(bubbleViewCaravan != nullptr)
         {
@@ -488,6 +492,9 @@ void DrawUI()
             bubbleViewPlace->DrawPlaceMarketBubble();
             bubbleViewPlace->DrawPlaceIndustriesBubble();
         }
+
+        if(beingStatusBubbleOpen)
+            DrawBeingStatusBubble();
 
         if(encyclopediaBubbleOpen)
             DrawEncyclopediaBubble();
@@ -554,6 +561,14 @@ bool MouseLeftOnCaravanCrewBubble()
             && mouseDisplayY > caravanCrewBubbleDrawY
             && mouseDisplayY < caravanCrewBubbleDrawY + caravanCrewBubbleHeight)
     {
+        int x = mouseDisplayX - caravanCrewBubbleDrawX;
+        unsigned index = x/TILE_W;
+
+        if(index < bubbleViewCaravan->members.size())
+        {
+            OverworldLockCameraCaravan(bubbleViewCaravan);
+            OpenBeingStatusBubble(bubbleViewCaravan->members[index]);
+        }
 
         return true;
     }

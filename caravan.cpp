@@ -469,6 +469,7 @@ void Caravan::DrawCaravanCrewBubble()
         string_al_draw_text(builtin8,COLKEY_TEXT,caravanCrewBubbleDrawX, caravanCrewBubbleDrawY-bubblePadding-TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanCrewBubbleEmptyText);
 }
 
+
 /*
 void Caravan::DrawCaravanTravelViewBubble()
 {
