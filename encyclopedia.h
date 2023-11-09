@@ -83,9 +83,9 @@ const std::map<int, std::string>encyclopediaPlaceLore =
 
 const std::map<int, std::string>encyclopediaCargoLore =
 {
-    {IT_CORPUS, "Flesh shed by beasts, whose essences inhabit bodies only in passing.\nWhereas the Leykin are confined to their flesh, beasts exist between corpus and spiritus."},
-    {IT_PLASM, "Luminescent mold that grows on creatures who consort with spirits.\nLeykin who prefer the company of ghosts develop something like a soul, but this nascent affinity is expelled as plasm."},
-    {IT_OCULUS, "Uncanny stone that forms within the brains of creatures in long seclusion.\nSaid to be eyes of otherworldly beings, though there is no evidence that occuli can perceive anything."},
+    {IT_CORPUS, "Flesh shed by beasts, whose essences inhabit bodies only in passing.\n\nWhereas the Leykin are confined to their flesh, beasts exist between corpus and spiritus."},
+    {IT_PLASM, "Luminescent mold that grows on creatures who consort with spirits.\n\nLeykin who prefer the company of ghosts develop something like a soul, but this nascent affinity is expelled as plasm."},
+    {IT_OCULUS, "Uncanny stone that forms within the brains of creatures in long seclusion.\n\nSaid to be eyes of otherworldly beings, though there is no evidence that occuli can perceive anything."},
     {IT_DORMANT_EGG, "Transmigratory vessel to which all beasts eventually return."}, // Eggs eventually hatch into creatures suited to their domain, but the process is stunted by travel.
 
     {IT_BERRIES, "Lacking seeds or flowers, the propagation of these fruits remain a mystery."}, // The leylines are said to be their vines and roots, but from what source do leys convey nourishment?

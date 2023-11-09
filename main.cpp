@@ -494,7 +494,7 @@ void DrawUI()
         }
 
         if(beingStatusBubbleOpen)
-            DrawBeingStatusBubble();
+            bubbleViewBeing->DrawBeingStatusBubble();
 
         if(encyclopediaBubbleOpen)
             DrawEncyclopediaBubble();

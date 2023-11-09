@@ -33,25 +33,6 @@ void CloseBeingStatusBubble()
     bubbleViewBeing = nullptr;
 }
 
-void DrawBeingStatusBubble()
-{
-    al_draw_filled_rounded_rectangle(beingStatusBubbleDrawX - bubblePadding,
-                                     beingStatusBubbleDrawY - bubblePadding,
-                                     beingStatusBubbleDrawX + beingStatusBubbleWidth + bubblePadding,
-                                     beingStatusBubbleDrawY + beingStatusBubbleHeight + bubblePadding,
-                                     bubbleCornerRadius,
-                                     bubbleCornerRadius,
-                                     COLKEY_UI_BUBBLE_BODY);
-
-    al_draw_rounded_rectangle(beingStatusBubbleDrawX - bubblePadding,
-                                     beingStatusBubbleDrawY - bubblePadding,
-                                     beingStatusBubbleDrawX + beingStatusBubbleWidth + bubblePadding,
-                                     beingStatusBubbleDrawY + beingStatusBubbleHeight + bubblePadding,
-                                     bubbleCornerRadius,
-                                     bubbleCornerRadius,
-                                     COLKEY_UI_BUBBLE_FRAME, 4);
-}
-
 /// Encyclopedia bubble
 int encyclopediaCurrentCategory; // = EN_CAT_LEYKIN;
 int encyclopediaCurrentIndex; // = ANCESTRY_GENERAL;

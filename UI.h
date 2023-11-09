@@ -151,12 +151,14 @@ const float placeIndustriesBubbleProgressBarWidth = placeIndustriesBubbleWidth -
 /// Being status bubble
 const float beingStatusBubbleDrawX = SCREEN_W*9/40;
 const float beingStatusBubbleDrawY = SCREEN_H*9/25;
-const float beingStatusBubbleWidth  = TILE_W*6;
-const float beingStatusBubbleHeight = TILE_H*10;
+const float beingStatusBubbleWidth  = TILE_W*5;
+const float beingStatusBubbleBiographyPartitionHeight = 0;                                                        // Two text lines: Name, Hometown
+const float beingStatusBubbleStatsPartitionHeight = beingStatusBubbleBiographyPartitionHeight + TEXT_HEIGHT_12*2; // Three icons + bars: vitality, happiness, purpose
+const float beingStatusBubbleObjectivesPartitionHeight = beingStatusBubbleStatsPartitionHeight + TILE_H*3;        // Three text lines: Objective A, B, C
+const float beingStatusBubbleHeight = beingStatusBubbleObjectivesPartitionHeight + TEXT_HEIGHT_12*3;
 
 void OpenBeingStatusBubble(/*float x, float y,*/ Being *b);
 void CloseBeingStatusBubble();
-void DrawBeingStatusBubble();
 
 /// Encyclopedia bubble
 extern int encyclopediaCurrentCategory;
