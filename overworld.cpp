@@ -11,6 +11,8 @@ Place *overworldCameraPlace = nullptr;
 bool overworldCameraLockedOnCaravan = false;
 Caravan *overworldCameraCaravan = nullptr;
 
+/**
+
 float overworldCameraXPosition = 0;
 float overworldCameraYPosition = 0;
 
@@ -20,6 +22,7 @@ float overworldCameraYDestination;
 
 int overworldCameraXSensitivity = 16;
 int overworldCameraYSensitivity = 16;
+*/
 
 /// Audio
 //extern ALLEGRO_SAMPLE_INSTANCE *overworldParallelSampleInstance;
@@ -30,27 +33,27 @@ int overworldParallelSampleInstanceCurrentPart = OPS_COTTAGES;
 void OverworldDrawGridUnderlay()
 {
 
-    for(int x = 0; x <= SCREEN_W/TILE_W; x++) //Columns
+    for(int x = 0; x <= Display::WIDTH/Tile::WIDTH; x++) //Columns
     {
-        int owcxp = overworldCameraXPosition;
-        int tw = TILE_W;
+        int cxp = Camera::xPosition;
+        int tw = Tile::WIDTH;
 
-        al_draw_line(x*TILE_W - owcxp%tw,
+        al_draw_line(x*Tile::WIDTH - cxp%tw,
                      0,
-                     x*TILE_W - owcxp%tw,
-                     SCREEN_H,
+                     x*Tile::WIDTH - cxp%tw,
+                     Display::HEIGHT,
                      COLKEY_DEBUG_GRID_UNDERLAY,1);
     }
 
-    for(int y = 0; y <= SCREEN_H/TILE_W; y++) //Rows
+    for(int y = 0; y <= Display::HEIGHT/Tile::WIDTH; y++) //Rows
     {
-        int owcyp = overworldCameraYPosition;
-        int th = TILE_H;
+        int cyp = Camera::yPosition;
+        int th = Tile::HEIGHT;
 
         al_draw_line(0,
-                     y*TILE_H - owcyp%th,
-                     SCREEN_W,
-                     y*TILE_H - owcyp%th,
+                     y*Tile::HEIGHT - cyp%th,
+                     Display::WIDTH,
+                     y*Tile::HEIGHT - cyp%th,
                      COLKEY_DEBUG_GRID_UNDERLAY,1);
     }
 }
@@ -59,39 +62,39 @@ void OverworldDrawGridCameraCrosshair()
 {
     if(!overworldCameraLocked)
     {
-        al_draw_line(SCREEN_W/2,0,SCREEN_W/2,SCREEN_H,COLKEY_CAMERA_CROSSHAIR_FREE,1);
-        al_draw_line(0,SCREEN_H/2,SCREEN_W,SCREEN_H/2,COLKEY_CAMERA_CROSSHAIR_FREE,1);
+        al_draw_line(Display::WIDTH/2,0,Display::WIDTH/2,Display::HEIGHT,COLKEY_CAMERA_CROSSHAIR_FREE,1);
+        al_draw_line(0,Display::HEIGHT/2,Display::WIDTH,Display::HEIGHT/2,COLKEY_CAMERA_CROSSHAIR_FREE,1);
     }
     else
     {
-        al_draw_line(SCREEN_W/2,0,SCREEN_W/2,SCREEN_H,COLKEY_CAMERA_CROSSHAIR_LOCKED,1);
-        al_draw_line(0,SCREEN_H/2,SCREEN_W,SCREEN_H/2,COLKEY_CAMERA_CROSSHAIR_LOCKED,1);
+        al_draw_line(Display::WIDTH/2,0,Display::WIDTH/2,Display::HEIGHT,COLKEY_CAMERA_CROSSHAIR_LOCKED,1);
+        al_draw_line(0,Display::HEIGHT/2,Display::WIDTH,Display::HEIGHT/2,COLKEY_CAMERA_CROSSHAIR_LOCKED,1);
     }
 }
 
 /*
 void OverworldDrawGridMouseCrosshair(float mouseDisplayX, float mouseDisplayY)
 {
-    al_draw_line(mouseDisplayX, 0, mouseDisplayX, SCREEN_H, COLKEY_MOUSE_CROSSHAIR,1);
-    al_draw_line(0, mouseDisplayY, SCREEN_W, mouseDisplayY, COLKEY_MOUSE_CROSSHAIR,1);
+    al_draw_line(mouseDisplayX, 0, mouseDisplayX, Display::HEIGHT, COLKEY_MOUSE_CROSSHAIR,1);
+    al_draw_line(0, mouseDisplayY, Display::WIDTH, mouseDisplayY, COLKEY_MOUSE_CROSSHAIR,1);
 }
 */
 
 void OverworldDrawGridText(float mouseTransformedX, float mouseTransformedY)
 {
-    int cameraCrosshairXPosition = overworldCameraXPosition+SCREEN_W/2;
-    int cameraCrosshairYPosition = overworldCameraYPosition+SCREEN_H/2;
+    int cameraCrosshairXPosition = Camera::xPosition+Display::WIDTH/2;
+    int cameraCrosshairYPosition = Camera::yPosition+Display::HEIGHT/2;
 
-    int cameraCrosshairXPositionCell = cameraCrosshairXPosition/TILE_W;
-    int cameraCrosshairYPositionCell = cameraCrosshairYPosition/TILE_H;
+    int cameraCrosshairXPositionCell = cameraCrosshairXPosition/Tile::WIDTH;
+    int cameraCrosshairYPositionCell = cameraCrosshairYPosition/Tile::HEIGHT;
 
-    int mouseCrosshairXPosition = overworldCameraXPosition+mouseTransformedX;
-    int mouseCrosshairYPosition = overworldCameraYPosition+mouseTransformedY;
+    int mouseCrosshairXPosition = Camera::xPosition+mouseTransformedX;
+    int mouseCrosshairYPosition = Camera::yPosition+mouseTransformedY;
 
-    int mouseCrosshairXPositionCell = mouseCrosshairXPosition/TILE_W;
-    int mouseCrosshairYPositionCell = mouseCrosshairYPosition/TILE_H;
+    int mouseCrosshairXPositionCell = mouseCrosshairXPosition/Tile::WIDTH;
+    int mouseCrosshairYPositionCell = mouseCrosshairYPosition/Tile::HEIGHT;
 
-    int zoomPercentage = cameraZoomScale*100;
+    int zoomPercentage = Camera::zoomScale*100;
 
     std::string cameraCrosshairPositionString = "CAMERA: (" + std::to_string(cameraCrosshairXPosition) + ", " + std::to_string(cameraCrosshairYPosition) + ") : ("
             + std::to_string(cameraCrosshairXPositionCell) + ", " + std::to_string(cameraCrosshairYPositionCell) + ") "
@@ -115,13 +118,14 @@ void OverworldDrawGridText(float mouseTransformedX, float mouseTransformedY)
 void OverworldUpdateTransformedMouseCoords(float mX, float mY)
 {
 
-    mouseTransformedX = mX - cameraZoomScale*0.1*SCREEN_W;
-    mouseTransformedY = mY + cameraZoomScale*0.1*SCREEN_H;
+    mouseTransformedX = mX - cameraZoomScale*0.1*Display::WIDTH;
+    mouseTransformedY = mY + cameraZoomScale*0.1*Display::HEIGHT;
 }
 */
 
 
 /// Camera control functions
+/**
 void OverworldApproachCameraDestination()
 {
     if(overworldCameraXPosition != overworldCameraXDestination)
@@ -131,6 +135,7 @@ void OverworldApproachCameraDestination()
         overworldCameraYPosition += (overworldCameraYDestination - overworldCameraYPosition)/2;
 
 }
+*/
 
 void OverworldLockCameraPlace(Place *whichPlace)
 {

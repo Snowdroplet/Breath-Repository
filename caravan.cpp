@@ -360,7 +360,7 @@ void Caravan::CheckTradeRecordsRowLimit()
 
 void Caravan::UpdateCaravanCrewBubble()
 {
-    caravanCrewBubbleWidth = members.size()*TILE_W;
+    caravanCrewBubbleWidth = members.size()*Tile::WIDTH;
 }
 
 void Caravan::UpdateCaravanInventoryBubble()
@@ -376,8 +376,8 @@ void Caravan::UpdateCaravanInventoryBubble()
             caravanInventoryBubbleNumRows++;
     }
 
-    caravanInventoryBubbleWidth = caravanInventoryBubbleNumCols*TILE_W;
-    caravanInventoryBubbleHeight = caravanInventoryBubbleNumRows*(TILE_H+caravanInventoryBubbleRowSpacing);
+    caravanInventoryBubbleWidth = caravanInventoryBubbleNumCols*Tile::WIDTH;
+    caravanInventoryBubbleHeight = caravanInventoryBubbleNumRows*(Tile::HEIGHT+caravanInventoryBubbleRowSpacing);
 }
 
 void Caravan::UpdateCaravanTradeRecordsBubble()
@@ -391,7 +391,7 @@ void Caravan::UpdateCaravanTradeRecordsBubble()
     if(rowCount > caravanTradeRecordsBubbleBaseRows)
         caravanTradeRecordsBubbleNumRows = rowCount;
 
-    caravanTradeRecordsBubbleHeight = caravanTradeRecordsBubbleNumRows*(TILE_H+caravanTradeRecordsBubbleRowSpacing);
+    caravanTradeRecordsBubbleHeight = caravanTradeRecordsBubbleNumRows*(Tile::HEIGHT+caravanTradeRecordsBubbleRowSpacing);
 }
 
 void Caravan::UpdateCaravanPathfindingBubble()
@@ -403,8 +403,8 @@ void Caravan::UpdateCaravanPathfindingBubble()
     if(worldGraph.path.size() > caravanPathfindingBubbleNumCols)
         caravanPathfindingBubbleNumCols = worldGraph.path.size();
 
-    caravanPathfindingBubbleWidth = caravanPathfindingBubbleNumCols*(2*TILE_W+caravanPathfindingBubbleColSpacing) - caravanPathfindingBubbleColSpacing;
-    caravanPathfindingBubbleHeight = caravanPathfindingBubbleNumRows*(2*TILE_H+caravanPathfindingBubbleRowSpacing);
+    caravanPathfindingBubbleWidth = caravanPathfindingBubbleNumCols*(2*Tile::WIDTH+caravanPathfindingBubbleColSpacing) - caravanPathfindingBubbleColSpacing;
+    caravanPathfindingBubbleHeight = caravanPathfindingBubbleNumRows*(2*Tile::HEIGHT+caravanPathfindingBubbleRowSpacing);
 }
 
 void Caravan::UpdateAllBubbles()
@@ -420,7 +420,8 @@ void Caravan::DrawSpriteOnOverworld()
 {
     if(onRoad)
     {
-        DrawActivity(overworldXPosition - overworldCameraXPosition,overworldYPosition - overworldCameraYPosition);
+        ///DrawActivity(overworldXPosition - overworldCameraXPosition,overworldYPosition - overworldCameraYPosition);
+        DrawActivity(overworldXPosition - Camera::xPosition, overworldYPosition - Camera::yPosition);
     }
 
     else if(atPlace /* and the open place interface is equal to whichPlace */)
@@ -460,9 +461,9 @@ void Caravan::DrawCaravanCrewBubble()
         int s = 0;
         for(std::vector<Being*>::iterator it = members.begin(); it != members.end(); ++it)
         {
-            float drawX = caravanCrewBubbleDrawX + s*TILE_W;
-            (*it)->DrawActivity(drawX + TILE_W/2,
-                                caravanCrewBubbleDrawY + TILE_H/2);
+            float drawX = caravanCrewBubbleDrawX + s*Tile::WIDTH;
+            (*it)->DrawActivity(drawX + Tile::WIDTH/2,
+                                caravanCrewBubbleDrawY + Tile::HEIGHT/2);
         }
     }
     else
@@ -516,16 +517,16 @@ void Caravan::DrawCaravanInventoryBubble()
         unsigned i = 0;
         for(std::map<int,float>::iterator it = inventory.cargo.begin(); it != inventory.cargo.end(); ++it)
         {
-            float drawX = caravanInventoryBubbleDrawX + i%caravanInventoryBubbleNumCols*TILE_W;
-            float drawY = caravanInventoryBubbleDrawY + i/caravanInventoryBubbleNumCols*(TILE_H + caravanInventoryBubbleRowSpacing);
+            float drawX = caravanInventoryBubbleDrawX + i%caravanInventoryBubbleNumCols*Tile::WIDTH;
+            float drawY = caravanInventoryBubbleDrawY + i/caravanInventoryBubbleNumCols*(Tile::HEIGHT + caravanInventoryBubbleRowSpacing);
 
             al_draw_bitmap_region(cargoPng,
-                                  ((*it).first)*TILE_W, 0,
-                                  TILE_W, TILE_H,
+                                  ((*it).first)*Tile::WIDTH, 0,
+                                  Tile::WIDTH, Tile::HEIGHT,
                                   drawX, drawY,
                                   0);
 
-            string_al_draw_text(builtin8, COLKEY_TEXT, drawX+TILE_W, drawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
+            string_al_draw_text(builtin8, COLKEY_TEXT, drawX+Tile::WIDTH, drawY+Tile::HEIGHT, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
             i++;
         }
     }
@@ -570,7 +571,7 @@ void Caravan::DrawCaravanTradeRecordsBubble()
         {
             string_al_draw_text(builtin8, COLKEY_TEXT,
                                 caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubblePlaceNameWidth,
-                                caravanTradeRecordsBubbleDrawY + row*(TILE_H + caravanTradeRecordsBubbleRowSpacing),
+                                caravanTradeRecordsBubbleDrawY + row*(Tile::HEIGHT + caravanTradeRecordsBubbleRowSpacing),
                                 ALLEGRO_ALIGN_RIGHT,
                                 placeNames.at((*rit)->location)); //+ " (" + std::to_string((*rit)->numRows) + ")");
 
@@ -585,26 +586,26 @@ void Caravan::DrawCaravanTradeRecordsBubble()
                         row++;
                     }
 
-                    float iconDrawX = caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubblePlaceNameWidth + col*(TILE_W);
-                    float iconDrawY = caravanTradeRecordsBubbleDrawY + row*(TILE_H + caravanTradeRecordsBubbleRowSpacing);
+                    float iconDrawX = caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubblePlaceNameWidth + col*(Tile::WIDTH);
+                    float iconDrawY = caravanTradeRecordsBubbleDrawY + row*(Tile::HEIGHT + caravanTradeRecordsBubbleRowSpacing);
 
                     if((*jt).second < 0)
                         al_draw_filled_rectangle(iconDrawX, iconDrawY,
-                                                 iconDrawX+TILE_W, iconDrawY+TILE_H+caravanTradeRecordsBubbleRowSpacing,
+                                                 iconDrawX+Tile::WIDTH, iconDrawY+Tile::HEIGHT+caravanTradeRecordsBubbleRowSpacing,
                                                  COLKEY_UI_TRADERECORD_NEGATIVE);
                     else
                         al_draw_filled_rectangle(iconDrawX, iconDrawY,
-                                                 iconDrawX+TILE_W, iconDrawY+TILE_H+caravanTradeRecordsBubbleRowSpacing,
+                                                 iconDrawX+Tile::WIDTH, iconDrawY+Tile::HEIGHT+caravanTradeRecordsBubbleRowSpacing,
                                                  COLKEY_UI_TRADERECORD_POSITIVE);
 
 
                     al_draw_bitmap_region(cargoPng,
-                                          ((*jt).first)*TILE_W, 0,
-                                          TILE_W, TILE_H,
+                                          ((*jt).first)*Tile::WIDTH, 0,
+                                          Tile::WIDTH, Tile::HEIGHT,
                                           iconDrawX, iconDrawY,
                                           0);
 
-                    string_al_draw_text(builtin8, COLKEY_TEXT, iconDrawX+TILE_W, iconDrawY+TILE_H, ALLEGRO_ALIGN_RIGHT, std::to_string((*jt).second));
+                    string_al_draw_text(builtin8, COLKEY_TEXT, iconDrawX+Tile::WIDTH, iconDrawY+Tile::HEIGHT, ALLEGRO_ALIGN_RIGHT, std::to_string((*jt).second));
 
                     col++;
                 }
@@ -613,8 +614,8 @@ void Caravan::DrawCaravanTradeRecordsBubble()
             else if((*rit)->tradeQuantities.size() == 0) // tradeQuantities vector empty
             {
                 string_al_draw_text(builtin8, COLKEY_TEXT,
-                                    caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubblePlaceNameWidth + col*(TILE_W),
-                                    caravanTradeRecordsBubbleDrawY + row*(TILE_H + caravanTradeRecordsBubbleRowSpacing) + TILE_H/2 - TEXT_HEIGHT_8/2,
+                                    caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubblePlaceNameWidth + col*(Tile::WIDTH),
+                                    caravanTradeRecordsBubbleDrawY + row*(Tile::HEIGHT + caravanTradeRecordsBubbleRowSpacing) + Tile::HEIGHT/2 - TEXT_HEIGHT_8/2,
                                     ALLEGRO_ALIGN_LEFT,
                                     caravanTradeRecordsBubbleNoTransactionText);
             }
@@ -651,24 +652,24 @@ void Caravan::DrawCaravanPathfindingBubble()
 
         for(unsigned i = 0; i < worldGraph.path.size(); i++)
         {
-            float drawX = caravanPathfindingBubbleDrawX + i*(2*TILE_H+caravanPathfindingBubbleColSpacing);
+            float drawX = caravanPathfindingBubbleDrawX + i*(2*Tile::HEIGHT+caravanPathfindingBubbleColSpacing);
             float drawY = caravanPathfindingBubbleDrawY;
             al_draw_bitmap_region(overworldPlacePng,
-                                  worldGraph.path[i]*2*TILE_W, 0,
-                                  2*TILE_W, 2*TILE_H,
+                                  worldGraph.path[i]*2*Tile::WIDTH, 0,
+                                  2*Tile::WIDTH, 2*Tile::HEIGHT,
                                   drawX, drawY,
                                   0);
 
             string_al_draw_text(builtin8, COLKEY_TEXT,
-                                drawX + TILE_W, drawY + 2*TILE_H,
+                                drawX + Tile::WIDTH, drawY + 2*Tile::HEIGHT,
                                 ALLEGRO_ALIGN_CENTER,
                                 placeNames.at(worldGraph.path[i]));
 
             if(i < worldGraph.path.size()-1)
             {
                 al_draw_bitmap(redArrowPng,
-                               drawX+2*TILE_W,
-                               drawY+TILE_H/2,
+                               drawX+2*Tile::WIDTH,
+                               drawY+Tile::HEIGHT/2,
                                0);
             }
         }

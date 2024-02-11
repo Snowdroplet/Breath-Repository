@@ -9,6 +9,7 @@
 #include <allegro5/allegro_primitives.h>
 
 #include "colorindex.h"
+#include "camera.h"
 
 #include "gamestate.h"
 #include "resource.h"
@@ -32,6 +33,7 @@ extern Place*overworldCameraPlace;
 extern bool overworldCameraLockedOnCaravan;
 extern Caravan* overworldCameraCaravan;
 
+/**
 extern float overworldCameraXPosition;
 extern float overworldCameraYPosition;
 
@@ -42,10 +44,11 @@ extern float overworldCameraYDestination;
 extern int overworldCameraXSensitivity;
 extern int overworldCameraYSensitivity;
 
-const int OVERWORLD_MIN_DRAW_X = 0 - TILE_W*2; // Save drawing resources by not drawing places and beings outside this boundary
-const int OVERWORLD_MIN_DRAW_Y = 0 - TILE_H*2;
-const int OVERWORLD_MAX_DRAW_X = SCREEN_W + TILE_W*2;
-const int OVERWORLD_MAX_DRAW_Y = SCREEN_H + TILE_H*2;
+const int OVERWORLD_MIN_DRAW_X = 0 - Tile::WIDTH*2; // Save drawing resources by not drawing places and beings outside this boundary
+const int OVERWORLD_MIN_DRAW_Y = 0 - Tile::HEIGHT*2;
+const int OVERWORLD_MAX_DRAW_X = Display::WIDTH + Tile::WIDTH*2;
+const int OVERWORLD_MAX_DRAW_Y = Display::HEIGHT + Tile::HEIGHT*2;
+*/
 
 
 /// Audio
@@ -68,7 +71,7 @@ void OverworldDrawGridText(float mouseTransformedX, float mouseTransformedY);
 //void OverworldUpdateTransformedMouseCoords(float mX, float mY);
 
 /// Camera control functions
-void OverworldApproachCameraDestination();
+///void OverworldApproachCameraDestination();
 void OverworldLockCameraPlace(Place *whichPlace);
 void OverworldLockCameraCaravan(Caravan *whichCaravan);
 void OverworldUnlockCamera();

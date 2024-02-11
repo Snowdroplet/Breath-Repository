@@ -16,6 +16,7 @@ extern bool redraw;
 
 extern ALLEGRO_COLOR currentClearColor;
 
+/**
 extern ALLEGRO_TRANSFORM cameraNoTransform; // identity transform
 extern ALLEGRO_TRANSFORM cameraZoom;
 extern float cameraZoomScale;
@@ -27,11 +28,10 @@ extern float mouseTransformedY;
 
 const float CAMERA_SCALE_MIN = 1.0;
 const float CAMERA_SCALE_MAX = 2.0;
+*/
 
 /// Events and event sources
 extern ALLEGRO_TIMER *FPSTimer;
-extern ALLEGRO_EVENT_QUEUE *eventQueue;
 extern ALLEGRO_DISPLAY *display;
-extern ALLEGRO_EVENT event;
 
 #endif // GAMESTATE_H_INCLUDED

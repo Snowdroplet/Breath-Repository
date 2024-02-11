@@ -56,9 +56,9 @@ void LoadImageResources()
     {
         beingPng[i] = al_create_sub_bitmap(beingsPng,
                                            0,
-                                           i*SPRITE_TILE_H,
-                                           SPRITE_TILE_W * resourceBeingNumWalkFrames * resourceBeingNumSpriteVariants.at(i),
-                                           SPRITE_TILE_H);
+                                           i*Tile::HEIGHT,
+                                           Tile::WIDTH * resourceBeingNumWalkFrames * resourceBeingNumSpriteVariants.at(i),
+                                           Tile::HEIGHT);
     }
 
     expertiseIconPng = al_load_bitmap("placeholderExpertiseIcon.png");

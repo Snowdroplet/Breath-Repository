@@ -108,7 +108,7 @@ public:
     std::vector<Road*>connections;
 
 /// Bubbles -- General
-    const float bubblePadding = TILE_W/4;
+    const float bubblePadding = Tile::WIDTH/4;
     const float bubbleCornerRadius = 8;
 
 /// Bubbles -- Population
@@ -124,10 +124,10 @@ public:
 
 /// Bubbles -- Surplus and Deficit
     unsigned placeSurplusBubbleNumCols, placeSurplusBubbleNumRows;
-    float placeSurplusBubbleWidth, placeSurplusBubbleHeight; // Width extended by TILE_W*1.5 in UpdateplaceSurplusBubble()
+    float placeSurplusBubbleWidth, placeSurplusBubbleHeight; // Width extended by Tile::WIDTH*1.5 in UpdateplaceSurplusBubble()
 
     unsigned placeDeficitBubbleNumCols, placeDeficitBubbleNumRows;
-    float placeDeficitBubbleWidth, placeDeficitBubbleHeight; // Width extended by TILE_W*1.5 in UpdateplaceDeficitBubble()
+    float placeDeficitBubbleWidth, placeDeficitBubbleHeight; // Width extended by Tile::WIDTH*1.5 in UpdateplaceDeficitBubble()
 
 
 /// Bubbles -- Market

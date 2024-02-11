@@ -75,8 +75,8 @@ void OpenEncyclopediaBubble(float x, float y, unsigned category, unsigned index)
     encyclopediaBubbleHeight = TEXT_HEIGHT_12 * (2 + num_lines); // Turns out the line spacing can be controlled by specifying a text height larger than the actual font size. Just remember to do the same in DrawEncyclopediaBubble()
 
     // In case the bottom of the enyclopedia bubble would end up off-screen, adjust upwards.
-    if(encyclopediaBubbleDrawY + (encyclopediaBubbleHeight + 2*bubblePadding) > SCREEN_H)
-        encyclopediaBubbleDrawY = SCREEN_H - encyclopediaBubbleHeight + bubblePadding;
+    if(encyclopediaBubbleDrawY + (encyclopediaBubbleHeight + 2*bubblePadding) > Display::HEIGHT)
+        encyclopediaBubbleDrawY = Display::HEIGHT - encyclopediaBubbleHeight + bubblePadding;
 }
 
 void CloseEncyclopediaBubble()

@@ -8,10 +8,12 @@
 #include <allegro5/allegro_acodec.h>
 
 #include "UI.h"
+#include "tile.h"
 #include "beingindex.h"
 
-const unsigned SPRITE_TILE_W = 32;
-const unsigned SPRITE_TILE_H = 32;
+
+//const unsigned SPRITE_TILE_WIDTH = 32;
+//const unsigned SPRITE_TILE_HEIGHT = 32;
 
 const std::map<unsigned,unsigned>resourceBeingNumSpriteVariants
 {

@@ -14,6 +14,7 @@
 
 #include "gamestate.h"
 #include "resource.h"
+#include "camera.h"
 
 #include "inventory.h"
 

@@ -53,19 +53,19 @@ void FlyingText::DrawOnOverworld()
 {
     if(!queued)
     {
-        float drawX = overworldXPosition - overworldCameraXPosition;
-        float drawY = overworldYPosition - overworldCameraYPosition;
+        float drawX = overworldXPosition - Camera::xPosition;
+        float drawY = overworldYPosition - Camera::yPosition;
 
         al_draw_bitmap_region(miniCargoPng,
-                              itemIcon*MINI_TILE_W, 0,
-                              MINI_TILE_W, MINI_TILE_H,
+                              itemIcon*Tile::MINI_WIDTH, 0,
+                              Tile::MINI_WIDTH, Tile::MINI_HEIGHT,
                               drawX,
                               drawY,
                               0);
 
         if(scrollUp)
-            string_al_draw_text(builtin8,COLKEY_TEXT,drawX+MINI_TILE_W,drawY,ALLEGRO_ALIGN_LEFT,text);
+            string_al_draw_text(builtin8,COLKEY_TEXT,drawX+Tile::MINI_WIDTH,drawY,ALLEGRO_ALIGN_LEFT,text);
         else //scroll down
-            string_al_draw_text(builtin8,COLKEY_FLYINGTEXT_DOWN,drawX+MINI_TILE_W,drawY,ALLEGRO_ALIGN_LEFT,text);
+            string_al_draw_text(builtin8,COLKEY_FLYINGTEXT_DOWN,drawX+Tile::MINI_WIDTH,drawY,ALLEGRO_ALIGN_LEFT,text);
     }
 }

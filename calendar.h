@@ -64,8 +64,8 @@ const std::map<int, std::string>monthNames =
     {12, "December"}
 };
 
-const int CALENDAR_TEXT_DRAW_X = SCREEN_W; // Right aligned
-const int CALENDAR_TEXT_DRAW_Y = SCREEN_H - 8;
+const int CALENDAR_TEXT_DRAW_X = Display::WIDTH; // Right aligned
+const int CALENDAR_TEXT_DRAW_Y = Display::HEIGHT - 8;
 
 void InitCalendar(int startHour, int startDayOfMonth, int startMonthOfYear, int startYear);
 void AdvanceHourFrame();

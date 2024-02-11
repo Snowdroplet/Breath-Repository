@@ -49,8 +49,8 @@ void Being::SetName(std::string n)
 void Being::SetAncestry(int a)
 {
     ancestry = a;
-    spriteWidth = SPRITE_TILE_W;
-    spriteHeight = SPRITE_TILE_H;
+    spriteWidth = Tile::WIDTH;
+    spriteHeight = Tile::HEIGHT;
     spriteVariant = rand()% resourceBeingNumSpriteVariants.at(ancestry);
 }
 
@@ -72,8 +72,8 @@ void Being::Progress()
 
 void Being::DrawActivity(float x, float y)
 {
-    if(x > OVERWORLD_MIN_DRAW_X && x < OVERWORLD_MAX_DRAW_X
-            && y > OVERWORLD_MIN_DRAW_Y && y < OVERWORLD_MAX_DRAW_Y)
+    if(x > Camera::OVERWORLD_MIN_DRAW_X && x < Camera::OVERWORLD_MAX_DRAW_X
+            && y > Camera::OVERWORLD_MIN_DRAW_Y && y < Camera::OVERWORLD_MAX_DRAW_Y)
     {
         int f = 0;
         if(!facingLeft)
@@ -137,49 +137,49 @@ void Being::DrawBeingStatusBubble()
     al_draw_filled_rectangle(beingStatusBubbleDrawX,
                              beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight,
                              beingStatusBubbleDrawX + beingStatusBubbleWidth,
-                             beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + TILE_H,
+                             beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + Tile::HEIGHT,
                              COLKEY_UI_BUBBLE_BEING_STATUS_VITALITY_BODY);
 
     al_draw_rectangle(beingStatusBubbleDrawX,
                       beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight,
                       beingStatusBubbleDrawX + beingStatusBubbleWidth,
-                      beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + TILE_H,
+                      beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + Tile::HEIGHT,
                       COLKEY_UI_BUBBLE_BEING_STATUS_VITALITY_FRAME, 2);
 
     al_draw_text(builtin8,COLKEY_TEXT,beingStatusBubbleDrawX + beingStatusBubbleWidth/2,
-                 beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + TILE_H/2 - TEXT_HEIGHT_8/2,
+                 beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + Tile::HEIGHT/2 - TEXT_HEIGHT_8/2,
                   ALLEGRO_ALIGN_CENTER, "Vitality");
 // Stats: Happiness
     al_draw_filled_rectangle(beingStatusBubbleDrawX,
-                             beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + TILE_H,
+                             beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + Tile::HEIGHT,
                              beingStatusBubbleDrawX + beingStatusBubbleWidth,
-                             beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + TILE_H + TILE_H,
+                             beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + Tile::HEIGHT + Tile::HEIGHT,
                              COLKEY_UI_BUBBLE_BEING_STATUS_HAPPINESS_BODY);
 
     al_draw_rectangle(beingStatusBubbleDrawX,
-                      beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + TILE_H,
+                      beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + Tile::HEIGHT,
                       beingStatusBubbleDrawX + beingStatusBubbleWidth,
-                      beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + TILE_H + TILE_H,
+                      beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + Tile::HEIGHT + Tile::HEIGHT,
                       COLKEY_UI_BUBBLE_BEING_STATUS_HAPPINESS_FRAME, 2);
 
     al_draw_text(builtin8,COLKEY_TEXT,beingStatusBubbleDrawX + beingStatusBubbleWidth/2,
-                 beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + TILE_H + TILE_H/2 - TEXT_HEIGHT_8/2,
+                 beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + Tile::HEIGHT + Tile::HEIGHT/2 - TEXT_HEIGHT_8/2,
                   ALLEGRO_ALIGN_CENTER, "Happiness");
 // Stats: Purpose
     al_draw_filled_rectangle(beingStatusBubbleDrawX,
-                             beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + TILE_H*2,
+                             beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + Tile::HEIGHT*2,
                              beingStatusBubbleDrawX + beingStatusBubbleWidth,
-                             beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + TILE_H*2 + TILE_H,
+                             beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + Tile::HEIGHT*2 + Tile::HEIGHT,
                              COLKEY_UI_BUBBLE_BEING_STATUS_PURPOSE_BODY);
 
     al_draw_rectangle(beingStatusBubbleDrawX,
-                      beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + TILE_H*2,
+                      beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + Tile::HEIGHT*2,
                       beingStatusBubbleDrawX + beingStatusBubbleWidth,
-                      beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + TILE_H*2 + TILE_H,
+                      beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + Tile::HEIGHT*2 + Tile::HEIGHT,
                       COLKEY_UI_BUBBLE_BEING_STATUS_PURPOSE_FRAME, 2);
 
     al_draw_text(builtin8,COLKEY_TEXT,beingStatusBubbleDrawX + beingStatusBubbleWidth/2,
-                 beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + TILE_H*2 + TILE_H/2 - TEXT_HEIGHT_8/2,
+                 beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + Tile::HEIGHT*2 + Tile::HEIGHT/2 - TEXT_HEIGHT_8/2,
                  ALLEGRO_ALIGN_CENTER, "Purpose");
 }
 
