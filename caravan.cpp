@@ -17,6 +17,8 @@ Caravan::Caravan()
     whichPlace = nullptr;
     whichRoad = nullptr;
 
+    bubblesNeedUpdate = true;
+
     UpdateCaravanInventoryBubble();
     UpdateCaravanTradeRecordsBubble();
 
@@ -203,7 +205,7 @@ void Caravan::MoveToPlace(Place *p)
 
 /// Effects on UI bubbles
     if(overworldCameraCaravan == this)
-        bubbleViewPlace = p;
+        BubbleView::currentPlace = p;
 
 }
 
@@ -238,7 +240,7 @@ void Caravan::MoveToRoad(Road *r, bool isReverseRoad)
 
 /// Effects on UI bubbles
     if(overworldCameraCaravan == this)
-        bubbleViewPlace = nullptr;
+        BubbleView::currentPlace = nullptr;
 }
 
 void Caravan::MoveToRoadSegment(int a, bool isReverseRoad)
@@ -437,24 +439,24 @@ void Caravan::DrawActivity(float x, float y)
 
 void Caravan::DrawCaravanCrewBubble()
 {
-    al_draw_filled_rounded_rectangle(caravanCrewBubbleDrawX - bubblePadding,
-                                     caravanCrewBubbleDrawY - bubblePadding,
-                                     caravanCrewBubbleDrawX + caravanCrewBubbleWidth + bubblePadding,
-                                     caravanCrewBubbleDrawY + caravanCrewBubbleHeight + bubblePadding,
-                                     bubbleCornerRadius,
-                                     bubbleCornerRadius,
+    al_draw_filled_rounded_rectangle(caravanCrewBubbleDrawX - BubbleView::bubblePadding,
+                                     caravanCrewBubbleDrawY - BubbleView::bubblePadding,
+                                     caravanCrewBubbleDrawX + caravanCrewBubbleWidth + BubbleView::bubblePadding,
+                                     caravanCrewBubbleDrawY + caravanCrewBubbleHeight + BubbleView::bubblePadding,
+                                     BubbleView::bubbleCornerRadius,
+                                     BubbleView::bubbleCornerRadius,
                                      COLKEY_UI_BUBBLE_BODY);
 
 
-    al_draw_rounded_rectangle(caravanCrewBubbleDrawX - bubblePadding,
-                              caravanCrewBubbleDrawY - bubblePadding,
-                              caravanCrewBubbleDrawX + caravanCrewBubbleWidth + bubblePadding,
-                              caravanCrewBubbleDrawY + caravanCrewBubbleHeight + bubblePadding,
-                              bubbleCornerRadius,
-                              bubbleCornerRadius,
+    al_draw_rounded_rectangle(caravanCrewBubbleDrawX - BubbleView::bubblePadding,
+                              caravanCrewBubbleDrawY - BubbleView::bubblePadding,
+                              caravanCrewBubbleDrawX + caravanCrewBubbleWidth + BubbleView::bubblePadding,
+                              caravanCrewBubbleDrawY + caravanCrewBubbleHeight + BubbleView::bubblePadding,
+                              BubbleView::bubbleCornerRadius,
+                              BubbleView::bubbleCornerRadius,
                               COLKEY_UI_BUBBLE_FRAME, 4);
 
-    string_al_draw_text(builtin8,COLKEY_TEXT,caravanCrewBubbleDrawX, caravanCrewBubbleDrawY-bubblePadding-TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanCrewBubbleLabel);
+    string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanCrewBubbleDrawX, caravanCrewBubbleDrawY-BubbleView::bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanCrewBubbleLabel);
 
     if(members.size() > 0)
     {
@@ -467,50 +469,50 @@ void Caravan::DrawCaravanCrewBubble()
         }
     }
     else
-        string_al_draw_text(builtin8,COLKEY_TEXT,caravanCrewBubbleDrawX, caravanCrewBubbleDrawY-bubblePadding-TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanCrewBubbleEmptyText);
+        string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanCrewBubbleDrawX, caravanCrewBubbleDrawY-BubbleView::bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanCrewBubbleEmptyText);
 }
 
 
 /*
 void Caravan::DrawCaravanTravelViewBubble()
 {
-    al_draw_filled_rounded_rectangle(caravanTravelViewBubbleDrawX - bubblePadding,
-                                     caravanTravelViewBubbleDrawY - bubblePadding,
-                                     caravanTravelViewBubbleDrawX + caravanTravelViewBubbleWidth + bubblePadding,
-                                     caravanTravelViewBubbleDrawY + caravanTravelViewBubbleHeight + bubblePadding,
-                                     bubbleCornerRadius, bubbleCornerRadius,
+    al_draw_filled_rounded_rectangle(caravanTravelViewBubbleDrawX - BubbleView::bubblePadding,
+                                     caravanTravelViewBubbleDrawY - BubbleView::bubblePadding,
+                                     caravanTravelViewBubbleDrawX + caravanTravelViewBubbleWidth + BubbleView::bubblePadding,
+                                     caravanTravelViewBubbleDrawY + caravanTravelViewBubbleHeight + BubbleView::bubblePadding,
+                                     BubbleView::bubbleCornerRadius, BubbleView::bubbleCornerRadius,
                                      COLKEY_UI_BUBBLE_BODY);
 
 
-    al_draw_rounded_rectangle(caravanTravelViewBubbleDrawX - bubblePadding,
-                                     caravanTravelViewBubbleDrawY - bubblePadding,
-                                     caravanTravelViewBubbleDrawX + caravanTravelViewBubbleWidth + bubblePadding,
-                                     caravanTravelViewBubbleDrawY + caravanTravelViewBubbleHeight + bubblePadding,
-                                     bubbleCornerRadius, bubbleCornerRadius,
+    al_draw_rounded_rectangle(caravanTravelViewBubbleDrawX - BubbleView::bubblePadding,
+                                     caravanTravelViewBubbleDrawY - BubbleView::bubblePadding,
+                                     caravanTravelViewBubbleDrawX + caravanTravelViewBubbleWidth + BubbleView::bubblePadding,
+                                     caravanTravelViewBubbleDrawY + caravanTravelViewBubbleHeight + BubbleView::bubblePadding,
+                                     BubbleView::bubbleCornerRadius, BubbleView::bubbleCornerRadius,
                                      COLKEY_UI_BUBBLE_FRAME, 4);
 }
 */
 
 void Caravan::DrawCaravanInventoryBubble()
 {
-    al_draw_filled_rounded_rectangle(caravanInventoryBubbleDrawX - bubblePadding,
-                                     caravanInventoryBubbleDrawY - bubblePadding,
-                                     caravanInventoryBubbleDrawX + caravanInventoryBubbleWidth + bubblePadding,
-                                     caravanInventoryBubbleDrawY + caravanInventoryBubbleHeight + bubblePadding,
-                                     bubbleCornerRadius,
-                                     bubbleCornerRadius,
+    al_draw_filled_rounded_rectangle(caravanInventoryBubbleDrawX - BubbleView::bubblePadding,
+                                     caravanInventoryBubbleDrawY - BubbleView::bubblePadding,
+                                     caravanInventoryBubbleDrawX + caravanInventoryBubbleWidth + BubbleView::bubblePadding,
+                                     caravanInventoryBubbleDrawY + caravanInventoryBubbleHeight + BubbleView::bubblePadding,
+                                     BubbleView::bubbleCornerRadius,
+                                     BubbleView::bubbleCornerRadius,
                                      COLKEY_UI_BUBBLE_BODY);
 
 
-    al_draw_rounded_rectangle(caravanInventoryBubbleDrawX - bubblePadding,
-                              caravanInventoryBubbleDrawY - bubblePadding,
-                              caravanInventoryBubbleDrawX + caravanInventoryBubbleWidth + bubblePadding,
-                              caravanInventoryBubbleDrawY + caravanInventoryBubbleHeight + bubblePadding,
-                              bubbleCornerRadius,
-                              bubbleCornerRadius,
+    al_draw_rounded_rectangle(caravanInventoryBubbleDrawX - BubbleView::bubblePadding,
+                              caravanInventoryBubbleDrawY - BubbleView::bubblePadding,
+                              caravanInventoryBubbleDrawX + caravanInventoryBubbleWidth + BubbleView::bubblePadding,
+                              caravanInventoryBubbleDrawY + caravanInventoryBubbleHeight + BubbleView::bubblePadding,
+                              BubbleView::bubbleCornerRadius,
+                              BubbleView::bubbleCornerRadius,
                               COLKEY_UI_BUBBLE_FRAME, 4);
 
-    string_al_draw_text(builtin8,COLKEY_TEXT,caravanInventoryBubbleDrawX, caravanInventoryBubbleDrawY-bubblePadding-TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanInventoryBubbleLabel);
+    string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanInventoryBubbleDrawX, caravanInventoryBubbleDrawY-BubbleView::bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanInventoryBubbleLabel);
 
     if(inventory.cargo.size() > 0)
     {
@@ -526,15 +528,15 @@ void Caravan::DrawCaravanInventoryBubble()
                                   drawX, drawY,
                                   0);
 
-            string_al_draw_text(builtin8, COLKEY_TEXT, drawX+Tile::WIDTH, drawY+Tile::HEIGHT, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
+            string_al_draw_text(Resource::builtin8, COLKEY_TEXT, drawX+Tile::WIDTH, drawY+Tile::HEIGHT, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
             i++;
         }
     }
     else
-        string_al_draw_text(builtin8,COLKEY_TEXT,caravanInventoryBubbleDrawX,caravanInventoryBubbleDrawY,ALLEGRO_ALIGN_LEFT,caravanInventoryBubbleEmptyText);
+        string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanInventoryBubbleDrawX,caravanInventoryBubbleDrawY,ALLEGRO_ALIGN_LEFT,caravanInventoryBubbleEmptyText);
 
-    string_al_draw_text(builtin8,COLKEY_TEXT,caravanInventoryBubbleDrawX,
-                        caravanInventoryBubbleDrawY+caravanInventoryBubbleHeight + TEXT_HEIGHT_8,
+    string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanInventoryBubbleDrawX,
+                        caravanInventoryBubbleDrawY+caravanInventoryBubbleHeight + Resource::TEXT_HEIGHT_8,
                         ALLEGRO_ALIGN_LEFT,
                         "Weight: " + std::to_string((int)cargoWeight) + " / " + std::to_string((int)cargoWeightMax) );
 
@@ -542,25 +544,25 @@ void Caravan::DrawCaravanInventoryBubble()
 
 void Caravan::DrawCaravanTradeRecordsBubble()
 {
-    al_draw_filled_rounded_rectangle(caravanTradeRecordsBubbleDrawX - bubblePadding,
-                                     caravanTradeRecordsBubbleDrawY - bubblePadding,
-                                     caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubbleWidth + bubblePadding,
-                                     caravanTradeRecordsBubbleDrawY + caravanTradeRecordsBubbleHeight + bubblePadding,
-                                     bubbleCornerRadius,
-                                     bubbleCornerRadius,
+    al_draw_filled_rounded_rectangle(caravanTradeRecordsBubbleDrawX - BubbleView::bubblePadding,
+                                     caravanTradeRecordsBubbleDrawY - BubbleView::bubblePadding,
+                                     caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubbleWidth + BubbleView::bubblePadding,
+                                     caravanTradeRecordsBubbleDrawY + caravanTradeRecordsBubbleHeight + BubbleView::bubblePadding,
+                                     BubbleView::bubbleCornerRadius,
+                                     BubbleView::bubbleCornerRadius,
                                      COLKEY_UI_BUBBLE_BODY);
 
-    al_draw_rounded_rectangle(caravanTradeRecordsBubbleDrawX - bubblePadding,
-                              caravanTradeRecordsBubbleDrawY - bubblePadding,
-                              caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubbleWidth + bubblePadding,
-                              caravanTradeRecordsBubbleDrawY + caravanTradeRecordsBubbleHeight + bubblePadding,
-                              bubbleCornerRadius,
-                              bubbleCornerRadius,
+    al_draw_rounded_rectangle(caravanTradeRecordsBubbleDrawX - BubbleView::bubblePadding,
+                              caravanTradeRecordsBubbleDrawY - BubbleView::bubblePadding,
+                              caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubbleWidth + BubbleView::bubblePadding,
+                              caravanTradeRecordsBubbleDrawY + caravanTradeRecordsBubbleHeight + BubbleView::bubblePadding,
+                              BubbleView::bubbleCornerRadius,
+                              BubbleView::bubbleCornerRadius,
                               COLKEY_UI_BUBBLE_FRAME,
                               4);
 
 
-    string_al_draw_text(builtin8, COLKEY_TEXT, caravanTradeRecordsBubbleDrawX, caravanTradeRecordsBubbleDrawY-bubblePadding-TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanTradeRecordsBubbleLabel);
+    string_al_draw_text(Resource::builtin8, COLKEY_TEXT, caravanTradeRecordsBubbleDrawX, caravanTradeRecordsBubbleDrawY-BubbleView::bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanTradeRecordsBubbleLabel);
 
     if(tradeRecords.size() > 0)
     {
@@ -569,7 +571,7 @@ void Caravan::DrawCaravanTradeRecordsBubble()
 
         for(std::vector<TradeRecord*>::reverse_iterator rit = tradeRecords.rbegin(); rit != tradeRecords.rend(); ++rit)
         {
-            string_al_draw_text(builtin8, COLKEY_TEXT,
+            string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
                                 caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubblePlaceNameWidth,
                                 caravanTradeRecordsBubbleDrawY + row*(Tile::HEIGHT + caravanTradeRecordsBubbleRowSpacing),
                                 ALLEGRO_ALIGN_RIGHT,
@@ -605,7 +607,7 @@ void Caravan::DrawCaravanTradeRecordsBubble()
                                           iconDrawX, iconDrawY,
                                           0);
 
-                    string_al_draw_text(builtin8, COLKEY_TEXT, iconDrawX+Tile::WIDTH, iconDrawY+Tile::HEIGHT, ALLEGRO_ALIGN_RIGHT, std::to_string((*jt).second));
+                    string_al_draw_text(Resource::builtin8, COLKEY_TEXT, iconDrawX+Tile::WIDTH, iconDrawY+Tile::HEIGHT, ALLEGRO_ALIGN_RIGHT, std::to_string((*jt).second));
 
                     col++;
                 }
@@ -613,9 +615,9 @@ void Caravan::DrawCaravanTradeRecordsBubble()
             }
             else if((*rit)->tradeQuantities.size() == 0) // tradeQuantities vector empty
             {
-                string_al_draw_text(builtin8, COLKEY_TEXT,
+                string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
                                     caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubblePlaceNameWidth + col*(Tile::WIDTH),
-                                    caravanTradeRecordsBubbleDrawY + row*(Tile::HEIGHT + caravanTradeRecordsBubbleRowSpacing) + Tile::HEIGHT/2 - TEXT_HEIGHT_8/2,
+                                    caravanTradeRecordsBubbleDrawY + row*(Tile::HEIGHT + caravanTradeRecordsBubbleRowSpacing) + Tile::HEIGHT/2 - Resource::TEXT_HEIGHT_8/2,
                                     ALLEGRO_ALIGN_LEFT,
                                     caravanTradeRecordsBubbleNoTransactionText);
             }
@@ -625,25 +627,25 @@ void Caravan::DrawCaravanTradeRecordsBubble()
         }
     }
     else
-        string_al_draw_text(builtin8,COLKEY_TEXT,caravanTradeRecordsBubbleDrawX, caravanTradeRecordsBubbleDrawY, ALLEGRO_ALIGN_LEFT, caravanTradeRecordsBubbleEmptyText);
+        string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanTradeRecordsBubbleDrawX, caravanTradeRecordsBubbleDrawY, ALLEGRO_ALIGN_LEFT, caravanTradeRecordsBubbleEmptyText);
 }
 
 void Caravan::DrawCaravanPathfindingBubble()
 {
-    al_draw_filled_rounded_rectangle(caravanPathfindingBubbleDrawX - bubblePadding,
-                                     caravanPathfindingBubbleDrawY - bubblePadding,
-                                     caravanPathfindingBubbleDrawX + caravanPathfindingBubbleWidth + bubblePadding,
-                                     caravanPathfindingBubbleDrawY + caravanPathfindingBubbleHeight + bubblePadding,
-                                     bubbleCornerRadius,
-                                     bubbleCornerRadius,
+    al_draw_filled_rounded_rectangle(caravanPathfindingBubbleDrawX - BubbleView::bubblePadding,
+                                     caravanPathfindingBubbleDrawY - BubbleView::bubblePadding,
+                                     caravanPathfindingBubbleDrawX + caravanPathfindingBubbleWidth + BubbleView::bubblePadding,
+                                     caravanPathfindingBubbleDrawY + caravanPathfindingBubbleHeight + BubbleView::bubblePadding,
+                                     BubbleView::bubbleCornerRadius,
+                                     BubbleView::bubbleCornerRadius,
                                      COLKEY_UI_BUBBLE_BODY);
 
-    al_draw_rounded_rectangle(caravanPathfindingBubbleDrawX - bubblePadding,
-                              caravanPathfindingBubbleDrawY - bubblePadding,
-                              caravanPathfindingBubbleDrawX + caravanPathfindingBubbleWidth + bubblePadding,
-                              caravanPathfindingBubbleDrawY + caravanPathfindingBubbleHeight + bubblePadding,
-                              bubbleCornerRadius,
-                              bubbleCornerRadius,
+    al_draw_rounded_rectangle(caravanPathfindingBubbleDrawX - BubbleView::bubblePadding,
+                              caravanPathfindingBubbleDrawY - BubbleView::bubblePadding,
+                              caravanPathfindingBubbleDrawX + caravanPathfindingBubbleWidth + BubbleView::bubblePadding,
+                              caravanPathfindingBubbleDrawY + caravanPathfindingBubbleHeight + BubbleView::bubblePadding,
+                              BubbleView::bubbleCornerRadius,
+                              BubbleView::bubbleCornerRadius,
                               COLKEY_UI_BUBBLE_FRAME,
                               4);
 
@@ -654,13 +656,13 @@ void Caravan::DrawCaravanPathfindingBubble()
         {
             float drawX = caravanPathfindingBubbleDrawX + i*(2*Tile::HEIGHT+caravanPathfindingBubbleColSpacing);
             float drawY = caravanPathfindingBubbleDrawY;
-            al_draw_bitmap_region(overworldPlacePng,
+            al_draw_bitmap_region(Resource::overworldPlacePng,
                                   worldGraph.path[i]*2*Tile::WIDTH, 0,
                                   2*Tile::WIDTH, 2*Tile::HEIGHT,
                                   drawX, drawY,
                                   0);
 
-            string_al_draw_text(builtin8, COLKEY_TEXT,
+            string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
                                 drawX + Tile::WIDTH, drawY + 2*Tile::HEIGHT,
                                 ALLEGRO_ALIGN_CENTER,
                                 placeNames.at(worldGraph.path[i]));
@@ -676,13 +678,13 @@ void Caravan::DrawCaravanPathfindingBubble()
     }
     else
     {
-        string_al_draw_text(builtin8, COLKEY_TEXT,
+        string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
                             caravanPathfindingBubbleDrawX+caravanPathfindingBubbleWidth/2,
-                            caravanPathfindingBubbleDrawY+caravanPathfindingBubbleWidth/2 - TEXT_HEIGHT_8,
+                            caravanPathfindingBubbleDrawY+caravanPathfindingBubbleWidth/2 - Resource::TEXT_HEIGHT_8,
                             ALLEGRO_ALIGN_CENTER, caravanPathfindingBubbleEmptyText);
     }
-    string_al_draw_text(builtin8,COLKEY_TEXT,
+    string_al_draw_text(Resource::builtin8,COLKEY_TEXT,
                         caravanPathfindingBubbleDrawX,
-                        caravanPathfindingBubbleDrawY-bubblePadding-TEXT_HEIGHT_8,
+                        caravanPathfindingBubbleDrawY-BubbleView::bubblePadding-Resource::TEXT_HEIGHT_8,
                         ALLEGRO_ALIGN_LEFT, caravanPathfindingBubbleLabel);
 }

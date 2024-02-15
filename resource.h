@@ -7,13 +7,33 @@
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
 
-#include "UI.h"
 #include "tile.h"
 #include "beingindex.h"
 
+struct Resource
+{
+    static constexpr float TEXT_HEIGHT_8 = 8;
+    static constexpr float TEXT_HEIGHT_12 = 12;
+    static constexpr float TEXT_HEIGHT_16 = 16;
 
-//const unsigned SPRITE_TILE_WIDTH = 32;
-//const unsigned SPRITE_TILE_HEIGHT = 32;
+    static ALLEGRO_FONT *builtin8;
+    //extern ALLEGRO_BITMAP *builtin16Tga;
+    //extern ALLEGRO_FONT *builtin16;
+    //extern ALLEGRO_FONT *spaceMono16;
+
+    static ALLEGRO_BITMAP *overworldPlacePng;
+
+
+
+    static void LoadFontResources();
+    static void LoadImageResources();
+    static void LoadAudioResources();
+
+    static void UnloadFontResources();
+    static void UnloadImageResources();
+    static void UnloadAudioResources();
+
+};
 
 const std::map<unsigned,unsigned>resourceBeingNumSpriteVariants
 {
@@ -27,14 +47,6 @@ const std::map<unsigned,unsigned>resourceBeingNumSpriteVariants
     {ANCESTRY_HAPHAE, 2}
 };
 const unsigned resourceBeingNumWalkFrames = 2;
-
-extern ALLEGRO_FONT *builtin8;
-//extern ALLEGRO_BITMAP *builtin16Tga;
-//extern ALLEGRO_FONT *builtin16;
-//extern ALLEGRO_FONT *spaceMono16;
-
-extern ALLEGRO_BITMAP *overworldPlacePng;
-
 extern ALLEGRO_BITMAP *beingsPng;
 extern ALLEGRO_BITMAP *beingPng[NUM_ANCESTRIES];
 
@@ -61,13 +73,5 @@ extern ALLEGRO_SAMPLE_INSTANCE *cottagesSampleInstance;
 extern ALLEGRO_SAMPLE_INSTANCE *manorSampleInstance;
 
 //extern std::map<int, *ALLEGRO_SAMPLE_INSTANCE>allegroSampleInstances;
-
-void LoadFontResources();
-void LoadImageResources();
-void LoadAudioResources();
-
-void UnloadFontResources();
-void UnloadImageResources();
-void UnloadAudioResources();
 
 #endif // RESOURCE_H_INCLUDED

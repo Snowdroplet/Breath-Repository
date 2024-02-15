@@ -6,7 +6,6 @@
 
 #include "colorindex.h"
 
-#include "gamestate.h"
 #include "overworld.h"
 #include "roadindex.h"
 #include "placeindex.h"

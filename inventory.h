@@ -6,7 +6,6 @@
 
 #include "inventoryindex.h"
 
-#include "UI.h"
 #include "resource.h"
 
 /*

@@ -28,17 +28,21 @@ Todo next:
 #include <physfs.h>
 #include "allegrocustom.h"
 
-#include "gamestate.h"
 #include "event.h"
+#include "timer.h"
 #include "camera.h"
 #include "resource.h"
+#include "scene.h"
 #include "being.h"
 #include "caravan.h"
 #include "road.h"
 #include "place.h"
 #include "overworld.h"
 #include "calendar.h"
-#include "encyclopedia.h"
+
+bool gameExit = false;
+
+bool redraw = false;
 
 void Initialize();
 void Deinitialize();
@@ -46,8 +50,6 @@ void Deinitialize();
 void InterpretInput();
 void ProgressWorld();
 void UpdateUI();
-
-void ChangeUI(int whichUI, int whichSubUI);
 
 void DrawUI();
 
@@ -73,8 +75,8 @@ int main(int argc, char *argv[])
     al_install_system(ALLEGRO_VERSION_INT,NULL);
     al_init_native_dialog_addon();
 
-    display = al_create_display(Display::WIDTH, Display::HEIGHT);
-    if(!display)
+    Display::display = al_create_display(Display::WIDTH, Display::HEIGHT);
+    if(!Display::display)
     {
         al_show_native_message_box(NULL,"Initialization Failed", "", "al_create_display() failed", NULL, 0);
         return -1;
@@ -100,12 +102,12 @@ int main(int argc, char *argv[])
     al_init_font_addon();
     al_init_ttf_addon();
 
-    FPSTimer = al_create_timer(1.0/FPS);
+    Timer::FPSTimer = al_create_timer(1.0/Timer::FPS);
 
     Event::eventQueue = al_create_event_queue();
 
-    al_register_event_source(Event::eventQueue, al_get_display_event_source(display));
-    al_register_event_source(Event::eventQueue, al_get_timer_event_source(FPSTimer));
+    al_register_event_source(Event::eventQueue, al_get_display_event_source(Display::display));
+    al_register_event_source(Event::eventQueue, al_get_timer_event_source(Timer::FPSTimer));
     al_register_event_source(Event::eventQueue, al_get_keyboard_event_source());
     al_register_event_source(Event::eventQueue, al_get_mouse_event_source());
 
@@ -119,13 +121,13 @@ int main(int argc, char *argv[])
     al_set_physfs_file_interface();
 
     AllegroCustomColours();
-    LoadFontResources();
-    LoadImageResources();
-    LoadAudioResources();
+    Resource::LoadFontResources();
+    Resource::LoadImageResources();
+    Resource::LoadAudioResources();
 
     Initialize();
 
-    al_start_timer(FPSTimer);
+    al_start_timer(Timer::FPSTimer);
 
     al_identity_transform(&Camera::noTransform);
 
@@ -190,15 +192,15 @@ int main(int argc, char *argv[])
 
     Deinitialize();
 
-    UnloadFontResources();
-    UnloadImageResources();
-    UnloadAudioResources();
+    Resource::UnloadFontResources();
+    Resource::UnloadImageResources();
+    Resource::UnloadAudioResources();
 
     PHYSFS_deinit();
 
     al_uninstall_audio();
-    al_destroy_display(display);
-    al_destroy_timer(FPSTimer);
+    al_destroy_display(Display::display);
+    al_destroy_timer(Timer::FPSTimer);
     al_destroy_event_queue(Event::eventQueue);
 
     al_shutdown_native_dialog_addon();
@@ -209,7 +211,9 @@ int main(int argc, char *argv[])
 
 void Initialize()
 {
+    Scene::Initialize();
     Camera::Initialize();
+    BubbleView::Initialize();
 
     InitCalendar(22,30,12,2023);
 
@@ -234,7 +238,8 @@ void Initialize()
         ((*it).second)->GenerateCitizenCaravans();
     }
 
-    ChangeUI(UI_OVERWORLD,SUBUI_OVERWORLD_NONE);
+    Scene::ChangeScene(Scene::SCENE_OVERWORLD,Scene::SUBSCENE_OVERWORLD_NONE);
+    currentClearColor = COL_JADE_3;
 }
 
 void Deinitialize()
@@ -275,7 +280,7 @@ void InterpretInput()
             Camera::zoomTranslateX -= Display::WIDTH*0.05; // Ten 0.05s = 0.5
             Camera::zoomTranslateY -= Display::HEIGHT*0.05;
 
-            std::cout << "zoom scale " << Camera::zoomScale << " (" << Camera::zoomScale*100 << "%)" << std::endl;
+            //std::cout << "zoom scale " << Camera::zoomScale << " (" << Camera::zoomScale*100 << "%)" << std::endl;
         }
 
         al_set_mouse_z(0);
@@ -289,7 +294,7 @@ void InterpretInput()
             Camera::zoomTranslateX += Display::WIDTH*0.05; // Ten 0.05s = 0.5
             Camera::zoomTranslateY += Display::HEIGHT*0.05;
 
-            std::cout << "zoom scale " << Camera::zoomScale << " (" << Camera::zoomScale*100 << "%)" << std::endl;
+            //std::cout << "zoom scale " << Camera::zoomScale << " (" << Camera::zoomScale*100 << "%)" << std::endl;
         }
 
         al_set_mouse_z(0);
@@ -303,13 +308,13 @@ void InterpretInput()
 
     if(Event::mouseButtonHoldTicks[Event::MOUSE_LEFT] == 1)
     {
-        CloseEncyclopediaBubble();
-        CloseBeingStatusBubble();
+        BubbleView::CloseEncyclopediaBubble();
+        BubbleView::CloseBeingStatusBubble();
 
         bool mouseLeftOnNoCaravanBubbles = false;
         bool mouseLeftOnNoPlaceBubbles = false;
 
-        if(bubbleViewCaravan != nullptr)
+        if(BubbleView::currentCaravan != nullptr)
         {
             if(!MouseLeftOnCaravanCrewBubble())
                 if(!MouseLeftOnCaravanInventoryBubble())
@@ -317,10 +322,10 @@ void InterpretInput()
                         if(!MouseLeftOnCaravanPathfindingBubble())
                             mouseLeftOnNoCaravanBubbles = true;
         }
-        else // bubbleViewCaravan == nullptr
+        else // BubbleView::currentCaravan == nullptr
             mouseLeftOnNoCaravanBubbles = true;
 
-        if(bubbleViewPlace != nullptr)
+        if(BubbleView::currentPlace != nullptr)
         {
             if(!MouseLeftOnPlacePopulationBubble())
                 if(!MouseLeftOnPlaceCaravanseraiBubble())
@@ -330,7 +335,7 @@ void InterpretInput()
                                 if(!MouseLeftOnPlaceIndustriesBubble())
                                     mouseLeftOnNoPlaceBubbles = true;
         }
-        else // bubbleViewPlace = nullptr
+        else // BubbleView::currentPlace = nullptr
             mouseLeftOnNoPlaceBubbles = true;
 
         if(mouseLeftOnNoCaravanBubbles && mouseLeftOnNoPlaceBubbles)
@@ -350,18 +355,18 @@ void InterpretInput()
     {
         // Priority: 1) Close enyclopedia. 2) Close being status bubble. 2) Close caravan/place bubbles. 3) Unlock camera.
 
-        if(encyclopediaBubbleOpen)
-            CloseEncyclopediaBubble();
+        if(BubbleView::encyclopediaBubbleOpen)
+            BubbleView::CloseEncyclopediaBubble();
         else // ! EncyclopediaBubbleOpen
         {
-            if(beingStatusBubbleOpen)
-                CloseBeingStatusBubble();
-            else // ! beingStatusBubbleOpen
+            if(BubbleView::BubbleView::beingStatusBubbleOpen)
+                BubbleView::CloseBeingStatusBubble();
+            else // ! BubbleView::beingStatusBubbleOpen
             {
-                if(bubbleViewCaravan != nullptr || bubbleViewPlace != nullptr) // either caravan/place bubbles are open
+                if(BubbleView::currentCaravan != nullptr || BubbleView::currentPlace != nullptr) // either caravan/place bubbles are open
                 {
-                    bubbleViewCaravan = nullptr;
-                    bubbleViewPlace = nullptr;
+                    BubbleView::currentCaravan = nullptr;
+                    BubbleView::currentPlace = nullptr;
                 }
                 else // no bubbles are open
                     OverworldUnlockCamera();
@@ -391,19 +396,19 @@ void InterpretInput()
     {
         // Reestablishes bubbles of locked place/caravan, in case they have been closed (nullptr'd).
         if(overworldCameraLockedOnPlace)
-            bubbleViewPlace = overworldCameraPlace;
+            BubbleView::currentPlace = overworldCameraPlace;
         else if(overworldCameraLockedOnCaravan)
         {
-            bubbleViewCaravan = overworldCameraCaravan;
-            if(bubbleViewCaravan->atPlace)
-                bubbleViewPlace = bubbleViewCaravan->whichPlace;
+            BubbleView::currentCaravan = overworldCameraCaravan;
+            if(BubbleView::currentCaravan->atPlace)
+                BubbleView::currentPlace = BubbleView::currentCaravan->whichPlace;
         }
     }
 }
 
 void ProgressWorld()
 {
-    if(activeUI == UI_OVERWORLD)
+    if(Scene::activeScene == Scene::SCENE_OVERWORLD)
     {
         AdvanceHourFrame();
         UpdateCalendarText();
@@ -451,7 +456,7 @@ void ProgressWorld()
 
 void UpdateUI()
 {
-    if(activeUI == UI_OVERWORLD)
+    if(Scene::activeScene == Scene::SCENE_OVERWORLD)
     {
         if(overworldCameraLockedOnCaravan)
         {
@@ -468,7 +473,6 @@ void UpdateUI()
                 {
                     Camera::WarpToDestination();
                     AttemptCameraLockOn();
-                    ///Camera::ApproachingDestination = false;
                 }
 
             }
@@ -479,29 +483,9 @@ void UpdateUI()
     }
 }
 
-
-void ChangeUI(int whichUI, int whichSubUI)
-{
-    UIChangeDelay = true;
-
-    if(whichUI != activeUI)
-        previousActiveUI = activeUI;
-    if(whichSubUI != activeSubUI)
-        previousActiveSubUI = activeSubUI;
-
-    activeUI = whichUI;
-    activeSubUI = whichSubUI;
-
-    if(activeUI == UI_OVERWORLD)
-    {
-        currentClearColor = COL_JADE_3;
-    }
-}
-
-
 void DrawUI()
 {
-    if(activeUI == UI_OVERWORLD)
+    if(Scene::activeScene == Scene::SCENE_OVERWORLD)
     {
         al_identity_transform(&Camera::zoomTransform);
         al_scale_transform(&Camera::zoomTransform,Camera::zoomScale,Camera::zoomScale);
@@ -527,31 +511,31 @@ void DrawUI()
 
         al_use_transform(&Camera::noTransform);
 
-        if(bubbleViewCaravan != nullptr)
+        if(BubbleView::currentCaravan != nullptr)
         {
-            bubbleViewCaravan->DrawCaravanCrewBubble();
-            //bubbleViewCaravan->DrawCaravanTravelViewBubble();
-            bubbleViewCaravan->DrawCaravanInventoryBubble();
-            bubbleViewCaravan->DrawCaravanTradeRecordsBubble();
-            bubbleViewCaravan->DrawCaravanPathfindingBubble();
+            BubbleView::currentCaravan->DrawCaravanCrewBubble();
+            //BubbleView::currentCaravan->DrawCaravanTravelViewBubble();
+            BubbleView::currentCaravan->DrawCaravanInventoryBubble();
+            BubbleView::currentCaravan->DrawCaravanTradeRecordsBubble();
+            BubbleView::currentCaravan->DrawCaravanPathfindingBubble();
         }
-        if(bubbleViewPlace != nullptr)
+        if(BubbleView::currentPlace != nullptr)
         {
-            bubbleViewPlace->DrawPlacePopulationBubble();
-            bubbleViewPlace->DrawPlaceCaravanseraiBubble();
+            BubbleView::currentPlace->DrawPlacePopulationBubble();
+            BubbleView::currentPlace->DrawPlaceCaravanseraiBubble();
 
-            bubbleViewPlace->DrawPlaceSurplusBubble();
-            bubbleViewPlace->DrawPlaceDeficitBubble();
+            BubbleView::currentPlace->DrawPlaceSurplusBubble();
+            BubbleView::currentPlace->DrawPlaceDeficitBubble();
 
-            bubbleViewPlace->DrawPlaceMarketBubble();
-            bubbleViewPlace->DrawPlaceIndustriesBubble();
+            BubbleView::currentPlace->DrawPlaceMarketBubble();
+            BubbleView::currentPlace->DrawPlaceIndustriesBubble();
         }
 
-        if(beingStatusBubbleOpen)
-            bubbleViewBeing->DrawBeingStatusBubble();
+        if(BubbleView::beingStatusBubbleOpen)
+            BubbleView::DrawBeingStatusBubble(BubbleView::currentBeing);
 
-        if(encyclopediaBubbleOpen)
-            DrawEncyclopediaBubble();
+        if(BubbleView::encyclopediaBubbleOpen)
+            BubbleView::DrawEncyclopediaBubble();
 
         DrawCalendar();
         //OverworldDrawGridMouseCrosshair(mouseDisplayX, mouseDisplayY);
@@ -563,17 +547,17 @@ void DrawUI()
 bool MouseLeftOnCaravanCrewBubble()
 {
     if(Event::mouseDisplayX > caravanCrewBubbleDrawX
-            && Event::mouseDisplayX < caravanCrewBubbleDrawX + bubbleViewCaravan->caravanCrewBubbleWidth
+            && Event::mouseDisplayX < caravanCrewBubbleDrawX + BubbleView::currentCaravan->caravanCrewBubbleWidth
             && Event::mouseDisplayY > caravanCrewBubbleDrawY
             && Event::mouseDisplayY < caravanCrewBubbleDrawY + caravanCrewBubbleHeight)
     {
         int x = Event::mouseDisplayX - caravanCrewBubbleDrawX;
         unsigned index = x/Tile::WIDTH;
 
-        if(index < bubbleViewCaravan->members.size())
+        if(index < BubbleView::currentCaravan->members.size())
         {
-            OverworldLockCameraCaravan(bubbleViewCaravan);
-            OpenBeingStatusBubble(bubbleViewCaravan->members[index]);
+            OverworldLockCameraCaravan(BubbleView::currentCaravan);
+            BubbleView::OpenBeingStatusBubble(BubbleView::currentCaravan->members[index]);
         }
 
         return true;
@@ -585,9 +569,9 @@ bool MouseLeftOnCaravanCrewBubble()
 bool MouseLeftOnCaravanInventoryBubble()
 {
     if(Event::mouseDisplayX > caravanInventoryBubbleDrawX
-            && Event::mouseDisplayX < caravanInventoryBubbleDrawX + bubbleViewCaravan->caravanInventoryBubbleWidth
+            && Event::mouseDisplayX < caravanInventoryBubbleDrawX + BubbleView::currentCaravan->caravanInventoryBubbleWidth
             && Event::mouseDisplayY > caravanInventoryBubbleDrawY
-            && Event::mouseDisplayY < caravanInventoryBubbleDrawY + bubbleViewCaravan->caravanInventoryBubbleHeight)
+            && Event::mouseDisplayY < caravanInventoryBubbleDrawY + BubbleView::currentCaravan->caravanInventoryBubbleHeight)
     {
         int x = Event::mouseDisplayX - caravanInventoryBubbleDrawX;
         int y = Event::mouseDisplayY - caravanInventoryBubbleDrawY;
@@ -595,14 +579,14 @@ bool MouseLeftOnCaravanInventoryBubble()
         int xCell = x/Tile::WIDTH;
         int yCell = y/(Tile::HEIGHT+caravanInventoryBubbleRowSpacing);
 
-        unsigned position = yCell*(bubbleViewCaravan->caravanInventoryBubbleNumCols) + xCell;
+        unsigned position = yCell*(BubbleView::currentCaravan->caravanInventoryBubbleNumCols) + xCell;
 
-        if(position < bubbleViewCaravan->inventory.cargo.size())
+        if(position < BubbleView::currentCaravan->inventory.cargo.size())
         {
-            std::map<int,float>::iterator it = bubbleViewCaravan->inventory.cargo.begin();
+            std::map<int,float>::iterator it = BubbleView::currentCaravan->inventory.cargo.begin();
             std::advance(it, position);
 
-            OpenEncyclopediaBubble(Event::mouseDisplayX, Event::mouseDisplayY, EN_CAT_CARGO, (*it).first);
+            BubbleView::OpenEncyclopediaBubble(Event::mouseDisplayX, Event::mouseDisplayY, EN_CAT_CARGO, (*it).first);
         }
 
         return true;
@@ -616,7 +600,7 @@ bool MouseLeftOnCaravanTradeRecordsBubble()
     if(Event::mouseDisplayX > caravanTradeRecordsBubbleDrawX
             && Event::mouseDisplayX < caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubbleWidth
             && Event::mouseDisplayY > caravanTradeRecordsBubbleDrawY
-            && Event::mouseDisplayY < caravanTradeRecordsBubbleDrawY + bubbleViewCaravan->caravanTradeRecordsBubbleHeight)
+            && Event::mouseDisplayY < caravanTradeRecordsBubbleDrawY + BubbleView::currentCaravan->caravanTradeRecordsBubbleHeight)
     {
         int x = Event::mouseDisplayX - caravanTradeRecordsBubbleDrawX;
         int y = Event::mouseDisplayY - caravanTradeRecordsBubbleDrawY;
@@ -626,7 +610,7 @@ bool MouseLeftOnCaravanTradeRecordsBubble()
 
         int ritRecordRowMin = 0;
         int ritRecordRowMax = 0;
-        for(std::vector<TradeRecord*>::reverse_iterator rit = bubbleViewCaravan->tradeRecords.rbegin(); rit != bubbleViewCaravan->tradeRecords.rend(); ++rit)
+        for(std::vector<TradeRecord*>::reverse_iterator rit = BubbleView::currentCaravan->tradeRecords.rbegin(); rit != BubbleView::currentCaravan->tradeRecords.rend(); ++rit)
         {
             ritRecordRowMax = ritRecordRowMin + (*rit)->numRows-1;
             if(yCell >= ritRecordRowMin && yCell <= ritRecordRowMax)
@@ -636,7 +620,7 @@ bool MouseLeftOnCaravanTradeRecordsBubble()
                     Place::places[(*rit)->location]->UpdateAllBubbles();
                     OverworldLockCameraPlace(Place::places[(*rit)->location]);
 
-                    OpenEncyclopediaBubble(Display::WIDTH/2 - encyclopediaBubbleWidth/2,
+                    BubbleView::OpenEncyclopediaBubble(Display::WIDTH/2 - encyclopediaBubbleWidth/2,
                                            Display::HEIGHT/2 + 2*Tile::HEIGHT,
                                            EN_CAT_PLACES, (*rit)->location);
                 }
@@ -651,7 +635,7 @@ bool MouseLeftOnCaravanTradeRecordsBubble()
                         std::map<int,int>::iterator it = (*rit)->tradeQuantities.begin();
                         std::advance(it, position);
 
-                        OpenEncyclopediaBubble(Event::mouseDisplayX, Event::mouseDisplayY, EN_CAT_CARGO, (*it).first);
+                        BubbleView::OpenEncyclopediaBubble(Event::mouseDisplayX, Event::mouseDisplayY, EN_CAT_CARGO, (*it).first);
                     }
                 }
                 break;
@@ -669,9 +653,9 @@ bool MouseLeftOnCaravanTradeRecordsBubble()
 bool MouseLeftOnCaravanPathfindingBubble()
 {
     if(Event::mouseDisplayX > caravanPathfindingBubbleDrawX
-            && Event::mouseDisplayX < caravanPathfindingBubbleDrawX + bubbleViewCaravan->caravanPathfindingBubbleWidth
+            && Event::mouseDisplayX < caravanPathfindingBubbleDrawX + BubbleView::currentCaravan->caravanPathfindingBubbleWidth
             && Event::mouseDisplayY > caravanPathfindingBubbleDrawY
-            && Event::mouseDisplayY < caravanPathfindingBubbleDrawY + caravanPathfindingBubbleHeight - TEXT_HEIGHT_8)
+            && Event::mouseDisplayY < caravanPathfindingBubbleDrawY + caravanPathfindingBubbleHeight - Resource::TEXT_HEIGHT_8)
     {
         int x = Event::mouseDisplayX - caravanPathfindingBubbleDrawX;
 
@@ -679,14 +663,14 @@ bool MouseLeftOnCaravanPathfindingBubble()
         if(xCell %3 != 2)
         {
             unsigned position = xCell/3;
-            int placeId = bubbleViewCaravan->worldGraph.path[position];
+            int placeId = BubbleView::currentCaravan->worldGraph.path[position];
 
             Place::places[placeId]->UpdateAllBubbles();
 
             SetCameraCenterDestination(Place::places[placeId]->overworldXPosition,
                                        Place::places[placeId]->overworldYPosition);
 
-            OpenEncyclopediaBubble(Display::WIDTH/2 - encyclopediaBubbleWidth/2,
+            BubbleView::OpenEncyclopediaBubble(Display::WIDTH/2 - encyclopediaBubbleWidth/2,
                                    Display::HEIGHT/2 + 2*Tile::HEIGHT,
                                    EN_CAT_PLACES, placeId);
         }
@@ -705,9 +689,9 @@ bool MouseLeftOnPlacePopulationBubble()
 bool MouseLeftOnPlaceCaravanseraiBubble()
 {
     if(Event::mouseDisplayX > placeCaravanseraiDrawX
-            && Event::mouseDisplayX < placeCaravanseraiDrawX + bubbleViewPlace->placeCaravanseraiWidth
+            && Event::mouseDisplayX < placeCaravanseraiDrawX + BubbleView::currentPlace->placeCaravanseraiWidth
             && Event::mouseDisplayY > placeCaravanseraiDrawY
-            && Event::mouseDisplayY < placeCaravanseraiDrawY + bubbleViewPlace->placeCaravanseraiHeight)
+            && Event::mouseDisplayY < placeCaravanseraiDrawY + BubbleView::currentPlace->placeCaravanseraiHeight)
     {
         int x = Event::mouseDisplayX - placeCaravanseraiDrawX;
         int y = Event::mouseDisplayY - placeCaravanseraiDrawY;
@@ -715,13 +699,13 @@ bool MouseLeftOnPlaceCaravanseraiBubble()
         int xCell = x/Tile::WIDTH;
         int yCell = y/Tile::HEIGHT;
 
-        unsigned position = yCell*(bubbleViewPlace->placeCaravanseraiNumCols) + xCell;
+        unsigned position = yCell*(BubbleView::currentPlace->placeCaravanseraiNumCols) + xCell;
 
-        if(position < bubbleViewPlace->caravanserai.size())
+        if(position < BubbleView::currentPlace->caravanserai.size())
         {
-            bubbleViewPlace->caravanserai[position]->UpdateAllBubbles();
-            bubbleViewCaravan = bubbleViewPlace->caravanserai[position];
-            //OverworldLockCameraCaravan(bubbleViewPlace->caravanserai[position]); // Already unlocks camera from place
+            BubbleView::currentPlace->caravanserai[position]->UpdateAllBubbles();
+            BubbleView::currentCaravan = BubbleView::currentPlace->caravanserai[position];
+            //OverworldLockCameraCaravan(BubbleView::currentPlace->caravanserai[position]); // Already unlocks camera from place
         }
 
         return true;
@@ -743,9 +727,9 @@ bool MouseLeftOnPlaceDeficitBubble()
 bool MouseLeftOnPlaceMarketBubble()
 {
     if(Event::mouseDisplayX > placeMarketBubbleDrawX
-            && Event::mouseDisplayX < placeMarketBubbleDrawX + bubbleViewPlace->placeMarketBubbleWidth
+            && Event::mouseDisplayX < placeMarketBubbleDrawX + BubbleView::currentPlace->placeMarketBubbleWidth
             && Event::mouseDisplayY > placeMarketBubbleDrawY
-            && Event::mouseDisplayY < placeMarketBubbleDrawY + bubbleViewPlace->placeMarketBubbleHeight)
+            && Event::mouseDisplayY < placeMarketBubbleDrawY + BubbleView::currentPlace->placeMarketBubbleHeight)
     {
         int x = Event::mouseDisplayX - placeMarketBubbleDrawX;
         int y = Event::mouseDisplayY - placeMarketBubbleDrawY;
@@ -753,14 +737,14 @@ bool MouseLeftOnPlaceMarketBubble()
         int xCell = x/Tile::WIDTH;
         int yCell = y/(Tile::HEIGHT+placeMarketBubbleRowSpacing);
 
-        unsigned position = yCell*(bubbleViewPlace->placeMarketBubbleNumCols) + xCell;
+        unsigned position = yCell*(BubbleView::currentPlace->placeMarketBubbleNumCols) + xCell;
 
-        if(position < bubbleViewPlace->market.cargo.size())
+        if(position < BubbleView::currentPlace->market.cargo.size())
         {
-            std::map<int,float>::iterator it = bubbleViewPlace->market.cargo.begin();
+            std::map<int,float>::iterator it = BubbleView::currentPlace->market.cargo.begin();
             std::advance(it, position);
 
-            OpenEncyclopediaBubble(Event::mouseDisplayX, Event::mouseDisplayY, EN_CAT_CARGO, (*it).first);
+            BubbleView::OpenEncyclopediaBubble(Event::mouseDisplayX, Event::mouseDisplayY, EN_CAT_CARGO, (*it).first);
         }
 
         return true;
@@ -774,7 +758,7 @@ bool MouseLeftOnPlaceIndustriesBubble()
     if(Event::mouseDisplayX > placeIndustriesBubbleDrawX
             && Event::mouseDisplayX < placeIndustriesBubbleDrawX + placeIndustriesBubbleWidth
             && Event::mouseDisplayY > placeIndustriesBubbleDrawY
-            && Event::mouseDisplayY < placeIndustriesBubbleDrawY + bubbleViewPlace->placeIndustriesBubbleHeight)
+            && Event::mouseDisplayY < placeIndustriesBubbleDrawY + BubbleView::currentPlace->placeIndustriesBubbleHeight)
     {
         std::cout << "Unimplemented" << std::endl;
 
@@ -786,8 +770,8 @@ bool MouseLeftOnPlaceIndustriesBubble()
 
 void SetCameraCenterDestination(float x, float y)
 {
-    //bubbleViewCaravan = nullptr; // Don't nullify this. Needed to peruse pathfinding bubble locations without it closing
-    bubbleViewPlace = nullptr;
+    //BubbleView::currentCaravan = nullptr; // Don't nullify this. Needed to peruse pathfinding bubble locations without it closing
+    BubbleView::currentPlace = nullptr;
 
     OverworldUnlockCamera();
 
@@ -814,7 +798,7 @@ void AttemptCameraLockOn()
                 && (Camera::yPosition + Display::HEIGHT/2) < y + h/2)
         {
             OverworldLockCameraPlace((*it).second);
-            bubbleViewPlace = ((*it).second);
+            BubbleView::currentPlace = ((*it).second);
             (*it).second->UpdateAllBubbles();
 
             Camera::xPosition = x - Display::WIDTH/2;
@@ -838,7 +822,7 @@ void AttemptCameraLockOn()
                     && (Camera::yPosition + Display::HEIGHT/2) < y + h/2)
             {
                 OverworldLockCameraCaravan(*it);
-                bubbleViewCaravan = (*it);
+                BubbleView::currentCaravan = (*it);
                 break;
             }
         }

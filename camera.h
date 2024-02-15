@@ -6,7 +6,6 @@
 
 #include <allegro5/allegro5.h>
 
-//#include "ui.h"
 #include "display.h"
 #include "tile.h"
 

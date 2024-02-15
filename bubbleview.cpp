@@ -1,113 +1,29 @@
-#include "being.h"
+#include "bubbleview.h"
 
-std::vector<Being*> Being::people;
+/// Bubble view
+Caravan* BubbleView::currentCaravan;
+Place* BubbleView::currentPlace;
+Being* BubbleView::currentBeing;
 
-Being::Being()
+bool BubbleView::beingStatusBubbleOpen;
+bool BubbleView::encyclopediaBubbleOpen;
+
+/// Being status bubble
+
+void BubbleView::OpenBeingStatusBubble(Being *b)
 {
-    SetActive(true);
+    beingStatusBubbleOpen = true;
 
-    SetActivity(ACT_WALKING);
-
-    travelSpeed = 1.0;
-
-    vitality = 100;
-    happiness = 100;
-    purpose = 100;
-
-    //std::cout << "Being created." << std::endl;
+    currentBeing = b;
 }
 
-Being::~Being()
+void BubbleView::CloseBeingStatusBubble()
 {
-    //std::cout << "Being deleted." << std::endl;
+    beingStatusBubbleOpen = false;
+    currentBeing = nullptr;
 }
 
-void Being::SetActive(bool a)
-{
-    active = a;
-}
-
-void Being::SetActivity(int act)
-{
-    activity = act;
-    currentFrame = 0;
-    frameDelayCount = 0;
-    frameDelayThreshold = 6;
-
-    switch(activity)
-    {
-    case ACT_WALKING:
-        maxFrame = 1;
-        break;
-    }
-}
-
-void Being::SetName(std::string n)
-{
-    name = n;
-}
-void Being::SetAncestry(int a)
-{
-    ancestry = a;
-    spriteWidth = Tile::WIDTH;
-    spriteHeight = Tile::HEIGHT;
-    spriteVariant = rand()% resourceBeingNumSpriteVariants.at(ancestry);
-}
-
-void Being::SetHometown(int h)
-{
-    hometown = h;
-}
-
-
-bool Being::IsActive()
-{
-    return active;
-}
-
-void Being::Progress()
-{
-    ProgressAnimation();
-}
-
-void Being::DrawActivity(float x, float y)
-{
-    if(x > Camera::OVERWORLD_MIN_DRAW_X && x < Camera::OVERWORLD_MAX_DRAW_X
-            && y > Camera::OVERWORLD_MIN_DRAW_Y && y < Camera::OVERWORLD_MAX_DRAW_Y)
-    {
-        int f = 0;
-        if(!facingLeft)
-            f = ALLEGRO_FLIP_HORIZONTAL;
-
-        if(activity == ACT_WALKING)
-            al_draw_bitmap_region(beingPng[ancestry],
-                                  spriteVariant*resourceBeingNumWalkFrames*spriteWidth + spriteWidth*currentFrame,
-                                  spriteHeight*activity,
-                                  spriteWidth,
-                                  spriteHeight,
-                                  x - (spriteWidth/2),
-                                  y - (spriteHeight/2),
-                                  f);
-    }
-}
-
-void Being::ProgressAnimation()
-{
-    if(maxFrame > 0)
-    {
-        frameDelayCount++;
-        if(frameDelayCount >= frameDelayThreshold)
-        {
-            frameDelayCount = 0;
-            currentFrame++;
-            if(currentFrame > maxFrame)
-                currentFrame = 0;
-        }
-    }
-}
-
-/**
-void Being::DrawBeingStatusBubble()
+void BubbleView::DrawBeingStatusBubble(Being *b)
 {
     al_draw_filled_rounded_rectangle(beingStatusBubbleDrawX - BubbleView::bubblePadding,
                                      beingStatusBubbleDrawY - BubbleView::bubblePadding,
@@ -128,11 +44,11 @@ void Being::DrawBeingStatusBubble()
 // Biography
     string_al_draw_text(Resource::builtin8, COLKEY_TEXT, beingStatusBubbleDrawX,
                         beingStatusBubbleDrawY+beingStatusBubbleBiographyPartitionHeight,
-                        ALLEGRO_ALIGN_LEFT, "Name: " + name);
+                        ALLEGRO_ALIGN_LEFT, "Name: " + b->name);
 
     string_al_draw_text(Resource::builtin8, COLKEY_TEXT, beingStatusBubbleDrawX,
                         beingStatusBubbleDrawY+beingStatusBubbleBiographyPartitionHeight + Resource::TEXT_HEIGHT_12,
-                        ALLEGRO_ALIGN_LEFT, "Home: " + placeNames.at(hometown));
+                        ALLEGRO_ALIGN_LEFT, "Home: " + placeNames.at(b->hometown));
 
 // Stats: Vitality
     al_draw_filled_rectangle(beingStatusBubbleDrawX,
@@ -183,5 +99,85 @@ void Being::DrawBeingStatusBubble()
                  beingStatusBubbleDrawY + beingStatusBubbleStatsPartitionHeight + Tile::HEIGHT*2 + Tile::HEIGHT/2 - Resource::TEXT_HEIGHT_8/2,
                  ALLEGRO_ALIGN_CENTER, "Purpose");
 }
-*/
 
+/// Encyclopedia bubble
+int encyclopediaCurrentCategory; // = EN_CAT_LEYKIN;
+int encyclopediaCurrentIndex; // = ANCESTRY_GENERAL;
+std::string encyclopediaBubbleEntryName; // = beingAncestryNames.at(encyclopediaCurrentIndex);
+std::string encyclopediaBubbleEntryText; // = encyclopedia.at(encyclopediaCurrentCategory).at(encyclopediaCurrentIndex);
+
+float encyclopediaBubbleDrawX;
+float encyclopediaBubbleDrawY;
+float encyclopediaBubbleHeight;
+
+void BubbleView::OpenEncyclopediaBubble(float x, float y, unsigned category, unsigned index)
+{
+    encyclopediaBubbleOpen = true;
+
+    encyclopediaBubbleDrawX = x;
+    encyclopediaBubbleDrawY = y;
+
+    encyclopediaCurrentCategory = category;
+    encyclopediaCurrentIndex = index;
+
+    switch(category)
+    {
+    case EN_CAT_LEYKIN:
+        encyclopediaBubbleEntryName = beingAncestryNames.at(encyclopediaCurrentIndex);
+        break;
+    case EN_CAT_FACTIONS:
+        encyclopediaBubbleEntryName = sovereigntyNames.at(encyclopediaCurrentIndex);
+        break;
+    case EN_CAT_PLACES:
+        encyclopediaBubbleEntryName = placeNames.at(encyclopediaCurrentIndex);
+        break;
+    case EN_CAT_CARGO:
+        encyclopediaBubbleEntryName = itemNames.at(encyclopediaCurrentIndex);
+        break;
+    }
+
+    encyclopediaBubbleEntryText = encyclopedia.at(encyclopediaCurrentCategory).at(encyclopediaCurrentIndex);
+
+    int num_lines = count_num_lines_will_render(Resource::builtin8, encyclopediaBubbleWidth, encyclopediaBubbleEntryText);
+    encyclopediaBubbleHeight = Resource::TEXT_HEIGHT_12 * (2 + num_lines); // Turns out the line spacing can be controlled by specifying a text height larger than the actual font size. Just remember to do the same in DrawEncyclopediaBubble()
+
+    // In case the bottom of the enyclopedia bubble would end up off-screen, adjust upwards.
+    if(encyclopediaBubbleDrawY + (encyclopediaBubbleHeight + 2*BubbleView::bubblePadding) > Display::HEIGHT)
+        encyclopediaBubbleDrawY = Display::HEIGHT - encyclopediaBubbleHeight + BubbleView::bubblePadding;
+}
+
+void BubbleView::CloseEncyclopediaBubble()
+{
+    encyclopediaBubbleOpen = false;
+}
+
+void BubbleView::DrawEncyclopediaBubble()
+{
+    al_draw_filled_rounded_rectangle(encyclopediaBubbleDrawX - bubblePadding,
+                                     encyclopediaBubbleDrawY - bubblePadding,
+                                     encyclopediaBubbleDrawX + encyclopediaBubbleWidth + bubblePadding,
+                                     encyclopediaBubbleDrawY + encyclopediaBubbleHeight + bubblePadding,
+                                     BubbleView::bubbleCornerRadius,
+                                     BubbleView::bubbleCornerRadius,
+                                     COLKEY_UI_BUBBLE_BODY);
+
+    al_draw_rounded_rectangle(encyclopediaBubbleDrawX - bubblePadding,
+                              encyclopediaBubbleDrawY - bubblePadding,
+                              encyclopediaBubbleDrawX + encyclopediaBubbleWidth + bubblePadding,
+                              encyclopediaBubbleDrawY + encyclopediaBubbleHeight + bubblePadding,
+                              BubbleView::bubbleCornerRadius,
+                              BubbleView::bubbleCornerRadius,
+                              COLKEY_UI_BUBBLE_FRAME,
+                              4);
+
+
+    string_al_draw_text(Resource::builtin8,COLKEY_TEXT,encyclopediaBubbleDrawX,encyclopediaBubbleDrawY,
+                        ALLEGRO_ALIGN_LEFT,encyclopediaBubbleEntryName);
+
+    string_al_draw_multiline_text(Resource::builtin8, COLKEY_TEXT,
+                                  encyclopediaBubbleDrawX,encyclopediaBubbleDrawY + 2*Resource::TEXT_HEIGHT_12,
+                                  encyclopediaBubbleWidth,
+                                  Resource::TEXT_HEIGHT_12, // Turns out the line spacing can be controlled by specifying a text height larger than the actual font size.
+                                  ALLEGRO_ALIGN_LEFT,
+                                  encyclopediaBubbleEntryText);
+}

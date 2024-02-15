@@ -7,7 +7,10 @@
 #include <map>
 
 #include "allegrocustom.h"
-#include "gamestate.h"
+
+#include "timer.h"
+#include "camera.h"
+
 #include "resource.h"
 
 #include "colorindex.h"
@@ -15,7 +18,7 @@
 extern bool hourChangeTick;
 extern bool dayChangeTick;
 
-const int FRAMES_PER_HOUR = FPS*1; // *smaller value = faster
+const int FRAMES_PER_HOUR = Timer::FPS*1; // *smaller value = faster
 extern int hourFrame;
 
 const int HOURS_PER_DAY = 24;

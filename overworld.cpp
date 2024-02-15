@@ -105,11 +105,11 @@ void OverworldDrawGridText(float mouseTransformedX, float mouseTransformedY)
             + std::to_string(zoomPercentage) + "%";
 
     if(!overworldCameraLocked)
-        string_al_draw_text(builtin8,COLKEY_CAMERA_CROSSHAIR_FREE,0,0,ALLEGRO_ALIGN_LEFT,cameraCrosshairPositionString);
+        string_al_draw_text(Resource::builtin8,COLKEY_CAMERA_CROSSHAIR_FREE,0,0,ALLEGRO_ALIGN_LEFT,cameraCrosshairPositionString);
     else
-        string_al_draw_text(builtin8,COLKEY_CAMERA_CROSSHAIR_LOCKED,0,0,ALLEGRO_ALIGN_LEFT,cameraCrosshairPositionString);
+        string_al_draw_text(Resource::builtin8,COLKEY_CAMERA_CROSSHAIR_LOCKED,0,0,ALLEGRO_ALIGN_LEFT,cameraCrosshairPositionString);
 
-    string_al_draw_text(builtin8,COLKEY_MOUSE_CROSSHAIR,0,TEXT_HEIGHT_8,ALLEGRO_ALIGN_LEFT,mouseCrosshairPositionString);
+    string_al_draw_text(Resource::builtin8,COLKEY_MOUSE_CROSSHAIR,0,Resource::TEXT_HEIGHT_8,ALLEGRO_ALIGN_LEFT,mouseCrosshairPositionString);
 
 }
 
@@ -145,7 +145,7 @@ void OverworldLockCameraPlace(Place *whichPlace)
     overworldCameraLockedOnPlace = true;
     overworldCameraLocked = true;
 
-    bubbleViewPlace = whichPlace;
+    BubbleView::currentPlace = whichPlace;
 
     OverworldSwapParallelBackgroundAudioToPlace();
 }
@@ -158,7 +158,7 @@ void OverworldLockCameraCaravan(Caravan *whichCaravan)
     overworldCameraLockedOnCaravan = true;
     overworldCameraLocked = true;
 
-    bubbleViewCaravan = whichCaravan;
+    BubbleView::currentCaravan = whichCaravan;
 
     OverworldSwapParallelBackgroundAudioToField();
 }

@@ -1,11 +1,11 @@
 #include "resource.h"
 
-ALLEGRO_FONT *builtin8;
+ALLEGRO_FONT* Resource::Resource::builtin8;
 //ALLEGRO_BITMAP *builtin16Tga;
 //ALLEGRO_FONT *builtin16;
 //ALLEGRO_FONT *spaceMono16;
 
-ALLEGRO_BITMAP *overworldPlacePng;
+ALLEGRO_BITMAP* Resource::overworldPlacePng;
 
 ALLEGRO_BITMAP *beingsPng;
 ALLEGRO_BITMAP *beingPng[NUM_ANCESTRIES];
@@ -26,7 +26,7 @@ ALLEGRO_SAMPLE_INSTANCE *manorSampleInstance;
 
 //std::map<int, *ALLEGRO_SAMPLE_INSTANCE>allegro_sample_instances>;
 
-void LoadFontResources()
+void Resource::LoadFontResources()
 {
     /*
     int fontRanges[] =
@@ -38,7 +38,7 @@ void LoadFontResources()
     };
     */
 
-    builtin8 = al_create_builtin_font();
+    Resource::builtin8 = al_create_builtin_font();
     //builtin16Tga = al_load_bitmap("a4_font_16.tga");
     //builtin16 = al_grab_font_from_bitmap(builtin16Tga, 4, fontRanges);
     //builtin16 = al_create_builtin_font();
@@ -46,7 +46,7 @@ void LoadFontResources()
 
 }
 
-void LoadImageResources()
+void Resource::LoadImageResources()
 {
     overworldPlacePng = al_load_bitmap("placeholderOverworldPlace.png");
 
@@ -70,7 +70,7 @@ void LoadImageResources()
     redTransparentXPng = al_load_bitmap("placeholderRedTransparentX.png");
 }
 
-void LoadAudioResources()
+void Resource::LoadAudioResources()
 {
     al_reserve_samples(10);
     cottagesMacLeodMp3 = al_load_sample("Magic Scout - Cottages.mp3");
@@ -82,15 +82,15 @@ void LoadAudioResources()
     al_attach_sample_instance_to_mixer(manorSampleInstance,    al_get_default_mixer());
 }
 
-void UnloadFontResources()
+void Resource::UnloadFontResources()
 {
-    al_destroy_font(builtin8);
+    al_destroy_font(Resource::builtin8);
     //al_destroy_bitmap(builtin16Tga);
     //al_destroy_font(builtin16);
     //al_destroy_font(spaceMono16);
 }
 
-void UnloadImageResources()
+void Resource::UnloadImageResources()
 {
     al_destroy_bitmap(overworldPlacePng);
 
@@ -108,7 +108,7 @@ void UnloadImageResources()
     al_destroy_bitmap(redTransparentXPng);
 }
 
-void UnloadAudioResources()
+void Resource::UnloadAudioResources()
 {
     al_destroy_sample_instance(cottagesSampleInstance);
     al_destroy_sample_instance(manorSampleInstance);

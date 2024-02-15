@@ -3,8 +3,6 @@
 
 #include <allegro5/allegro5.h>
 
-#include "gamestate.h"
-
 struct Event
 {
     static ALLEGRO_EVENT_QUEUE* eventQueue;

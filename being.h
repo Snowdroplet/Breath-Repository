@@ -12,7 +12,6 @@
 #include "beingindex.h"
 #include "overworld.h"
 
-#include "gamestate.h"
 #include "resource.h"
 #include "camera.h"
 
@@ -86,13 +85,9 @@ public:
 /// Progress
     void Progress();
 
-/// Status bubble
-
 /// Drawing
     void DrawActivity(float x, float y);
     void ProgressAnimation();
-
-    void DrawBeingStatusBubble();
 };
 
 #endif // BEING_H_INCLUDED

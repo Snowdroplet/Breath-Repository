@@ -75,6 +75,8 @@ public:
     const unsigned tradeRecordsMaxRows = 9;
 
 /// Bubbles
+    bool bubblesNeedUpdate;
+
     float caravanCrewBubbleWidth;
 
     unsigned caravanInventoryBubbleNumCols;

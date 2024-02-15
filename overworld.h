@@ -11,7 +11,7 @@
 #include "colorindex.h"
 #include "camera.h"
 
-#include "gamestate.h"
+#include "bubbleview.h"
 #include "resource.h"
 
 #include "placeindex.h"

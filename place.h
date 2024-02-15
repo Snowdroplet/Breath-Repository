@@ -108,8 +108,8 @@ public:
     std::vector<Road*>connections;
 
 /// Bubbles -- General
-    const float bubblePadding = Tile::WIDTH/4;
-    const float bubbleCornerRadius = 8;
+    //const float BubbleView::bubblePadding = Tile::WIDTH/4;
+    //const float BubbleView::bubbleCornerRadius = 8;
 
 /// Bubbles -- Population
     float placePopulationBubbleWidth;
