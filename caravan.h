@@ -75,20 +75,19 @@ public:
     const unsigned tradeRecordsMaxRows = 9;
 
 /// Bubbles
-    bool bubblesNeedUpdate;
+    bool crewBubbleNeedsUpdate;
+    bool inventoryBubbleNeedsUpdate;
+    bool tradeRecordsBubbleNeedsUpdate;
+    bool pathfindingBubbleNeedsUpdate;
 
+    /*
     float caravanCrewBubbleWidth;
 
     unsigned caravanInventoryBubbleNumCols;
     unsigned caravanInventoryBubbleNumRows;
     float caravanInventoryBubbleWidth, caravanInventoryBubbleHeight;
+    */
 
-    unsigned caravanTradeRecordsBubbleNumRows;
-    float caravanTradeRecordsBubbleHeight;
-
-    unsigned caravanPathfindingBubbleNumCols;
-    unsigned caravanPathfindingBubbleNumRows;
-    float caravanPathfindingBubbleWidth, caravanPathfindingBubbleHeight;
 
 /// Constructor
     Caravan();
@@ -133,12 +132,7 @@ public:
     void CheckTradeRecordsRowLimit();
 
 /// Bubble functions
-    //void UpdateCaravanTravelViewBubble();
-    void UpdateCaravanCrewBubble();
-    void UpdateCaravanInventoryBubble();
-    void UpdateCaravanPathfindingBubble();
-    void UpdateCaravanTradeRecordsBubble();
-    void UpdateAllBubbles();
+    void AllBubblesNeedUpdate();
 
 /// Drawing functions
     void DrawSpriteOnOverworld();

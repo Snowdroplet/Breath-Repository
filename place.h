@@ -15,14 +15,10 @@
 
 #include "colorindex.h"
 
-#include "overworld.h"
 #include "caravan.h"
 #include "industry.h"
 #include "flyingtext.h"
 #include "resource.h"
-//#include "economy.h"
-
-#include "flyingtext.h"
 
 #include "placeindex.h"
 #include "economyindex.h"
@@ -107,10 +103,15 @@ public:
 
     std::vector<Road*>connections;
 
-/// Bubbles -- General
-    //const float BubbleView::bubblePadding = Tile::WIDTH/4;
-    //const float BubbleView::bubbleCornerRadius = 8;
+/// Bubbles
+    bool populationBubbleNeedsUpdate;
+    bool caravanseraiBubbleNeedsUpdate;
+    bool surplusBubbleNeedsUpdate;
+    bool deficitBubbleNeedsUpdate;
+    bool marketBubbleNeedsUpdate;
+    bool industriesBubbleNeedsUpdate;
 
+    /*
 /// Bubbles -- Population
     float placePopulationBubbleWidth;
     unsigned placePopulationBubbleNumCols;
@@ -138,6 +139,7 @@ public:
 
 /// Bubbles -- Industry
     float placeIndustriesBubbleHeight;
+    */
 
 /// Flying text
     std::vector<FlyingText*>upFlyingTexts;
@@ -218,7 +220,10 @@ public:
     void AddInitialMarketStock();
 
 /// Bubble functions
-    void UpdateAllBubbles();
+    void AllBubblesNeedUpdate();
+
+    //void UpdateAllBubbles();
+    /*
     void UpdatePlacePopulationBubble();
     void UpdateCitizensBubble();
     void UpdatePlaceCaravanseraiBubble();
@@ -228,6 +233,7 @@ public:
 
     void UpdatePlaceMarketBubble();
     void UpdatePlaceIndustriesBubble(); // Only called when industrial activity updated
+    */
     void ProgressPlaceIndustriesBubbleProgressBars(); // Called on timer tick
 
 /// Flying text functions
@@ -237,6 +243,8 @@ public:
 
 /// Overworld drawing functions
     void DrawSpriteOnOverworld();
+
+    /*
     void DrawPlacePopulationBubble();
     void DrawCitizensBubble();
     void DrawPlaceCaravanseraiBubble();
@@ -247,6 +255,7 @@ public:
     ///void DrawInventoryBubbles();
     void DrawPlaceMarketBubble();
     void DrawPlaceIndustriesBubble();
+    */
     void DrawFlyingTexts();
 };
 

@@ -40,6 +40,8 @@ Place::Place(int id)
 
 
     AddInitialMarketStock();
+
+    AllBubblesNeedUpdate();
 }
 
 Place::~Place()
@@ -113,9 +115,11 @@ void Place::AddToCaravanserai(Caravan *c)
 {
     caravanserai.push_back(c);
     if(overworldCameraCaravan == c)
-        UpdateAllBubbles();
+        //UpdateAllBubbles();
+        AllBubblesNeedUpdate();
     else
-        UpdatePlaceCaravanseraiBubble();
+        //UpdatePlaceCaravanseraiBubble();
+        caravanseraiBubbleNeedsUpdate = true;
 }
 
 void Place::RemoveFromCaravanserai(Caravan *c)
@@ -132,7 +136,8 @@ void Place::RemoveFromCaravanserai(Caravan *c)
         }
     }
 
-    UpdatePlaceCaravanseraiBubble();
+    //UpdatePlaceCaravanseraiBubble();
+    caravanseraiBubbleNeedsUpdate = true;
     //std::cout << "Removed" << std::endl;
 
 }
@@ -433,7 +438,8 @@ void Place::UpdateSurplusesDescending()
             surplusesDescending.push_back(indices[i]);
     }
 
-    UpdatePlaceSurplusBubble();
+    //UpdatePlaceSurplusBubble();
+    surplusBubbleNeedsUpdate = true;
 }
 
 void Place::UpdateDeficitsDescending()
@@ -458,7 +464,8 @@ void Place::UpdateDeficitsDescending()
             deficitsDescending.push_back(indices[i]);
     }
 
-    UpdatePlaceDeficitBubble();
+    //UpdatePlaceDeficitBubble();
+    deficitBubbleNeedsUpdate = true;
 }
 
 void Place::TradeWithCaravan(Caravan *c)
@@ -517,7 +524,8 @@ void Place::UnloadCaravanToMarketBuffer(Caravan *c)
     }
 
     c->CheckTradeRecordsRowLimit();
-    c->UpdateCaravanTradeRecordsBubble();
+    //c->UpdateCaravanTradeRecordsBubble();
+    c->tradeRecordsBubbleNeedsUpdate = true;
 }
 
 void Place::LoadCaravan(Caravan *c)
@@ -563,7 +571,8 @@ void Place::LoadCaravan(Caravan *c)
     }
 
     c->CheckTradeRecordsRowLimit();
-    c->UpdateCaravanTradeRecordsBubble();
+    //c->UpdateCaravanTradeRecordsBubble();
+    c->tradeRecordsBubbleNeedsUpdate = true;
 }
 
 void Place::UpdateItemsProducedAndConsumedByIndustries()
@@ -596,7 +605,8 @@ void Place::AddMarketStock(int a, float b)
     market.AddStock(a,b);
 
     if(market.cargo.size() != prev)
-        UpdatePlaceMarketBubble();
+        marketBubbleNeedsUpdate = true;
+        //UpdatePlaceMarketBubble();
 
     UpdateSurplusAndDeficitRatios(a);
     UpdateSurplusesDescending();
@@ -608,7 +618,8 @@ void Place::RemoveMarketStock(int a, float b)
     market.RemoveStock(a,b);
 
     if(market.cargo.size() != prev)
-        UpdatePlaceMarketBubble();
+        marketBubbleNeedsUpdate = true;
+        //UpdatePlaceMarketBubble();
 
     UpdateSurplusAndDeficitRatios(a);
     UpdateSurplusesDescending();
@@ -620,7 +631,8 @@ void Place::SetMarketStock(int a, float b)
     market.SetStock(a,b);
 
     if(market.cargo.size() != prev)
-        UpdatePlaceMarketBubble();
+        marketBubbleNeedsUpdate = true;
+        //UpdatePlaceMarketBubble();
 
     UpdateSurplusAndDeficitRatios(a);
     UpdateSurplusesDescending();
@@ -696,6 +708,7 @@ void Place::AddInitialMarketStock()
     }
 }
 
+/*
 void Place::UpdateAllBubbles()
 {
     UpdatePlacePopulationBubble();
@@ -707,6 +720,19 @@ void Place::UpdateAllBubbles()
     UpdatePlaceMarketBubble();
     UpdatePlaceIndustriesBubble();
 }
+*/
+
+void Place::AllBubblesNeedUpdate()
+{
+    populationBubbleNeedsUpdate = true;
+    caravanseraiBubbleNeedsUpdate = true;
+    surplusBubbleNeedsUpdate = true;
+    deficitBubbleNeedsUpdate = true;
+    marketBubbleNeedsUpdate = true;
+    industriesBubbleNeedsUpdate = true;
+}
+
+/*
 
 void Place::UpdatePlacePopulationBubble()
 {
@@ -807,6 +833,8 @@ void Place::UpdatePlaceIndustriesBubble()
     placeIndustriesBubbleHeight = industries.size()*(Tile::HEIGHT+placeIndustriesBubbleRowSpacing + Resource::TEXT_HEIGHT_8);
 }
 
+*/
+
 void Place::ProgressPlaceIndustriesBubbleProgressBars()
 {
     for(std::vector<Industry*>::iterator it = industries.begin(); it != industries.end(); ++it)
@@ -834,6 +862,8 @@ void Place::DrawSpriteOnOverworld()
         string_al_draw_text(Resource::builtin8, COLKEY_TEXT, nameDrawX, nameDrawY, ALLEGRO_ALIGN_CENTER, name);
     }
 }
+
+/*
 
 void Place::DrawPlacePopulationBubble()
 {
@@ -1197,6 +1227,8 @@ void Place::DrawPlaceIndustriesBubble()
         string_al_draw_text(Resource::builtin8, COLKEY_TEXT, placeIndustriesBubbleDrawX,placeIndustriesBubbleDrawY,ALLEGRO_ALIGN_LEFT, placeIndustriesBubbleEmptyText);
 
 }
+
+*/
 
 void Place::QueueUpFlyingText(int ic, std::string t, float x, float y)
 {

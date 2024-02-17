@@ -479,6 +479,35 @@ void UpdateUI()
 
         }
 
+        if(BubbleView::currentCaravan != nullptr)
+        {
+            if(BubbleView::currentCaravan->crewBubbleNeedsUpdate)
+                BubbleView::UpdateCaravanCrewBubble(BubbleView::currentCaravan);
+            if(BubbleView::currentCaravan->inventoryBubbleNeedsUpdate)
+                BubbleView::UpdateCaravanInventoryBubble(BubbleView::currentCaravan);
+            if(BubbleView::currentCaravan->tradeRecordsBubbleNeedsUpdate)
+                BubbleView::UpdateCaravanTradeRecordsBubble(BubbleView::currentCaravan);
+            if(BubbleView::currentCaravan->pathfindingBubbleNeedsUpdate)
+                BubbleView::UpdateCaravanPathfindingBubble(BubbleView::currentCaravan);
+        }
+
+        if(BubbleView::currentPlace != nullptr)
+        {
+            if(BubbleView::currentPlace->populationBubbleNeedsUpdate)
+                BubbleView::UpdatePlacePopulationBubble(BubbleView::currentPlace);
+            if(BubbleView::currentPlace->caravanseraiBubbleNeedsUpdate)
+                BubbleView::UpdatePlaceCaravanseraiBubble(BubbleView::currentPlace);
+            if(BubbleView::currentPlace->surplusBubbleNeedsUpdate)
+                BubbleView::UpdatePlaceSurplusBubble(BubbleView::currentPlace);
+            if(BubbleView::currentPlace->deficitBubbleNeedsUpdate)
+                BubbleView::UpdatePlaceDeficitBubble(BubbleView::currentPlace);
+            if(BubbleView::currentPlace->marketBubbleNeedsUpdate)
+                BubbleView::UpdatePlaceMarketBubble(BubbleView::currentPlace);
+            if(BubbleView::currentPlace->industriesBubbleNeedsUpdate)
+                BubbleView::UpdatePlaceIndustriesBubble(BubbleView::currentPlace);
+
+        }
+
         OverworldAudioUpdate();
     }
 }
@@ -511,28 +540,26 @@ void DrawUI()
 
         al_use_transform(&Camera::noTransform);
 
+        if(BubbleView::beingStatusBubbleOpen)
+            BubbleView::DrawBeingStatusBubble(BubbleView::currentBeing);
+
         if(BubbleView::currentCaravan != nullptr)
         {
-            BubbleView::currentCaravan->DrawCaravanCrewBubble();
-            //BubbleView::currentCaravan->DrawCaravanTravelViewBubble();
-            BubbleView::currentCaravan->DrawCaravanInventoryBubble();
-            BubbleView::currentCaravan->DrawCaravanTradeRecordsBubble();
-            BubbleView::currentCaravan->DrawCaravanPathfindingBubble();
+            BubbleView::DrawCaravanCrewBubble(BubbleView::currentCaravan);
+            //BubbleView::DrawCaravanTravelViewBubble(BubbleView::currentCaravan);
+            BubbleView::DrawCaravanInventoryBubble(BubbleView::currentCaravan);
+            BubbleView::DrawCaravanTradeRecordsBubble(BubbleView::currentCaravan);
+            BubbleView::DrawCaravanPathfindingBubble(BubbleView::currentCaravan);
         }
         if(BubbleView::currentPlace != nullptr)
         {
-            BubbleView::currentPlace->DrawPlacePopulationBubble();
-            BubbleView::currentPlace->DrawPlaceCaravanseraiBubble();
-
-            BubbleView::currentPlace->DrawPlaceSurplusBubble();
-            BubbleView::currentPlace->DrawPlaceDeficitBubble();
-
-            BubbleView::currentPlace->DrawPlaceMarketBubble();
-            BubbleView::currentPlace->DrawPlaceIndustriesBubble();
+            BubbleView::DrawPlacePopulationBubble(BubbleView::currentPlace);
+            BubbleView::DrawPlaceCaravanseraiBubble(BubbleView::currentPlace);
+            BubbleView::DrawPlaceSurplusBubble(BubbleView::currentPlace);
+            BubbleView::DrawPlaceDeficitBubble(BubbleView::currentPlace);
+            BubbleView::DrawPlaceMarketBubble(BubbleView::currentPlace);
+            BubbleView::DrawPlaceIndustriesBubble(BubbleView::currentPlace);
         }
-
-        if(BubbleView::beingStatusBubbleOpen)
-            BubbleView::DrawBeingStatusBubble(BubbleView::currentBeing);
 
         if(BubbleView::encyclopediaBubbleOpen)
             BubbleView::DrawEncyclopediaBubble();
@@ -546,12 +573,12 @@ void DrawUI()
 
 bool MouseLeftOnCaravanCrewBubble()
 {
-    if(Event::mouseDisplayX > caravanCrewBubbleDrawX
-            && Event::mouseDisplayX < caravanCrewBubbleDrawX + BubbleView::currentCaravan->caravanCrewBubbleWidth
-            && Event::mouseDisplayY > caravanCrewBubbleDrawY
-            && Event::mouseDisplayY < caravanCrewBubbleDrawY + caravanCrewBubbleHeight)
+    if(Event::mouseDisplayX > BubbleView::caravanCrewBubbleDrawX
+            && Event::mouseDisplayX < BubbleView::caravanCrewBubbleDrawX + BubbleView::caravanCrewBubbleWidth
+            && Event::mouseDisplayY > BubbleView::caravanCrewBubbleDrawY
+            && Event::mouseDisplayY < BubbleView::caravanCrewBubbleDrawY + BubbleView::caravanCrewBubbleHeight)
     {
-        int x = Event::mouseDisplayX - caravanCrewBubbleDrawX;
+        int x = Event::mouseDisplayX - BubbleView::caravanCrewBubbleDrawX;
         unsigned index = x/Tile::WIDTH;
 
         if(index < BubbleView::currentCaravan->members.size())
@@ -568,18 +595,18 @@ bool MouseLeftOnCaravanCrewBubble()
 
 bool MouseLeftOnCaravanInventoryBubble()
 {
-    if(Event::mouseDisplayX > caravanInventoryBubbleDrawX
-            && Event::mouseDisplayX < caravanInventoryBubbleDrawX + BubbleView::currentCaravan->caravanInventoryBubbleWidth
-            && Event::mouseDisplayY > caravanInventoryBubbleDrawY
-            && Event::mouseDisplayY < caravanInventoryBubbleDrawY + BubbleView::currentCaravan->caravanInventoryBubbleHeight)
+    if(Event::mouseDisplayX > BubbleView::caravanInventoryBubbleDrawX
+            && Event::mouseDisplayX < BubbleView::caravanInventoryBubbleDrawX + BubbleView::caravanInventoryBubbleWidth
+            && Event::mouseDisplayY > BubbleView::caravanInventoryBubbleDrawY
+            && Event::mouseDisplayY < BubbleView::caravanInventoryBubbleDrawY + BubbleView::caravanInventoryBubbleHeight)
     {
-        int x = Event::mouseDisplayX - caravanInventoryBubbleDrawX;
-        int y = Event::mouseDisplayY - caravanInventoryBubbleDrawY;
+        int x = Event::mouseDisplayX - BubbleView::caravanInventoryBubbleDrawX;
+        int y = Event::mouseDisplayY - BubbleView::caravanInventoryBubbleDrawY;
 
         int xCell = x/Tile::WIDTH;
-        int yCell = y/(Tile::HEIGHT+caravanInventoryBubbleRowSpacing);
+        int yCell = y/(Tile::HEIGHT+BubbleView::caravanInventoryBubbleRowSpacing);
 
-        unsigned position = yCell*(BubbleView::currentCaravan->caravanInventoryBubbleNumCols) + xCell;
+        unsigned position = yCell*BubbleView::caravanInventoryBubbleNumCols + xCell;
 
         if(position < BubbleView::currentCaravan->inventory.cargo.size())
         {
@@ -597,16 +624,16 @@ bool MouseLeftOnCaravanInventoryBubble()
 
 bool MouseLeftOnCaravanTradeRecordsBubble()
 {
-    if(Event::mouseDisplayX > caravanTradeRecordsBubbleDrawX
-            && Event::mouseDisplayX < caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubbleWidth
-            && Event::mouseDisplayY > caravanTradeRecordsBubbleDrawY
-            && Event::mouseDisplayY < caravanTradeRecordsBubbleDrawY + BubbleView::currentCaravan->caravanTradeRecordsBubbleHeight)
+    if(Event::mouseDisplayX > BubbleView::caravanTradeRecordsBubbleDrawX
+            && Event::mouseDisplayX < BubbleView::caravanTradeRecordsBubbleDrawX + BubbleView::caravanTradeRecordsBubbleWidth
+            && Event::mouseDisplayY > BubbleView::caravanTradeRecordsBubbleDrawY
+            && Event::mouseDisplayY < BubbleView::caravanTradeRecordsBubbleDrawY + BubbleView::caravanTradeRecordsBubbleHeight)
     {
-        int x = Event::mouseDisplayX - caravanTradeRecordsBubbleDrawX;
-        int y = Event::mouseDisplayY - caravanTradeRecordsBubbleDrawY;
+        int x = Event::mouseDisplayX - BubbleView::caravanTradeRecordsBubbleDrawX;
+        int y = Event::mouseDisplayY - BubbleView::caravanTradeRecordsBubbleDrawY;
 
         int xCell = x/Tile::WIDTH;
-        int yCell = y/(Tile::HEIGHT+caravanTradeRecordsBubbleRowSpacing);
+        int yCell = y/(Tile::HEIGHT+BubbleView::caravanTradeRecordsBubbleRowSpacing);
 
         int ritRecordRowMin = 0;
         int ritRecordRowMax = 0;
@@ -615,18 +642,18 @@ bool MouseLeftOnCaravanTradeRecordsBubble()
             ritRecordRowMax = ritRecordRowMin + (*rit)->numRows-1;
             if(yCell >= ritRecordRowMin && yCell <= ritRecordRowMax)
             {
-                if(x < caravanTradeRecordsBubblePlaceNameWidth)
+                if(x < BubbleView::caravanTradeRecordsBubblePlaceNameWidth)
                 {
-                    Place::places[(*rit)->location]->UpdateAllBubbles();
+                    Place::places[(*rit)->location]->AllBubblesNeedUpdate();
                     OverworldLockCameraPlace(Place::places[(*rit)->location]);
 
                     BubbleView::OpenEncyclopediaBubble(Display::WIDTH/2 - encyclopediaBubbleWidth/2,
-                                           Display::HEIGHT/2 + 2*Tile::HEIGHT,
-                                           EN_CAT_PLACES, (*rit)->location);
+                                                       Display::HEIGHT/2 + 2*Tile::HEIGHT,
+                                                       EN_CAT_PLACES, (*rit)->location);
                 }
                 else // x >= caravanTradeRecordsBubblePlaceNameWidth
                 {
-                    xCell -= caravanTradeRecordsBubblePlaceNameWidth/Tile::WIDTH;
+                    xCell -= BubbleView::caravanTradeRecordsBubblePlaceNameWidth/Tile::WIDTH;
                     yCell -= ritRecordRowMin;
 
                     unsigned position = yCell*((*rit)->maxCols) + xCell;
@@ -652,12 +679,12 @@ bool MouseLeftOnCaravanTradeRecordsBubble()
 
 bool MouseLeftOnCaravanPathfindingBubble()
 {
-    if(Event::mouseDisplayX > caravanPathfindingBubbleDrawX
-            && Event::mouseDisplayX < caravanPathfindingBubbleDrawX + BubbleView::currentCaravan->caravanPathfindingBubbleWidth
-            && Event::mouseDisplayY > caravanPathfindingBubbleDrawY
-            && Event::mouseDisplayY < caravanPathfindingBubbleDrawY + caravanPathfindingBubbleHeight - Resource::TEXT_HEIGHT_8)
+    if(Event::mouseDisplayX > BubbleView::caravanPathfindingBubbleDrawX
+            && Event::mouseDisplayX < BubbleView::caravanPathfindingBubbleDrawX + BubbleView::caravanPathfindingBubbleWidth
+            && Event::mouseDisplayY > BubbleView::caravanPathfindingBubbleDrawY
+            && Event::mouseDisplayY < BubbleView::caravanPathfindingBubbleDrawY + BubbleView::caravanPathfindingBubbleHeight - Resource::TEXT_HEIGHT_8)
     {
-        int x = Event::mouseDisplayX - caravanPathfindingBubbleDrawX;
+        int x = Event::mouseDisplayX - BubbleView::caravanPathfindingBubbleDrawX;
 
         int xCell = x/Tile::WIDTH; // The representation of cities is two tiles wide; every third tile is the red arrow and should not be clickable.
         if(xCell %3 != 2)
@@ -665,14 +692,14 @@ bool MouseLeftOnCaravanPathfindingBubble()
             unsigned position = xCell/3;
             int placeId = BubbleView::currentCaravan->worldGraph.path[position];
 
-            Place::places[placeId]->UpdateAllBubbles();
+            Place::places[placeId]->AllBubblesNeedUpdate();
 
             SetCameraCenterDestination(Place::places[placeId]->overworldXPosition,
                                        Place::places[placeId]->overworldYPosition);
 
             BubbleView::OpenEncyclopediaBubble(Display::WIDTH/2 - encyclopediaBubbleWidth/2,
-                                   Display::HEIGHT/2 + 2*Tile::HEIGHT,
-                                   EN_CAT_PLACES, placeId);
+                                               Display::HEIGHT/2 + 2*Tile::HEIGHT,
+                                               EN_CAT_PLACES, placeId);
         }
 
         return true;
@@ -688,22 +715,22 @@ bool MouseLeftOnPlacePopulationBubble()
 
 bool MouseLeftOnPlaceCaravanseraiBubble()
 {
-    if(Event::mouseDisplayX > placeCaravanseraiDrawX
-            && Event::mouseDisplayX < placeCaravanseraiDrawX + BubbleView::currentPlace->placeCaravanseraiWidth
-            && Event::mouseDisplayY > placeCaravanseraiDrawY
-            && Event::mouseDisplayY < placeCaravanseraiDrawY + BubbleView::currentPlace->placeCaravanseraiHeight)
+    if(Event::mouseDisplayX > BubbleView::placeCaravanseraiDrawX
+            && Event::mouseDisplayX < BubbleView::placeCaravanseraiDrawX + BubbleView::placeCaravanseraiWidth
+            && Event::mouseDisplayY > BubbleView::placeCaravanseraiDrawY
+            && Event::mouseDisplayY < BubbleView::placeCaravanseraiDrawY + BubbleView::placeCaravanseraiHeight)
     {
-        int x = Event::mouseDisplayX - placeCaravanseraiDrawX;
-        int y = Event::mouseDisplayY - placeCaravanseraiDrawY;
+        int x = Event::mouseDisplayX - BubbleView::placeCaravanseraiDrawX;
+        int y = Event::mouseDisplayY - BubbleView::placeCaravanseraiDrawY;
 
         int xCell = x/Tile::WIDTH;
         int yCell = y/Tile::HEIGHT;
 
-        unsigned position = yCell*(BubbleView::currentPlace->placeCaravanseraiNumCols) + xCell;
+        unsigned position = yCell*(BubbleView::placeCaravanseraiNumCols) + xCell;
 
         if(position < BubbleView::currentPlace->caravanserai.size())
         {
-            BubbleView::currentPlace->caravanserai[position]->UpdateAllBubbles();
+            BubbleView::currentPlace->caravanserai[position]->AllBubblesNeedUpdate();
             BubbleView::currentCaravan = BubbleView::currentPlace->caravanserai[position];
             //OverworldLockCameraCaravan(BubbleView::currentPlace->caravanserai[position]); // Already unlocks camera from place
         }
@@ -726,18 +753,18 @@ bool MouseLeftOnPlaceDeficitBubble()
 
 bool MouseLeftOnPlaceMarketBubble()
 {
-    if(Event::mouseDisplayX > placeMarketBubbleDrawX
-            && Event::mouseDisplayX < placeMarketBubbleDrawX + BubbleView::currentPlace->placeMarketBubbleWidth
-            && Event::mouseDisplayY > placeMarketBubbleDrawY
-            && Event::mouseDisplayY < placeMarketBubbleDrawY + BubbleView::currentPlace->placeMarketBubbleHeight)
+    if(Event::mouseDisplayX > BubbleView::placeMarketBubbleDrawX
+            && Event::mouseDisplayX < BubbleView::placeMarketBubbleDrawX + BubbleView::placeMarketBubbleWidth
+            && Event::mouseDisplayY > BubbleView::placeMarketBubbleDrawY
+            && Event::mouseDisplayY < BubbleView::placeMarketBubbleDrawY + BubbleView::placeMarketBubbleHeight)
     {
-        int x = Event::mouseDisplayX - placeMarketBubbleDrawX;
-        int y = Event::mouseDisplayY - placeMarketBubbleDrawY;
+        int x = Event::mouseDisplayX - BubbleView::placeMarketBubbleDrawX;
+        int y = Event::mouseDisplayY - BubbleView::placeMarketBubbleDrawY;
 
         int xCell = x/Tile::WIDTH;
-        int yCell = y/(Tile::HEIGHT+placeMarketBubbleRowSpacing);
+        int yCell = y/(Tile::HEIGHT+BubbleView::placeMarketBubbleRowSpacing);
 
-        unsigned position = yCell*(BubbleView::currentPlace->placeMarketBubbleNumCols) + xCell;
+        unsigned position = yCell*(BubbleView::placeMarketBubbleNumCols) + xCell;
 
         if(position < BubbleView::currentPlace->market.cargo.size())
         {
@@ -755,10 +782,10 @@ bool MouseLeftOnPlaceMarketBubble()
 
 bool MouseLeftOnPlaceIndustriesBubble()
 {
-    if(Event::mouseDisplayX > placeIndustriesBubbleDrawX
-            && Event::mouseDisplayX < placeIndustriesBubbleDrawX + placeIndustriesBubbleWidth
-            && Event::mouseDisplayY > placeIndustriesBubbleDrawY
-            && Event::mouseDisplayY < placeIndustriesBubbleDrawY + BubbleView::currentPlace->placeIndustriesBubbleHeight)
+    if(Event::mouseDisplayX > BubbleView::placeIndustriesBubbleDrawX
+            && Event::mouseDisplayX < BubbleView::placeIndustriesBubbleDrawX + BubbleView::placeIndustriesBubbleWidth
+            && Event::mouseDisplayY > BubbleView::placeIndustriesBubbleDrawY
+            && Event::mouseDisplayY < BubbleView::placeIndustriesBubbleDrawY + BubbleView::placeIndustriesBubbleHeight)
     {
         std::cout << "Unimplemented" << std::endl;
 
@@ -799,7 +826,7 @@ void AttemptCameraLockOn()
         {
             OverworldLockCameraPlace((*it).second);
             BubbleView::currentPlace = ((*it).second);
-            (*it).second->UpdateAllBubbles();
+            (*it).second->AllBubblesNeedUpdate();
 
             Camera::xPosition = x - Display::WIDTH/2;
             Camera::yPosition = y - Display::HEIGHT/2;
