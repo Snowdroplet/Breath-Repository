@@ -166,6 +166,18 @@ struct BubbleView
     static constexpr float placeIndustriesBubbleProgressBarWidth = placeIndustriesBubbleWidth - placeIndustriesBubbleProgressBarOffset;
     static float placeIndustriesBubbleHeight;
 
+    /// Encyclopedia bubble
+    static int encyclopediaCurrentCategory;
+    static int encyclopediaCurrentIndex;
+    static std::string encyclopediaBubbleEntryName;
+    static std::string encyclopediaBubbleEntryText;
+
+    static std::string encyclopediaBubbleLabel;
+    static constexpr float encyclopediaBubbleWidth = Tile::WIDTH*8;
+    static float encyclopediaBubbleHeight;
+    static float encyclopediaBubbleDrawX;
+    static float encyclopediaBubbleDrawY;
+
     static void Initialize()
     {
         currentCaravan = nullptr;
@@ -192,6 +204,8 @@ struct BubbleView
         placeMarketBubbleEmptyText = "<No inventory>";
         placeIndustriesBubbleLabel = "Local Industries";
         placeIndustriesBubbleEmptyText = "<No industries>";
+
+        encyclopediaBubbleLabel = "Encyclopedia";
 
         beingStatusBubbleOpen = false;
         encyclopediaBubbleOpen = false;
@@ -234,22 +248,11 @@ struct BubbleView
     static void DrawPlaceIndustriesBubble(Place *p);
 
 /// Encyclopedia bubble functions
-    static void OpenEncyclopediaBubble(float x, float y, unsigned category, unsigned index);
+    static void OpenEncyclopediaBubble(float x, float y, int category, int index);
     static void CloseEncyclopediaBubble();
     static void DrawEncyclopediaBubble();
 };
 
 /// Encyclopedia bubble
-extern int encyclopediaCurrentCategory;
-extern int encyclopediaCurrentIndex;
-extern std::string encyclopediaBubbleEntryName;
-extern std::string encyclopediaBubbleEntryText;
-
-const std::string encyclopediaBubbleLabel = "Encyclopedia";
-const float encyclopediaBubbleWidth = Tile::WIDTH*8;
-
-extern float encyclopediaBubbleDrawX;
-extern float encyclopediaBubbleDrawY;
-extern float encyclopediaBubbleHeight;
 
 #endif // BUBBLEVIEW_H_INCLUDED

@@ -346,43 +346,43 @@ void Road::SetGeography(int whichGeography)
     switch(whichGeography)
     {
     case GEO_PLAINS:
-        drawUnderColour = COL_JADE_1;
+        drawUnderColour = AllegroCustom::COL_JADE_1;
         break;
     case GEO_HILLS:
-        drawUnderColour = COL_EARTHEN_2;
+        drawUnderColour = AllegroCustom::COL_EARTHEN_2;
         break;
     case GEO_MOUNTAINS:
-        drawUnderColour = COL_EARTHEN_1;
+        drawUnderColour = AllegroCustom::COL_EARTHEN_1;
         break;
     case GEO_ICE_MOUNTAINS:
-        drawUnderColour = COL_STEEL_4;
+        drawUnderColour = AllegroCustom::COL_STEEL_4;
         break;
     case GEO_FOREST:
-        drawUnderColour = COL_JADE_0;
+        drawUnderColour = AllegroCustom::COL_JADE_0;
         break;
     case GEO_RIVER:
-        drawUnderColour = COL_AZURE_1;
+        drawUnderColour = AllegroCustom::COL_AZURE_1;
         break;
     case GEO_OCEAN:
-        drawUnderColour = COL_OCEAN_2;
+        drawUnderColour = AllegroCustom::COL_OCEAN_2;
         break;
     case GEO_TUNDRA:
-        drawUnderColour = COL_STEEL_3;
+        drawUnderColour = AllegroCustom::COL_STEEL_3;
         break;
     case GEO_DESERT:
-        drawUnderColour = COL_ELECTRIC_4; //COL_CARAMEL_2;
+        drawUnderColour = AllegroCustom::COL_ELECTRIC_4; //COL_CARAMEL_2;
         break;
     case GEO_RED_MESA:
-        drawUnderColour = COL_RUST_2;
+        drawUnderColour = AllegroCustom::COL_RUST_2;
         break;
     case GEO_ASH_WASTE:
-        drawUnderColour = COL_EARTHEN_1;
+        drawUnderColour = AllegroCustom::COL_EARTHEN_1;
         break;
     case GEO_CLOUDS:
-        drawUnderColour = COL_WIND_1;
+        drawUnderColour = AllegroCustom::COL_WIND_1;
         break;
     case GEO_TRANSIENT_LEY:
-        drawUnderColour = COL_VIOLET_1;
+        drawUnderColour = AllegroCustom::COL_VIOLET_1;
         break;
     }
 
@@ -395,22 +395,22 @@ void Road::SetSovereignty(int whichSovereignty)
     switch(sovereignty)
     {
     case SOV_NULL:
-        drawOverColour = COL_FLESH_2;
+        drawOverColour = AllegroCustom::COL_FLESH_2;
         break;
     case SOV_VERUS:
-        drawOverColour = COL_JADE_2;
+        drawOverColour = AllegroCustom::COL_JADE_2;
         break;
     case SOV_SHARUMNIR:
-        drawOverColour = COL_STEEL_2;
+        drawOverColour = AllegroCustom::COL_STEEL_2;
         break;
     case SOV_XENIA:
-        drawOverColour = COL_ELECTRIC_2;
+        drawOverColour = AllegroCustom::COL_ELECTRIC_2;
         break;
     case SOV_THOUSAND_ISLES:
-        drawOverColour = COL_AZURE_2;
+        drawOverColour = AllegroCustom::COL_AZURE_2;
         break;
     default:
-        drawOverColour = COL_WIND_3;
+        drawOverColour = AllegroCustom::COL_WIND_3;
         break;
     }
 }

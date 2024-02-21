@@ -9,6 +9,7 @@ float Camera::zoomScale;
 float Camera::zoomTranslateX;
 float Camera::zoomTranslateY;
 
+bool Camera::overworldCameraMousePanningDisabled;
 float Camera::mouseTransformedX;
 float Camera::mouseTransformedY;
 
@@ -21,8 +22,6 @@ float Camera::xPosition;
 float Camera::yPosition;
 float Camera::xDestination;
 float Camera::yDestination;
-
-
 
 void Camera::ApproachDestination()
 {

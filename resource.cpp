@@ -7,22 +7,22 @@ ALLEGRO_FONT* Resource::Resource::builtin8;
 
 ALLEGRO_BITMAP* Resource::overworldPlacePng;
 
-ALLEGRO_BITMAP *beingsPng;
-ALLEGRO_BITMAP *beingPng[NUM_ANCESTRIES];
+ALLEGRO_BITMAP* Resource::beingsPng;
+ALLEGRO_BITMAP* Resource::beingPng[NUM_ANCESTRIES];
 
-ALLEGRO_BITMAP *expertiseIconPng;
+ALLEGRO_BITMAP* Resource::expertiseIconPng;
 
-ALLEGRO_BITMAP *miniCargoPng;
-ALLEGRO_BITMAP *cargoPng;
+ALLEGRO_BITMAP* Resource::miniCargoPng;
+ALLEGRO_BITMAP* Resource::cargoPng;
 
-ALLEGRO_BITMAP *redArrowPng;
-ALLEGRO_BITMAP *redTransparentXPng;
+ALLEGRO_BITMAP* Resource::redArrowPng;
+ALLEGRO_BITMAP* Resource::redTransparentXPng;
 
-ALLEGRO_SAMPLE *cottagesMacLeodMp3;
-ALLEGRO_SAMPLE *manorMacLeodMp3;
+ALLEGRO_SAMPLE* Resource::cottagesMacLeodMp3;
+ALLEGRO_SAMPLE* Resource::manorMacLeodMp3;
 
-ALLEGRO_SAMPLE_INSTANCE *cottagesSampleInstance;
-ALLEGRO_SAMPLE_INSTANCE *manorSampleInstance;
+ALLEGRO_SAMPLE_INSTANCE* Resource::cottagesSampleInstance;
+ALLEGRO_SAMPLE_INSTANCE* Resource::manorSampleInstance;
 
 //std::map<int, *ALLEGRO_SAMPLE_INSTANCE>allegro_sample_instances>;
 

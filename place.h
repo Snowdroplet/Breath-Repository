@@ -14,11 +14,12 @@
 #include "allegrocustom.h"
 
 #include "colorindex.h"
+#include "resource.h"
 
 #include "caravan.h"
+#include "road.h"
 #include "industry.h"
 #include "flyingtext.h"
-#include "resource.h"
 
 #include "placeindex.h"
 #include "economyindex.h"
@@ -27,6 +28,7 @@
 
 /// Dependencies
 class Caravan; // Circular
+class Road;
 
 class Place
 {
@@ -58,15 +60,15 @@ public:
     const int removeFromCaravanseraiDelayHours = 1; // Todo: Tie to advancement of calendar time instead of arbitrary number
 
 /// Economy - Main
-    std::array<bool, IT_MARKER_LAST+1>itemsConsumedByIndustries; // Not mutually exclusive with "itemsProducedByIndustries", i.e. in the case of intermediate inputs in two stage production chains
-    std::array<bool, IT_MARKER_LAST+1>itemsProducedByIndustries;
-    std::array<bool, IT_MARKER_LAST+1>itemsConsumedByPopulation;
+    std::array<bool, InventoryIndex::IT_MARKER_LAST+1>itemsConsumedByIndustries; // Not mutually exclusive with "itemsProducedByIndustries", i.e. in the case of intermediate inputs in two stage production chains
+    std::array<bool, InventoryIndex::IT_MARKER_LAST+1>itemsProducedByIndustries;
+    std::array<bool, InventoryIndex::IT_MARKER_LAST+1>itemsConsumedByPopulation;
 
     const float maintainenceSecurityFactor = 3; /// Security factor is the lynchpin of a city's economy, affecting supply and demand. How many multiples of its consumption must a city be overstocked for in order to consider itself at a resource surplus.
     const float industrialSecurityFactor = 3;   /// As above, but for industrial inputs. Based on daily average, so a security factory of 7 means that the city wants to have enough inputs to cover 7 days' production at any time.
 
-    std::array<float, IT_MARKER_LAST+1>surplusRatio;
-    std::array<float, IT_MARKER_LAST+1>deficitRatio;
+    std::array<float, InventoryIndex::IT_MARKER_LAST+1>surplusRatio;
+    std::array<float, InventoryIndex::IT_MARKER_LAST+1>deficitRatio;
     std::vector<int>surplusesDescending;
     std::vector<int>deficitsDescending;
 
@@ -86,17 +88,17 @@ public:
 
 /// Economy - Maintainence Consumption --- Maintainence consumption roughly corresponds to "household consumption" in economics, as opposed to "industrial consumption".
 
-    std::array<int,IT_MARKER_LAST+1>maintainenceConsumptionLevel; // Standard of living, as applied to individual items.
-    std::array<int,IT_MARKER_LAST+1>maintainenceConsumptionTimer; // When this increases to threshold, it's time for a consumption tick
-    std::array<int,IT_MARKER_LAST+1>maintainenceConsumptionTimerThreshold;
-    std::array<float,IT_MARKER_LAST+1>maintainenceConsumptionQuantityOnTick; // How much of a resource is consumed during a consumption tick
-    std::array<float,IT_MARKER_LAST+1>maintainenceConsumptionQuantityDaily;
+    std::array<int,InventoryIndex::IT_MARKER_LAST+1>maintainenceConsumptionLevel; // Standard of living, as applied to individual items.
+    std::array<int,InventoryIndex::IT_MARKER_LAST+1>maintainenceConsumptionTimer; // When this increases to threshold, it's time for a consumption tick
+    std::array<int,InventoryIndex::IT_MARKER_LAST+1>maintainenceConsumptionTimerThreshold;
+    std::array<float,InventoryIndex::IT_MARKER_LAST+1>maintainenceConsumptionQuantityOnTick; // How much of a resource is consumed during a consumption tick
+    std::array<float,InventoryIndex::IT_MARKER_LAST+1>maintainenceConsumptionQuantityDaily;
 
 ///std::array<int, IT_MARKER_LAST+1>maintainenceConsumptionTier; /// It is important to note that changing MCT only affects maintainence consumption rate (not consumption quantity), through the updatemaintainenceconsumptionquantity function
     std::map<int,float>dailyConsumption;
 
 /// Economy - Industrial Consumption --- As opposed to maintainence consumption above.
-    std::array<float,IT_MARKER_LAST+1>industrialConsumptionQuantityDaily; // How much of a resource is consumed by industries on average **per day**.
+    std::array<float,InventoryIndex::IT_MARKER_LAST+1>industrialConsumptionQuantityDaily; // How much of a resource is consumed by industries on average **per day**.
 
 /// Location
     int overworldXPosition, overworldYPosition; // Absolute position on the overworld.

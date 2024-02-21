@@ -56,7 +56,7 @@ void FlyingText::DrawOnOverworld()
         float drawX = overworldXPosition - Camera::xPosition;
         float drawY = overworldYPosition - Camera::yPosition;
 
-        al_draw_bitmap_region(miniCargoPng,
+        al_draw_bitmap_region(Resource::miniCargoPng,
                               itemIcon*Tile::MINI_WIDTH, 0,
                               Tile::MINI_WIDTH, Tile::MINI_HEIGHT,
                               drawX,
@@ -64,8 +64,8 @@ void FlyingText::DrawOnOverworld()
                               0);
 
         if(scrollUp)
-            string_al_draw_text(Resource::builtin8,COLKEY_TEXT,drawX+Tile::MINI_WIDTH,drawY,ALLEGRO_ALIGN_LEFT,text);
+            AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_TEXT,drawX+Tile::MINI_WIDTH,drawY,ALLEGRO_ALIGN_LEFT,text);
         else //scroll down
-            string_al_draw_text(Resource::builtin8,COLKEY_FLYINGTEXT_DOWN,drawX+Tile::MINI_WIDTH,drawY,ALLEGRO_ALIGN_LEFT,text);
+            AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_FLYINGTEXT_DOWN,drawX+Tile::MINI_WIDTH,drawY,ALLEGRO_ALIGN_LEFT,text);
     }
 }

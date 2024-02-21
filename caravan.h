@@ -6,6 +6,7 @@
 #include <random>
 
 #include "colorindex.h"
+#include "lockon.h"
 
 #include "being.h"
 #include "inventory.h"
@@ -14,6 +15,10 @@
 #include "place.h"
 #include "worldgraph.h"
 #include "traderecord.h"
+
+#include "flyingtext.h"
+
+#include "bubbleview.h"
 
 
 /// Dependencies

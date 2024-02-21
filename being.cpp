@@ -80,8 +80,8 @@ void Being::DrawActivity(float x, float y)
             f = ALLEGRO_FLIP_HORIZONTAL;
 
         if(activity == ACT_WALKING)
-            al_draw_bitmap_region(beingPng[ancestry],
-                                  spriteVariant*resourceBeingNumWalkFrames*spriteWidth + spriteWidth*currentFrame,
+            al_draw_bitmap_region(Resource::beingPng[ancestry],
+                                  spriteVariant*Resource::resourceBeingNumWalkFrames*spriteWidth + spriteWidth*currentFrame,
                                   spriteHeight*activity,
                                   spriteWidth,
                                   spriteHeight,
@@ -126,11 +126,11 @@ void Being::DrawBeingStatusBubble()
                               COLKEY_UI_BUBBLE_FRAME, 4);
 
 // Biography
-    string_al_draw_text(Resource::builtin8, COLKEY_TEXT, beingStatusBubbleDrawX,
+    AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT, beingStatusBubbleDrawX,
                         beingStatusBubbleDrawY+beingStatusBubbleBiographyPartitionHeight,
                         ALLEGRO_ALIGN_LEFT, "Name: " + name);
 
-    string_al_draw_text(Resource::builtin8, COLKEY_TEXT, beingStatusBubbleDrawX,
+    AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT, beingStatusBubbleDrawX,
                         beingStatusBubbleDrawY+beingStatusBubbleBiographyPartitionHeight + Resource::TEXT_HEIGHT_12,
                         ALLEGRO_ALIGN_LEFT, "Home: " + placeNames.at(hometown));
 

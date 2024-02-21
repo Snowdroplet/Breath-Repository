@@ -1,20 +1,21 @@
 #include "calendar.h"
 
-bool hourChangeTick = false;
-bool dayChangeTick = false;
+bool Calendar::hourChangeTick;
+bool Calendar::dayChangeTick;
 
-int hourFrame;
-int hourOfTheDay;
-int dayOfTheWeek;
-int dayOfTheMonth;
-int monthOfTheYear;
-int year;
+int Calendar::hourFrame;
+int Calendar::hourOfTheDay;
+int Calendar::dayOfTheWeek;
+int Calendar::dayOfTheMonth;
+int Calendar::monthOfTheYear;
+int Calendar::year;
 
-std::string calendarText;
+std::string Calendar::calendarText;
 
-void InitCalendar(int startHourOfDay, int startDayOfMonth, int startMonthOfYear, int startYear)
+void Calendar::Initialize(int startHourOfDay, int startDayOfMonth, int startMonthOfYear, int startYear)
 {
     hourChangeTick = false;
+    dayChangeTick = false;
 
     hourFrame = 0;
     hourOfTheDay = startHourOfDay;
@@ -39,7 +40,7 @@ void InitCalendar(int startHourOfDay, int startDayOfMonth, int startMonthOfYear,
 }
 
 
-void AdvanceHourFrame()
+void Calendar::AdvanceHourFrame()
 {
     hourFrame ++;
     if(hourFrame >= FRAMES_PER_HOUR)
@@ -55,7 +56,7 @@ void AdvanceHourFrame()
     }
 }
 
-void AdvanceHour()
+void Calendar::AdvanceHour()
 {
     hourOfTheDay ++;
     if(hourOfTheDay >= HOURS_PER_DAY)
@@ -67,7 +68,7 @@ void AdvanceHour()
 
 }
 
-void AdvanceDay()
+void Calendar::AdvanceDay()
 {
     dayOfTheWeek++;
     if(dayOfTheWeek > LAST_DAY_OF_WEEK)
@@ -83,7 +84,7 @@ void AdvanceDay()
     }
 }
 
-void AdvanceMonth()
+void Calendar::AdvanceMonth()
 {
     monthOfTheYear++;
     if(monthOfTheYear > LAST_MONTH_OF_YEAR)
@@ -93,12 +94,12 @@ void AdvanceMonth()
     }
 }
 
-void AdvanceYear()
+void Calendar::AdvanceYear()
 {
     year++;
 }
 
-void UpdateCalendarText()
+void Calendar::UpdateCalendarText()
 {
     calendarText = std::to_string(hourOfTheDay) + "00h -- "
     + dayNames.at(dayOfTheWeek) + ", "
@@ -107,8 +108,8 @@ void UpdateCalendarText()
     + std::to_string(year);
 }
 
-void DrawCalendar()
+void Calendar::DrawCalendar()
 {
-    string_al_draw_text(Resource::builtin8, COLKEY_TEXT, CALENDAR_TEXT_DRAW_X, CALENDAR_TEXT_DRAW_Y, ALLEGRO_ALIGN_RIGHT, calendarText);
+    AllegroCustom::AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT, CALENDAR_TEXT_DRAW_X, CALENDAR_TEXT_DRAW_Y, ALLEGRO_ALIGN_RIGHT, calendarText);
 }
 

@@ -30,7 +30,6 @@ unsigned BubbleView::caravanPathfindingBubbleNumCols;
 unsigned BubbleView::caravanPathfindingBubbleNumRows;
 float BubbleView::caravanPathfindingBubbleWidth, BubbleView::caravanPathfindingBubbleHeight;
 
-
 std::string BubbleView::placePopulationBubbleLabel;
 std::string BubbleView::placePopulationBubbleEmptyText;
 float BubbleView::placePopulationBubbleWidth;
@@ -62,6 +61,16 @@ float BubbleView::placeMarketBubbleHeight;
 std::string BubbleView::placeIndustriesBubbleLabel;
 std::string BubbleView::placeIndustriesBubbleEmptyText;
 float BubbleView::placeIndustriesBubbleHeight;
+
+int BubbleView::encyclopediaCurrentCategory;
+int BubbleView::encyclopediaCurrentIndex;
+std::string BubbleView::encyclopediaBubbleEntryName;
+std::string BubbleView::encyclopediaBubbleEntryText;
+
+std::string BubbleView::encyclopediaBubbleLabel;
+float BubbleView::encyclopediaBubbleHeight;
+float BubbleView::encyclopediaBubbleDrawX;
+float BubbleView::encyclopediaBubbleDrawY;
 
 
 /// Being status bubble
@@ -97,11 +106,11 @@ void BubbleView::DrawBeingStatusBubble(Being *b)
                               COLKEY_UI_BUBBLE_FRAME, 4);
 
 // Biography
-    string_al_draw_text(Resource::builtin8, COLKEY_TEXT, beingStatusBubbleDrawX,
+    AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT, beingStatusBubbleDrawX,
                         beingStatusBubbleDrawY+beingStatusBubbleBiographyPartitionHeight,
                         ALLEGRO_ALIGN_LEFT, "Name: " + b->name);
 
-    string_al_draw_text(Resource::builtin8, COLKEY_TEXT, beingStatusBubbleDrawX,
+    AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT, beingStatusBubbleDrawX,
                         beingStatusBubbleDrawY+beingStatusBubbleBiographyPartitionHeight + Resource::TEXT_HEIGHT_12,
                         ALLEGRO_ALIGN_LEFT, "Home: " + placeNames.at(b->hometown));
 
@@ -240,7 +249,7 @@ void BubbleView::DrawCaravanCrewBubble(Caravan *c)
                               bubbleCornerRadius,
                               COLKEY_UI_BUBBLE_FRAME, 4);
 
-    string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanCrewBubbleDrawX, caravanCrewBubbleDrawY-bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanCrewBubbleLabel);
+    AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanCrewBubbleDrawX, caravanCrewBubbleDrawY-bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanCrewBubbleLabel);
 
     if(c->members.size() > 0)
     {
@@ -253,7 +262,7 @@ void BubbleView::DrawCaravanCrewBubble(Caravan *c)
         }
     }
     else
-        string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanCrewBubbleDrawX, caravanCrewBubbleDrawY-bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanCrewBubbleEmptyText);
+        AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanCrewBubbleDrawX, caravanCrewBubbleDrawY-bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanCrewBubbleEmptyText);
 }
 
 
@@ -296,7 +305,7 @@ void BubbleView::DrawCaravanInventoryBubble(Caravan *c)
                               bubbleCornerRadius,
                               COLKEY_UI_BUBBLE_FRAME, 4);
 
-    string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanInventoryBubbleDrawX, caravanInventoryBubbleDrawY-bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanInventoryBubbleLabel);
+    AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanInventoryBubbleDrawX, caravanInventoryBubbleDrawY-bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanInventoryBubbleLabel);
 
     if(c->inventory.cargo.size() > 0)
     {
@@ -306,20 +315,20 @@ void BubbleView::DrawCaravanInventoryBubble(Caravan *c)
             float drawX = caravanInventoryBubbleDrawX + i%caravanInventoryBubbleNumCols*Tile::WIDTH;
             float drawY = caravanInventoryBubbleDrawY + i/caravanInventoryBubbleNumCols*(Tile::HEIGHT + caravanInventoryBubbleRowSpacing);
 
-            al_draw_bitmap_region(cargoPng,
+            al_draw_bitmap_region(Resource::cargoPng,
                                   ((*it).first)*Tile::WIDTH, 0,
                                   Tile::WIDTH, Tile::HEIGHT,
                                   drawX, drawY,
                                   0);
 
-            string_al_draw_text(Resource::builtin8, COLKEY_TEXT, drawX+Tile::WIDTH, drawY+Tile::HEIGHT, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
+            AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT, drawX+Tile::WIDTH, drawY+Tile::HEIGHT, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
             i++;
         }
     }
     else
-        string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanInventoryBubbleDrawX,caravanInventoryBubbleDrawY,ALLEGRO_ALIGN_LEFT,caravanInventoryBubbleEmptyText);
+        AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanInventoryBubbleDrawX,caravanInventoryBubbleDrawY,ALLEGRO_ALIGN_LEFT,caravanInventoryBubbleEmptyText);
 
-    string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanInventoryBubbleDrawX,
+    AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanInventoryBubbleDrawX,
                         caravanInventoryBubbleDrawY+caravanInventoryBubbleHeight + Resource::TEXT_HEIGHT_8,
                         ALLEGRO_ALIGN_LEFT,
                         "Weight: " + std::to_string((int)(c->cargoWeight)) + " / " + std::to_string((int)(c->cargoWeightMax)) );
@@ -346,7 +355,7 @@ void BubbleView::DrawCaravanTradeRecordsBubble(Caravan *c)
                               4);
 
 
-    string_al_draw_text(Resource::builtin8, COLKEY_TEXT, caravanTradeRecordsBubbleDrawX, caravanTradeRecordsBubbleDrawY-bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanTradeRecordsBubbleLabel);
+    AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT, caravanTradeRecordsBubbleDrawX, caravanTradeRecordsBubbleDrawY-bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, caravanTradeRecordsBubbleLabel);
 
     if(c->tradeRecords.size() > 0)
     {
@@ -355,7 +364,7 @@ void BubbleView::DrawCaravanTradeRecordsBubble(Caravan *c)
 
         for(std::vector<TradeRecord*>::reverse_iterator rit = c->tradeRecords.rbegin(); rit != c->tradeRecords.rend(); ++rit)
         {
-            string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
+            AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
                                 caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubblePlaceNameWidth,
                                 caravanTradeRecordsBubbleDrawY + row*(Tile::HEIGHT + caravanTradeRecordsBubbleRowSpacing),
                                 ALLEGRO_ALIGN_RIGHT,
@@ -385,13 +394,13 @@ void BubbleView::DrawCaravanTradeRecordsBubble(Caravan *c)
                                                  COLKEY_UI_TRADERECORD_POSITIVE);
 
 
-                    al_draw_bitmap_region(cargoPng,
+                    al_draw_bitmap_region(Resource::cargoPng,
                                           ((*jt).first)*Tile::WIDTH, 0,
                                           Tile::WIDTH, Tile::HEIGHT,
                                           iconDrawX, iconDrawY,
                                           0);
 
-                    string_al_draw_text(Resource::builtin8, COLKEY_TEXT, iconDrawX+Tile::WIDTH, iconDrawY+Tile::HEIGHT, ALLEGRO_ALIGN_RIGHT, std::to_string((*jt).second));
+                    AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT, iconDrawX+Tile::WIDTH, iconDrawY+Tile::HEIGHT, ALLEGRO_ALIGN_RIGHT, std::to_string((*jt).second));
 
                     col++;
                 }
@@ -399,7 +408,7 @@ void BubbleView::DrawCaravanTradeRecordsBubble(Caravan *c)
             }
             else if((*rit)->tradeQuantities.size() == 0) // tradeQuantities vector empty
             {
-                string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
+                AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
                                     caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubblePlaceNameWidth + col*(Tile::WIDTH),
                                     caravanTradeRecordsBubbleDrawY + row*(Tile::HEIGHT + caravanTradeRecordsBubbleRowSpacing) + Tile::HEIGHT/2 - Resource::TEXT_HEIGHT_8/2,
                                     ALLEGRO_ALIGN_LEFT,
@@ -411,7 +420,7 @@ void BubbleView::DrawCaravanTradeRecordsBubble(Caravan *c)
         }
     }
     else
-        string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanTradeRecordsBubbleDrawX, caravanTradeRecordsBubbleDrawY, ALLEGRO_ALIGN_LEFT, caravanTradeRecordsBubbleEmptyText);
+        AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_TEXT,caravanTradeRecordsBubbleDrawX, caravanTradeRecordsBubbleDrawY, ALLEGRO_ALIGN_LEFT, caravanTradeRecordsBubbleEmptyText);
 }
 
 void BubbleView::DrawCaravanPathfindingBubble(Caravan *c)
@@ -446,14 +455,14 @@ void BubbleView::DrawCaravanPathfindingBubble(Caravan *c)
                                   drawX, drawY,
                                   0);
 
-            string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
+            AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
                                 drawX + Tile::WIDTH, drawY + 2*Tile::HEIGHT,
                                 ALLEGRO_ALIGN_CENTER,
                                 placeNames.at(c->worldGraph.path[i]));
 
             if(i < c->worldGraph.path.size()-1)
             {
-                al_draw_bitmap(redArrowPng,
+                al_draw_bitmap(Resource::redArrowPng,
                                drawX+2*Tile::WIDTH,
                                drawY+Tile::HEIGHT/2,
                                0);
@@ -462,12 +471,12 @@ void BubbleView::DrawCaravanPathfindingBubble(Caravan *c)
     }
     else
     {
-        string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
+        AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
                             caravanPathfindingBubbleDrawX+caravanPathfindingBubbleWidth/2,
                             caravanPathfindingBubbleDrawY+caravanPathfindingBubbleWidth/2 - Resource::TEXT_HEIGHT_8,
                             ALLEGRO_ALIGN_CENTER, caravanPathfindingBubbleEmptyText);
     }
-    string_al_draw_text(Resource::builtin8,COLKEY_TEXT,
+    AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_TEXT,
                         caravanPathfindingBubbleDrawX,
                         caravanPathfindingBubbleDrawY-bubblePadding-Resource::TEXT_HEIGHT_8,
                         ALLEGRO_ALIGN_LEFT, caravanPathfindingBubbleLabel);
@@ -606,18 +615,18 @@ void BubbleView::DrawPlacePopulationBubble(Place *p)
     unsigned i = 0;
     for(std::map<int, unsigned>::iterator it = p->population.begin(); it != p->population.end(); ++it)
     {
-        al_draw_bitmap_region(expertiseIconPng,
+        al_draw_bitmap_region(Resource::expertiseIconPng,
                               ((*it).first)*Tile::WIDTH, 0,
                               Tile::WIDTH,Tile::HEIGHT,
                               placePopulationBubbleDrawX + i*Tile::WIDTH,
                               placePopulationBubbleDrawY,
                               0);
 
-        string_al_draw_text(Resource::builtin8,COLKEY_TEXT, placePopulationBubbleDrawX + i*Tile::WIDTH + Tile::WIDTH, placePopulationBubbleDrawY+Tile::HEIGHT,ALLEGRO_ALIGN_RIGHT,std::to_string((*it).second));
+        AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_TEXT, placePopulationBubbleDrawX + i*Tile::WIDTH + Tile::WIDTH, placePopulationBubbleDrawY+Tile::HEIGHT,ALLEGRO_ALIGN_RIGHT,std::to_string((*it).second));
         i++;
     }
 
-    string_al_draw_text(Resource::builtin8,COLKEY_TEXT, placePopulationBubbleDrawX, placePopulationBubbleDrawY-bubblePadding-8, ALLEGRO_ALIGN_LEFT, placePopulationBubbleLabel);
+    AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_TEXT, placePopulationBubbleDrawX, placePopulationBubbleDrawY-bubblePadding-8, ALLEGRO_ALIGN_LEFT, placePopulationBubbleLabel);
 }
 
 
@@ -640,7 +649,7 @@ void BubbleView::DrawPlaceCaravanseraiBubble(Place *p)
                               bubbleCornerRadius, bubbleCornerRadius,
                               COLKEY_UI_BUBBLE_FRAME, 4);
 
-    string_al_draw_text(Resource::builtin8,COLKEY_TEXT,placeCaravanseraiDrawX, placeCaravanseraiDrawY-bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, placeCaravanseraiLabel);
+    AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_TEXT,placeCaravanseraiDrawX, placeCaravanseraiDrawY-bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, placeCaravanseraiLabel);
 
     if(p->caravanserai.size() > 0)
     {
@@ -656,7 +665,7 @@ void BubbleView::DrawPlaceCaravanseraiBubble(Place *p)
         }
     }
     else
-        string_al_draw_text(Resource::builtin8,COLKEY_TEXT,placeCaravanseraiDrawX,placeCaravanseraiDrawY,ALLEGRO_ALIGN_LEFT,placeCaravanseraiEmptyText);
+        AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_TEXT,placeCaravanseraiDrawX,placeCaravanseraiDrawY,ALLEGRO_ALIGN_LEFT,placeCaravanseraiEmptyText);
 }
 
 
@@ -684,7 +693,7 @@ void BubbleView::DrawPlaceSurplusBubble(Place *p)
         if(drawRow >= placeSurplusBubbleMaxRows)
             break;
 
-        al_draw_bitmap_region(cargoPng,
+        al_draw_bitmap_region(Resource::cargoPng,
                               (*it)*Tile::WIDTH, 0,
                               Tile::WIDTH,Tile::HEIGHT,
                               placeSurplusBubbleDrawX,placeSurplusBubbleDrawY + Tile::HEIGHT*drawRow, 0);
@@ -695,26 +704,26 @@ void BubbleView::DrawPlaceSurplusBubble(Place *p)
 
 
 #ifdef debug_output_place_calculate_and_draw_consumption
-        string_al_draw_text(Resource::builtin8,COLKEY_UI_BUBBLE_TEXT_SURPLUS,
+        AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_UI_BUBBLE_TEXT_SURPLUS,
                             placeSurplusBubbleDrawX + Tile::WIDTH*1.125,
                             placeSurplusBubbleDrawY + Tile::HEIGHT*drawRow,
                             ALLEGRO_ALIGN_LEFT,roundedSurplusRatio.str());
 
         std::stringstream roundedDailyMC;
         roundedDailyMC << std::fixed << std::setprecision(2) << p->maintainenceConsumptionQuantityDaily.at(*it);
-        string_al_draw_text(Resource::builtin8,COLKEY_UI_BUBBLE_TEXT_SURPLUS,
+        AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_UI_BUBBLE_TEXT_SURPLUS,
                             placeSurplusBubbleDrawX + Tile::WIDTH*1.125,
                             placeSurplusBubbleDrawY + Tile::HEIGHT*drawRow + Resource::TEXT_HEIGHT_8,
                             ALLEGRO_ALIGN_LEFT, "MC " + roundedDailyMC.str());
 
         std::stringstream roundedDailyIC;
         roundedDailyIC << std::fixed << std::setprecision(2) << p->industrialConsumptionQuantityDaily.at(*it);
-        string_al_draw_text(Resource::builtin8,COLKEY_UI_BUBBLE_TEXT_SURPLUS,
+        AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_UI_BUBBLE_TEXT_SURPLUS,
                             placeSurplusBubbleDrawX + Tile::WIDTH*1.125,
                             placeSurplusBubbleDrawY + Tile::HEIGHT*drawRow + Resource::TEXT_HEIGHT_8*2,
                             ALLEGRO_ALIGN_LEFT, "IC " + roundedDailyIC.str());
 #else
-        string_al_draw_text(Resource::builtin8,COLKEY_UI_BUBBLE_TEXT_SURPLUS,
+        AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_UI_BUBBLE_TEXT_SURPLUS,
                             placeSurplusBubbleDrawX + Tile::WIDTH*1.125,
                             placeSurplusBubbleDrawY + Tile::HEIGHT*drawRow + Tile::HEIGHT/2 - Resource::TEXT_HEIGHT_8/2,
                             ALLEGRO_ALIGN_LEFT,roundedSurplusRatio.str());
@@ -724,7 +733,7 @@ void BubbleView::DrawPlaceSurplusBubble(Place *p)
         drawRow++;
     }
 
-    string_al_draw_text(Resource::builtin8, COLKEY_TEXT, placeSurplusBubbleDrawX, placeSurplusBubbleDrawY-bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, placeSurplusBubbleLabel);
+    AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT, placeSurplusBubbleDrawX, placeSurplusBubbleDrawY-bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, placeSurplusBubbleLabel);
 
 }
 
@@ -750,7 +759,7 @@ void BubbleView::DrawPlaceDeficitBubble(Place *p)
         if(drawRow >= placeDeficitBubbleMaxRows)
             break;
 
-        al_draw_bitmap_region(cargoPng,
+        al_draw_bitmap_region(Resource::cargoPng,
                               (*it)*Tile::WIDTH, 0,
                               Tile::WIDTH,Tile::HEIGHT,
                               placeDeficitBubbleDrawX, placeDeficitBubbleDrawY + Tile::HEIGHT*drawRow, 0);
@@ -761,26 +770,26 @@ void BubbleView::DrawPlaceDeficitBubble(Place *p)
 
 
 #ifdef debug_output_place_calculate_and_draw_consumption
-        string_al_draw_text(Resource::builtin8,COLKEY_UI_BUBBLE_TEXT_DEFICIT,
+        AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_UI_BUBBLE_TEXT_DEFICIT,
                             placeDeficitBubbleDrawX + Tile::WIDTH*1.125,
                             placeDeficitBubbleDrawY + Tile::HEIGHT*drawRow,
                             ALLEGRO_ALIGN_LEFT, roundedDeficitRatio.str());
 
         std::stringstream roundedDailyMC;
         roundedDailyMC << std::fixed << std::setprecision(2) << p->maintainenceConsumptionQuantityDaily.at(*it);
-        string_al_draw_text(Resource::builtin8,COLKEY_UI_BUBBLE_TEXT_DEFICIT,
+        AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_UI_BUBBLE_TEXT_DEFICIT,
                             placeDeficitBubbleDrawX + Tile::WIDTH*1.125,
                             placeDeficitBubbleDrawY + Tile::HEIGHT*drawRow + Resource::TEXT_HEIGHT_8,
                             ALLEGRO_ALIGN_LEFT, "MC " + roundedDailyMC.str());
 
         std::stringstream roundedDailyIC;
         roundedDailyIC << std::fixed << std::setprecision(2) << p->industrialConsumptionQuantityDaily.at(*it);
-        string_al_draw_text(Resource::builtin8,COLKEY_UI_BUBBLE_TEXT_DEFICIT,
+        AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_UI_BUBBLE_TEXT_DEFICIT,
                             placeDeficitBubbleDrawX + Tile::WIDTH*1.125,
                             placeDeficitBubbleDrawY + Tile::HEIGHT*drawRow + Resource::TEXT_HEIGHT_8*2,
                             ALLEGRO_ALIGN_LEFT, "IC " + roundedDailyIC.str());
 #else
-        string_al_draw_text(Resource::builtin8,COLKEY_UI_BUBBLE_TEXT_DEFICIT,
+        AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_UI_BUBBLE_TEXT_DEFICIT,
                             placeDeficitBubbleDrawX + Tile::WIDTH*1.125,
                             placeDeficitBubbleDrawY + Tile::HEIGHT*drawRow + Tile::WIDTH/2 - Resource::TEXT_HEIGHT_8/2,
                             ALLEGRO_ALIGN_LEFT, roundedDeficitRatio.str());
@@ -793,7 +802,7 @@ void BubbleView::DrawPlaceDeficitBubble(Place *p)
 
     }
 
-    string_al_draw_text(Resource::builtin8, COLKEY_TEXT, placeDeficitBubbleDrawX, placeDeficitBubbleDrawY-bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, placeDeficitBubbleLabel);
+    AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT, placeDeficitBubbleDrawX, placeDeficitBubbleDrawY-bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, placeDeficitBubbleLabel);
 
 }
 
@@ -814,7 +823,7 @@ void BubbleView::DrawPlaceMarketBubble(Place *p)
                               bubbleCornerRadius, bubbleCornerRadius,
                               COLKEY_UI_BUBBLE_FRAME, 4);
 
-    string_al_draw_text(Resource::builtin8,COLKEY_TEXT,placeMarketBubbleDrawX, placeMarketBubbleDrawY-bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, placeMarketBubbleLabel);
+    AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_TEXT,placeMarketBubbleDrawX, placeMarketBubbleDrawY-bubblePadding-Resource::TEXT_HEIGHT_8, ALLEGRO_ALIGN_LEFT, placeMarketBubbleLabel);
 
     if(p->market.cargo.size() > 0)
     {
@@ -826,19 +835,19 @@ void BubbleView::DrawPlaceMarketBubble(Place *p)
 
             if((*it).second >= 1)
             {
-                al_draw_bitmap_region(cargoPng,
+                al_draw_bitmap_region(Resource::cargoPng,
                                       0+((*it).first)*Tile::WIDTH, 0,
                                       Tile::WIDTH, Tile::HEIGHT,
                                       drawX, drawY,
                                       0);
 
-                string_al_draw_text(Resource::builtin8, COLKEY_TEXT, drawX+Tile::WIDTH, drawY+Tile::HEIGHT, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
+                AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT, drawX+Tile::WIDTH, drawY+Tile::HEIGHT, ALLEGRO_ALIGN_RIGHT, std::to_string((int)(*it).second));
                 s++;
             }
         }
     }
     else
-        string_al_draw_text(Resource::builtin8,COLKEY_TEXT,placeMarketBubbleDrawX,placeMarketBubbleDrawY,ALLEGRO_ALIGN_LEFT,placeMarketBubbleEmptyText);
+        AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_TEXT,placeMarketBubbleDrawX,placeMarketBubbleDrawY,ALLEGRO_ALIGN_LEFT,placeMarketBubbleEmptyText);
 }
 
 void BubbleView::DrawPlaceIndustriesBubble(Place *p)
@@ -860,7 +869,7 @@ void BubbleView::DrawPlaceIndustriesBubble(Place *p)
                               COLKEY_UI_BUBBLE_FRAME,
                               4);
 
-    string_al_draw_text(Resource::builtin8,COLKEY_TEXT,placeIndustriesBubbleDrawX, placeIndustriesBubbleDrawY-bubblePadding-8, ALLEGRO_ALIGN_LEFT, placeIndustriesBubbleLabel);
+    AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_TEXT,placeIndustriesBubbleDrawX, placeIndustriesBubbleDrawY-bubblePadding-8, ALLEGRO_ALIGN_LEFT, placeIndustriesBubbleLabel);
 
     if(p->industries.size() > 0)
     {
@@ -871,13 +880,13 @@ void BubbleView::DrawPlaceIndustriesBubble(Place *p)
 
 /// To do: Animation to fade through input/ouputs in sequence or rotate through them like cards in a stacked deck
 // Draw icon and quantity text for job output
-            al_draw_bitmap_region(cargoPng,
+            al_draw_bitmap_region(Resource::cargoPng,
                                   (p->industries[i]->outputs.begin()->first)*Tile::WIDTH,0,
                                   Tile::WIDTH,Tile::HEIGHT,
                                   placeIndustriesBubbleDrawX+Tile::WIDTH*1.5, drawY,
                                   0);
 
-            string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
+            AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
                                 placeIndustriesBubbleDrawX + Tile::WIDTH*1.5 +Tile::WIDTH,
                                 drawY + Tile::HEIGHT,
                                 ALLEGRO_ALIGN_RIGHT,
@@ -887,26 +896,26 @@ void BubbleView::DrawPlaceIndustriesBubble(Place *p)
             if(p->industries[i]->inputs.size() > 0)
             {
 
-                al_draw_bitmap_region(cargoPng,
+                al_draw_bitmap_region(Resource::cargoPng,
                                       (p->industries[i]->inputs.begin()->first)*Tile::WIDTH,0,
                                       Tile::WIDTH,Tile::HEIGHT,
                                       placeIndustriesBubbleDrawX, drawY,
                                       0);
 
-                string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
+                AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
                                     placeIndustriesBubbleDrawX + Tile::WIDTH,
                                     drawY + Tile::HEIGHT,
                                     ALLEGRO_ALIGN_RIGHT,
                                     std::to_string((int)p->industries[i]->inputs.begin()->second));
 
-                al_draw_bitmap(redArrowPng,
+                al_draw_bitmap(Resource::redArrowPng,
                                placeIndustriesBubbleDrawX+Tile::WIDTH*0.75,
                                drawY,
                                0);
 
                 // Draw red X over inputs, if inputs are insufficient
                 if(p->industries[i]->jobState == JOB_STATE_INSUFFICIENT_INPUTS)
-                    al_draw_bitmap(redTransparentXPng,
+                    al_draw_bitmap(Resource::redTransparentXPng,
                                    placeIndustriesBubbleDrawX, drawY,
                                    0);
             }
@@ -937,30 +946,21 @@ void BubbleView::DrawPlaceIndustriesBubble(Place *p)
                                   COLKEY_UI_BUBBLE_INDUSTRY_PROGRESS_FRAME,
                                   1);
 
-            string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
+            AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
                                 placeIndustriesBubbleDrawX + 3*Tile::WIDTH,
                                 drawY + Tile::HEIGHT/2-Resource::TEXT_HEIGHT_8,
                                 ALLEGRO_ALIGN_LEFT, p->industries[i]->remainingTimeText);
         }
     }
     else
-        string_al_draw_text(Resource::builtin8, COLKEY_TEXT, placeIndustriesBubbleDrawX,placeIndustriesBubbleDrawY,ALLEGRO_ALIGN_LEFT, placeIndustriesBubbleEmptyText);
+        AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT, placeIndustriesBubbleDrawX,placeIndustriesBubbleDrawY,ALLEGRO_ALIGN_LEFT, placeIndustriesBubbleEmptyText);
 
 }
 
 
 
 /// Encyclopedia bubble
-int encyclopediaCurrentCategory; // = EN_CAT_LEYKIN;
-int encyclopediaCurrentIndex; // = ANCESTRY_GENERAL;
-std::string encyclopediaBubbleEntryName; // = beingAncestryNames.at(encyclopediaCurrentIndex);
-std::string encyclopediaBubbleEntryText; // = encyclopedia.at(encyclopediaCurrentCategory).at(encyclopediaCurrentIndex);
-
-float encyclopediaBubbleDrawX;
-float encyclopediaBubbleDrawY;
-float encyclopediaBubbleHeight;
-
-void BubbleView::OpenEncyclopediaBubble(float x, float y, unsigned category, unsigned index)
+void BubbleView::OpenEncyclopediaBubble(float x, float y, int category, int index)
 {
     encyclopediaBubbleOpen = true;
 
@@ -972,23 +972,25 @@ void BubbleView::OpenEncyclopediaBubble(float x, float y, unsigned category, uns
 
     switch(category)
     {
-    case EN_CAT_LEYKIN:
+    case EncyclopediaIndex::EN_CAT_LEYKIN:
         encyclopediaBubbleEntryName = beingAncestryNames.at(encyclopediaCurrentIndex);
         break;
-    case EN_CAT_FACTIONS:
+    case EncyclopediaIndex::EN_CAT_FACTIONS:
         encyclopediaBubbleEntryName = sovereigntyNames.at(encyclopediaCurrentIndex);
         break;
-    case EN_CAT_PLACES:
+    case EncyclopediaIndex::EN_CAT_PLACES:
         encyclopediaBubbleEntryName = placeNames.at(encyclopediaCurrentIndex);
         break;
-    case EN_CAT_CARGO:
-        encyclopediaBubbleEntryName = itemNames.at(encyclopediaCurrentIndex);
+    case EncyclopediaIndex::EN_CAT_CARGO:
+        encyclopediaBubbleEntryName = InventoryIndex::itemNames.at(encyclopediaCurrentIndex);
         break;
     }
 
-    encyclopediaBubbleEntryText = encyclopedia.at(encyclopediaCurrentCategory).at(encyclopediaCurrentIndex);
+    std::cout << "encyclopediaCurrentCategory is " << encyclopediaCurrentCategory << std::endl;
+    std::cout << "encyclopediaCurrentIndex is " << encyclopediaCurrentIndex << std::endl;
+    encyclopediaBubbleEntryText = EncyclopediaIndex::encyclopedia.at(encyclopediaCurrentCategory).at(encyclopediaCurrentIndex);
 
-    int num_lines = count_num_lines_will_render(Resource::builtin8, encyclopediaBubbleWidth, encyclopediaBubbleEntryText);
+    int num_lines = AllegroCustom::count_num_lines_will_render(Resource::builtin8, encyclopediaBubbleWidth, encyclopediaBubbleEntryText);
     encyclopediaBubbleHeight = Resource::TEXT_HEIGHT_12 * (2 + num_lines); // Turns out the line spacing can be controlled by specifying a text height larger than the actual font size. Just remember to do the same in DrawEncyclopediaBubble()
 
     // In case the bottom of the enyclopedia bubble would end up off-screen, adjust upwards.
@@ -1021,10 +1023,10 @@ void BubbleView::DrawEncyclopediaBubble()
                               4);
 
 
-    string_al_draw_text(Resource::builtin8,COLKEY_TEXT,encyclopediaBubbleDrawX,encyclopediaBubbleDrawY,
+    AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_TEXT,encyclopediaBubbleDrawX,encyclopediaBubbleDrawY,
                         ALLEGRO_ALIGN_LEFT,encyclopediaBubbleEntryName);
 
-    string_al_draw_multiline_text(Resource::builtin8, COLKEY_TEXT,
+    AllegroCustom::string_al_draw_multiline_text(Resource::builtin8, COLKEY_TEXT,
                                   encyclopediaBubbleDrawX,encyclopediaBubbleDrawY + 2*Resource::TEXT_HEIGHT_12,
                                   encyclopediaBubbleWidth,
                                   Resource::TEXT_HEIGHT_12, // Turns out the line spacing can be controlled by specifying a text height larger than the actual font size.

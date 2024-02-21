@@ -31,6 +31,7 @@ Todo next:
 #include "event.h"
 #include "timer.h"
 #include "camera.h"
+#include "lockon.h"
 #include "resource.h"
 #include "scene.h"
 #include "being.h"
@@ -39,6 +40,9 @@ Todo next:
 #include "place.h"
 #include "overworld.h"
 #include "calendar.h"
+#include "configuration.h"
+#include "inventoryindex.h"
+#include "encyclopediaindex.h"
 
 bool gameExit = false;
 
@@ -67,6 +71,16 @@ bool MouseLeftOnPlaceIndustriesBubble();
 
 void SetCameraCenterDestination(float x, float y);
 void AttemptCameraLockOn();
+void OverworldLockCameraPlace(Place *whichPlace);
+void OverworldLockCameraCaravan(Caravan *whichCaravan);
+void OverworldUnlockCamera();
+void OverworldUnlockCameraCaravan();
+void OverworldUnlockCameraPlace();
+
+void OverworldDrawGridUnderlay();
+void OverworldDrawGridCameraCrosshair();
+//void OverworldDrawGridMouseCrosshair(float mouseZoomedX, float mouseZoomedY);
+void OverworldDrawGridText(float mouseTransformedX, float mouseTransformedY);
 
 int main(int argc, char *argv[])
 {
@@ -111,6 +125,8 @@ int main(int argc, char *argv[])
     al_register_event_source(Event::eventQueue, al_get_keyboard_event_source());
     al_register_event_source(Event::eventQueue, al_get_mouse_event_source());
 
+    AllegroCustom::Initialize();
+
     PHYSFS_init(argv[0]);
     if(!PHYSFS_mount("./gamedata.zip", "/", 1))
     {
@@ -119,19 +135,20 @@ int main(int argc, char *argv[])
     }
 
     al_set_physfs_file_interface();
-
-    AllegroCustomColours();
     Resource::LoadFontResources();
     Resource::LoadImageResources();
     Resource::LoadAudioResources();
 
+    al_set_standard_file_interface();
+    Configuration::LoadConfigurations();
+    InventoryIndex::LoadConfigurations();
+    EncyclopediaIndex::LoadConfigurations();
+
+    Configuration::UnloadConfigurations();
+
     Initialize();
 
     al_start_timer(Timer::FPSTimer);
-
-    al_identity_transform(&Camera::noTransform);
-
-    OverworldBeginParallelBackgroundAudio();
 
     while(!gameExit)
     {
@@ -147,10 +164,10 @@ int main(int argc, char *argv[])
             Event::InputKeyup();
 
         if(Event::event.type == ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY)
-            overworldCameraMousePanningDisabled = false;
+            Camera::overworldCameraMousePanningDisabled = false;
 
         if(Event::event.type == ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY)
-            overworldCameraMousePanningDisabled = true;
+            Camera::overworldCameraMousePanningDisabled = true;
 
 
         if(Event::event.type == ALLEGRO_EVENT_MOUSE_AXES)
@@ -182,7 +199,7 @@ int main(int argc, char *argv[])
         if(redraw && al_is_event_queue_empty(Event::eventQueue))
         {
             redraw = false;
-            al_clear_to_color(currentClearColor);
+            al_clear_to_color(AllegroCustom::currentClearColor);
             DrawUI();
             al_flip_display();
         }
@@ -211,11 +228,30 @@ int main(int argc, char *argv[])
 
 void Initialize()
 {
+/*
+    al_set_standard_file_interface();
+
+    ALLEGRO_CONFIG* testConfig = al_load_config_file("configs/testConfig.cfg");
+    if(!testConfig)
+        std::cout << "beep beep" << std::endl;
+    else
+        std::cout << "success" << std::endl;
+
+    al_add_config_section(testConfig, "Test Data Section"); // Doesn't seem to work
+    al_add_config_comment(testConfig, "Test Data Section", "Some comment"); // Doesn't seem to work
+    al_set_config_value(  testConfig, "Test Data Section", "Number of mushrooms", "123"); // Doesn't seem to work
+    al_save_config_file("configs/testConfig.cfg", testConfig); // Unknown whether it works
+    al_destroy_config(testConfig);
+
+    ALLEGRO_CONFIG* testSaveConfig = al_create_config();
+    al_save_config_file("configs/testSaveConfig.cfg", testSaveConfig);
+    al_destroy_config(testSaveConfig);
+*/
     Scene::Initialize();
     Camera::Initialize();
+    LockOn::Initialize();
     BubbleView::Initialize();
-
-    InitCalendar(22,30,12,2023);
+    Calendar::Initialize(12,17,2,2024);
 
     for(unsigned i = PL_MARKER_FIRST; i <= PL_MARKER_LAST; i++)
         Place::places[i] = new Place(i);
@@ -239,7 +275,9 @@ void Initialize()
     }
 
     Scene::ChangeScene(Scene::SCENE_OVERWORLD,Scene::SUBSCENE_OVERWORLD_NONE);
-    currentClearColor = COL_JADE_3;
+    AllegroCustom::currentClearColor = AllegroCustom::COL_JADE_3;
+
+    OverworldBeginParallelBackgroundAudio();
 }
 
 void Deinitialize()
@@ -356,20 +394,30 @@ void InterpretInput()
         // Priority: 1) Close enyclopedia. 2) Close being status bubble. 2) Close caravan/place bubbles. 3) Unlock camera.
 
         if(BubbleView::encyclopediaBubbleOpen)
+        {
             BubbleView::CloseEncyclopediaBubble();
+            std::cout << "Closing encyclopedia bubble" << std::endl;
+        }
         else // ! EncyclopediaBubbleOpen
         {
             if(BubbleView::BubbleView::beingStatusBubbleOpen)
+            {
                 BubbleView::CloseBeingStatusBubble();
+                std::cout << "Closing being status bubble" << std::endl;
+            }
             else // ! BubbleView::beingStatusBubbleOpen
             {
                 if(BubbleView::currentCaravan != nullptr || BubbleView::currentPlace != nullptr) // either caravan/place bubbles are open
                 {
                     BubbleView::currentCaravan = nullptr;
                     BubbleView::currentPlace = nullptr;
+                    std::cout << "Closing caravan/place bubbles" << std::endl;
                 }
                 else // no bubbles are open
+                {
                     OverworldUnlockCamera();
+                    std::cout << "unlocking camera" << std::endl;
+                }
             }
         }
         //Event::keyInput[Event::KEY_ESC] = false;
@@ -377,9 +425,9 @@ void InterpretInput()
 
 
     /// Camera panning
-    if(!overworldCameraLocked)
+    if(!LockOn::isLockedOn)
     {
-        if(!overworldCameraMousePanningDisabled)
+        if(!Camera::overworldCameraMousePanningDisabled)
         {
             if(Event::mouseDisplayX < 2*Tile::WIDTH)
                 Camera::xPosition -= Camera::xSensitivity;
@@ -395,11 +443,11 @@ void InterpretInput()
     if(Event::keyHoldTicks[Event::KEY_SPACE] == 1)
     {
         // Reestablishes bubbles of locked place/caravan, in case they have been closed (nullptr'd).
-        if(overworldCameraLockedOnPlace)
-            BubbleView::currentPlace = overworldCameraPlace;
-        else if(overworldCameraLockedOnCaravan)
+        if(LockOn::IsLockedOnPlace)
+            BubbleView::currentPlace = LockOn::whichPlace;
+        else if(LockOn::isLockedOnCaravan)
         {
-            BubbleView::currentCaravan = overworldCameraCaravan;
+            BubbleView::currentCaravan = LockOn::whichCaravan;
             if(BubbleView::currentCaravan->atPlace)
                 BubbleView::currentPlace = BubbleView::currentCaravan->whichPlace;
         }
@@ -410,15 +458,15 @@ void ProgressWorld()
 {
     if(Scene::activeScene == Scene::SCENE_OVERWORLD)
     {
-        AdvanceHourFrame();
-        UpdateCalendarText();
+        Calendar::AdvanceHourFrame();
+        Calendar::UpdateCalendarText();
 
         for(std::map<int,Place*>::iterator it = Place::places.begin(); it != Place::places.end(); ++it)
         {
             ((*it).second)->ProgressFlyingTexts();
             ((*it).second)->ProgressPlaceIndustriesBubbleProgressBars();
 
-            if(hourChangeTick)
+            if(Calendar::hourChangeTick)
             {
                 ((*it).second)->ProgressProduction();
 
@@ -427,7 +475,7 @@ void ProgressWorld()
                 ((*it).second)->UpdateDeficitsDescending();
             }
 
-            if(dayChangeTick)
+            if(Calendar::dayChangeTick)
             {
                 //((*it).second)->UpdateEconomyData();
             }
@@ -458,12 +506,12 @@ void UpdateUI()
 {
     if(Scene::activeScene == Scene::SCENE_OVERWORLD)
     {
-        if(overworldCameraLockedOnCaravan)
+        if(LockOn::isLockedOnCaravan)
         {
-            Camera::xPosition = overworldCameraCaravan->overworldXPosition-Display::WIDTH/2;
-            Camera::yPosition = overworldCameraCaravan->overworldYPosition-Display::HEIGHT/2;
+            Camera::xPosition = LockOn::whichCaravan->overworldXPosition-Display::WIDTH/2;
+            Camera::yPosition = LockOn::whichCaravan->overworldYPosition-Display::HEIGHT/2;
         }
-        else // if ! overworldCameraLockedOnCaravan
+        else // if ! isLockedOnCaravan
         {
             if(Camera::approachingDestination)
             {
@@ -564,7 +612,7 @@ void DrawUI()
         if(BubbleView::encyclopediaBubbleOpen)
             BubbleView::DrawEncyclopediaBubble();
 
-        DrawCalendar();
+        Calendar::DrawCalendar();
         //OverworldDrawGridMouseCrosshair(mouseDisplayX, mouseDisplayY);
         OverworldDrawGridText(Event::mouseDisplayX, Event::mouseDisplayY);
 
@@ -613,7 +661,7 @@ bool MouseLeftOnCaravanInventoryBubble()
             std::map<int,float>::iterator it = BubbleView::currentCaravan->inventory.cargo.begin();
             std::advance(it, position);
 
-            BubbleView::OpenEncyclopediaBubble(Event::mouseDisplayX, Event::mouseDisplayY, EN_CAT_CARGO, (*it).first);
+            BubbleView::OpenEncyclopediaBubble(Event::mouseDisplayX, Event::mouseDisplayY, EncyclopediaIndex::EN_CAT_CARGO, (*it).first);
         }
 
         return true;
@@ -647,9 +695,9 @@ bool MouseLeftOnCaravanTradeRecordsBubble()
                     Place::places[(*rit)->location]->AllBubblesNeedUpdate();
                     OverworldLockCameraPlace(Place::places[(*rit)->location]);
 
-                    BubbleView::OpenEncyclopediaBubble(Display::WIDTH/2 - encyclopediaBubbleWidth/2,
+                    BubbleView::OpenEncyclopediaBubble(Display::WIDTH/2 - BubbleView::encyclopediaBubbleWidth/2,
                                                        Display::HEIGHT/2 + 2*Tile::HEIGHT,
-                                                       EN_CAT_PLACES, (*rit)->location);
+                                                       EncyclopediaIndex::EN_CAT_PLACES, (*rit)->location);
                 }
                 else // x >= caravanTradeRecordsBubblePlaceNameWidth
                 {
@@ -662,7 +710,7 @@ bool MouseLeftOnCaravanTradeRecordsBubble()
                         std::map<int,int>::iterator it = (*rit)->tradeQuantities.begin();
                         std::advance(it, position);
 
-                        BubbleView::OpenEncyclopediaBubble(Event::mouseDisplayX, Event::mouseDisplayY, EN_CAT_CARGO, (*it).first);
+                        BubbleView::OpenEncyclopediaBubble(Event::mouseDisplayX, Event::mouseDisplayY, EncyclopediaIndex::EN_CAT_CARGO, (*it).first);
                     }
                 }
                 break;
@@ -697,9 +745,9 @@ bool MouseLeftOnCaravanPathfindingBubble()
             SetCameraCenterDestination(Place::places[placeId]->overworldXPosition,
                                        Place::places[placeId]->overworldYPosition);
 
-            BubbleView::OpenEncyclopediaBubble(Display::WIDTH/2 - encyclopediaBubbleWidth/2,
+            BubbleView::OpenEncyclopediaBubble(Display::WIDTH/2 - BubbleView::encyclopediaBubbleWidth/2,
                                                Display::HEIGHT/2 + 2*Tile::HEIGHT,
-                                               EN_CAT_PLACES, placeId);
+                                               EncyclopediaIndex::EN_CAT_PLACES, placeId);
         }
 
         return true;
@@ -771,7 +819,7 @@ bool MouseLeftOnPlaceMarketBubble()
             std::map<int,float>::iterator it = BubbleView::currentPlace->market.cargo.begin();
             std::advance(it, position);
 
-            BubbleView::OpenEncyclopediaBubble(Event::mouseDisplayX, Event::mouseDisplayY, EN_CAT_CARGO, (*it).first);
+            BubbleView::OpenEncyclopediaBubble(Event::mouseDisplayX, Event::mouseDisplayY, EncyclopediaIndex::EN_CAT_CARGO, (*it).first);
         }
 
         return true;
@@ -834,7 +882,7 @@ void AttemptCameraLockOn()
         }
     }
 
-    if(!overworldCameraLockedOnPlace) // If a Place wasn't locked on to, search for a caravan.
+    if(!LockOn::IsLockedOnPlace) // If a Place wasn't locked on to, search for a caravan.
     {
         for(std::vector<Caravan*>::iterator it = Caravan::caravans.begin(); it != Caravan::caravans.end(); ++it)
         {
@@ -854,4 +902,133 @@ void AttemptCameraLockOn()
             }
         }
     }
+}
+
+
+void OverworldLockCameraPlace(Place *whichPlace)
+{
+    OverworldUnlockCameraCaravan();
+
+    LockOn::whichPlace = whichPlace;
+    LockOn::IsLockedOnPlace = true;
+    LockOn::isLockedOn = true;
+
+    BubbleView::currentPlace = whichPlace;
+
+    OverworldSwapParallelBackgroundAudioToPlace();
+}
+
+void OverworldLockCameraCaravan(Caravan *whichCaravan)
+{
+    OverworldUnlockCameraPlace();
+
+    LockOn::whichCaravan = whichCaravan;
+    LockOn::isLockedOnCaravan = true;
+    LockOn::isLockedOn = true;
+
+    BubbleView::currentCaravan = whichCaravan;
+
+    OverworldSwapParallelBackgroundAudioToField();
+}
+
+void OverworldUnlockCameraCaravan()
+{
+    LockOn::whichCaravan = nullptr;
+    LockOn::isLockedOnCaravan = false;
+}
+
+void OverworldUnlockCameraPlace()
+{
+    LockOn::whichPlace = nullptr;
+    LockOn::IsLockedOnPlace = false;
+}
+
+void OverworldUnlockCamera()
+{
+    OverworldUnlockCameraPlace();
+    OverworldUnlockCameraCaravan();
+    LockOn::isLockedOn = false;
+}
+
+void OverworldDrawGridUnderlay()
+{
+
+    for(int x = 0; x <= Display::WIDTH/Tile::WIDTH; x++) //Columns
+    {
+        int cxp = Camera::xPosition;
+        int tw = Tile::WIDTH;
+
+        al_draw_line(x*Tile::WIDTH - cxp%tw,
+                     0,
+                     x*Tile::WIDTH - cxp%tw,
+                     Display::HEIGHT,
+                     COLKEY_DEBUG_GRID_UNDERLAY,1);
+    }
+
+    for(int y = 0; y <= Display::HEIGHT/Tile::WIDTH; y++) //Rows
+    {
+        int cyp = Camera::yPosition;
+        int th = Tile::HEIGHT;
+
+        al_draw_line(0,
+                     y*Tile::HEIGHT - cyp%th,
+                     Display::WIDTH,
+                     y*Tile::HEIGHT - cyp%th,
+                     COLKEY_DEBUG_GRID_UNDERLAY,1);
+    }
+}
+
+void OverworldDrawGridCameraCrosshair()
+{
+    if(!LockOn::isLockedOn)
+    {
+        al_draw_line(Display::WIDTH/2,0,Display::WIDTH/2,Display::HEIGHT,COLKEY_CAMERA_CROSSHAIR_FREE,1);
+        al_draw_line(0,Display::HEIGHT/2,Display::WIDTH,Display::HEIGHT/2,COLKEY_CAMERA_CROSSHAIR_FREE,1);
+    }
+    else
+    {
+        al_draw_line(Display::WIDTH/2,0,Display::WIDTH/2,Display::HEIGHT,COLKEY_CAMERA_CROSSHAIR_LOCKED,1);
+        al_draw_line(0,Display::HEIGHT/2,Display::WIDTH,Display::HEIGHT/2,COLKEY_CAMERA_CROSSHAIR_LOCKED,1);
+    }
+}
+
+/*
+void OverworldDrawGridMouseCrosshair(float mouseDisplayX, float mouseDisplayY)
+{
+    al_draw_line(mouseDisplayX, 0, mouseDisplayX, Display::HEIGHT, COLKEY_MOUSE_CROSSHAIR,1);
+    al_draw_line(0, mouseDisplayY, Display::WIDTH, mouseDisplayY, COLKEY_MOUSE_CROSSHAIR,1);
+}
+*/
+
+void OverworldDrawGridText(float mouseTransformedX, float mouseTransformedY)
+{
+    int cameraCrosshairXPosition = Camera::xPosition+Display::WIDTH/2;
+    int cameraCrosshairYPosition = Camera::yPosition+Display::HEIGHT/2;
+
+    int cameraCrosshairXPositionCell = cameraCrosshairXPosition/Tile::WIDTH;
+    int cameraCrosshairYPositionCell = cameraCrosshairYPosition/Tile::HEIGHT;
+
+    int mouseCrosshairXPosition = Camera::xPosition+mouseTransformedX;
+    int mouseCrosshairYPosition = Camera::yPosition+mouseTransformedY;
+
+    int mouseCrosshairXPositionCell = mouseCrosshairXPosition/Tile::WIDTH;
+    int mouseCrosshairYPositionCell = mouseCrosshairYPosition/Tile::HEIGHT;
+
+    int zoomPercentage = Camera::zoomScale*100;
+
+    std::string cameraCrosshairPositionString = "CAMERA: (" + std::to_string(cameraCrosshairXPosition) + ", " + std::to_string(cameraCrosshairYPosition) + ") : ("
+            + std::to_string(cameraCrosshairXPositionCell) + ", " + std::to_string(cameraCrosshairYPositionCell) + ") "
+            + std::to_string(zoomPercentage) + "%";
+
+    std::string mouseCrosshairPositionString = "MOUSE:  (" + std::to_string(mouseCrosshairXPosition) + ", " + std::to_string(mouseCrosshairYPosition) + ") : ("
+            + std::to_string(mouseCrosshairXPositionCell) + ", " + std::to_string(mouseCrosshairYPositionCell) + ") "
+            + std::to_string(zoomPercentage) + "%";
+
+    if(!LockOn::isLockedOn)
+        AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_CAMERA_CROSSHAIR_FREE,0,0,ALLEGRO_ALIGN_LEFT,cameraCrosshairPositionString);
+    else
+        AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_CAMERA_CROSSHAIR_LOCKED,0,0,ALLEGRO_ALIGN_LEFT,cameraCrosshairPositionString);
+
+    AllegroCustom::string_al_draw_text(Resource::builtin8,COLKEY_MOUSE_CROSSHAIR,0,Resource::TEXT_HEIGHT_8,ALLEGRO_ALIGN_LEFT,mouseCrosshairPositionString);
+
 }

@@ -114,7 +114,7 @@ void Caravan::OverworldLogic()
     }
     else if(atPlace)
     {
-        if(hourChangeTick)
+        if(Calendar::hourChangeTick)
         {
             /// debug
             /*
@@ -205,7 +205,7 @@ void Caravan::MoveToPlace(Place *p)
         caravanLeader->facingLeft = false;
 
 /// Effects on UI bubbles
-    if(overworldCameraCaravan == this)
+    if(LockOn::whichCaravan == this)
         BubbleView::currentPlace = p;
 
 }
@@ -241,7 +241,7 @@ void Caravan::MoveToRoad(Road *r, bool isReverseRoad)
     pathfindingBubbleNeedsUpdate = true;
 
 /// Effects on UI bubbles
-    if(overworldCameraCaravan == this)
+    if(LockOn::whichCaravan == this)
         BubbleView::currentPlace = nullptr;
 }
 

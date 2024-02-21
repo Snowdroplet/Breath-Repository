@@ -25,6 +25,7 @@ struct Camera
     static float zoomTranslateX;
     static float zoomTranslateY;
 
+    static bool overworldCameraMousePanningDisabled;
     static float mouseTransformedX;
     static float mouseTransformedY;
 
@@ -36,17 +37,12 @@ struct Camera
     static constexpr float xSensitivity = 16;
     static constexpr float ySensitivity = 16;
 
-    /*
-    static const int OVERWORLD_MIN_DRAW_X = 0 - Tile::WIDTH*2; // Save drawing resources by not drawing places and beings outside this boundary
-    static const int OVERWORLD_MIN_DRAW_Y = 0 - Tile::HEIGHT*2;
-    static const int OVERWORLD_MAX_DRAW_X = Display::WIDTH + Tile::WIDTH*2;
-    static const int OVERWORLD_MAX_DRAW_Y = Display::HEIGHT + Tile::HEIGHT*2;
-    */
-
     static constexpr float OVERWORLD_MIN_DRAW_X = 0 - Tile::WIDTH*2; // Save drawing resources by not drawing places and beings outside this boundary
     static constexpr float OVERWORLD_MIN_DRAW_Y = 0 - Tile::HEIGHT*2;
     static constexpr float OVERWORLD_MAX_DRAW_X = Display::WIDTH + Tile::WIDTH*2;
     static constexpr float OVERWORLD_MAX_DRAW_Y = Display::HEIGHT + Tile::HEIGHT*2;
+
+
 
     static void Initialize()
     {
@@ -70,6 +66,7 @@ struct Camera
 
     static void ApproachDestination();
     static void WarpToDestination();
+
 };
 
 #endif // CAMERA_H_INCLUDED

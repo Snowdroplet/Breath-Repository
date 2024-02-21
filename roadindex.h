@@ -3,6 +3,8 @@
 
 #include <map>
 
+#include "sovereigntyindex.h"
+
 enum enumRoads
 {
     ROAD_NONE = -1,

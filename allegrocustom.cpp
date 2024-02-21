@@ -1,84 +1,84 @@
 #include "allegrocustom.h"
-ALLEGRO_COLOR COL_EARTHEN_0;
-ALLEGRO_COLOR COL_EARTHEN_1;
-ALLEGRO_COLOR COL_EARTHEN_2;
-ALLEGRO_COLOR COL_EARTHEN_3;
-ALLEGRO_COLOR COL_EARTHEN_4;
+ALLEGRO_COLOR AllegroCustom::COL_EARTHEN_0;
+ALLEGRO_COLOR AllegroCustom::COL_EARTHEN_1;
+ALLEGRO_COLOR AllegroCustom::COL_EARTHEN_2;
+ALLEGRO_COLOR AllegroCustom::COL_EARTHEN_3;
+ALLEGRO_COLOR AllegroCustom::COL_EARTHEN_4;
 
-ALLEGRO_COLOR COL_STEEL_0;
-ALLEGRO_COLOR COL_STEEL_1;
-ALLEGRO_COLOR COL_STEEL_2;
-ALLEGRO_COLOR COL_STEEL_3;
-ALLEGRO_COLOR COL_STEEL_4;
+ALLEGRO_COLOR AllegroCustom::COL_STEEL_0;
+ALLEGRO_COLOR AllegroCustom::COL_STEEL_1;
+ALLEGRO_COLOR AllegroCustom::COL_STEEL_2;
+ALLEGRO_COLOR AllegroCustom::COL_STEEL_3;
+ALLEGRO_COLOR AllegroCustom::COL_STEEL_4;
 
-ALLEGRO_COLOR COL_RUST_0;
-ALLEGRO_COLOR COL_RUST_1;
-ALLEGRO_COLOR COL_RUST_2;
-ALLEGRO_COLOR COL_RUST_3;
+ALLEGRO_COLOR AllegroCustom::COL_RUST_0;
+ALLEGRO_COLOR AllegroCustom::COL_RUST_1;
+ALLEGRO_COLOR AllegroCustom::COL_RUST_2;
+ALLEGRO_COLOR AllegroCustom::COL_RUST_3;
 
-ALLEGRO_COLOR COL_FLAME_0;
-ALLEGRO_COLOR COL_FLAME_1;
-ALLEGRO_COLOR COL_FLAME_2;
-ALLEGRO_COLOR COL_FLAME_3;
-ALLEGRO_COLOR COL_FLAME_4;
+ALLEGRO_COLOR AllegroCustom::COL_FLAME_0;
+ALLEGRO_COLOR AllegroCustom::COL_FLAME_1;
+ALLEGRO_COLOR AllegroCustom::COL_FLAME_2;
+ALLEGRO_COLOR AllegroCustom::COL_FLAME_3;
+ALLEGRO_COLOR AllegroCustom::COL_FLAME_4;
 
-ALLEGRO_COLOR COL_CARAMEL_0;
-ALLEGRO_COLOR COL_CARAMEL_1;
-ALLEGRO_COLOR COL_CARAMEL_2;
-ALLEGRO_COLOR COL_CARAMEL_3;
-ALLEGRO_COLOR COL_CARAMEL_4;
+ALLEGRO_COLOR AllegroCustom::COL_CARAMEL_0;
+ALLEGRO_COLOR AllegroCustom::COL_CARAMEL_1;
+ALLEGRO_COLOR AllegroCustom::COL_CARAMEL_2;
+ALLEGRO_COLOR AllegroCustom::COL_CARAMEL_3;
+ALLEGRO_COLOR AllegroCustom::COL_CARAMEL_4;
 
-ALLEGRO_COLOR COL_ELECTRIC_0;
-ALLEGRO_COLOR COL_ELECTRIC_1;
-ALLEGRO_COLOR COL_ELECTRIC_2;
-ALLEGRO_COLOR COL_ELECTRIC_3;
-ALLEGRO_COLOR COL_ELECTRIC_4;
+ALLEGRO_COLOR AllegroCustom::COL_ELECTRIC_0;
+ALLEGRO_COLOR AllegroCustom::COL_ELECTRIC_1;
+ALLEGRO_COLOR AllegroCustom::COL_ELECTRIC_2;
+ALLEGRO_COLOR AllegroCustom::COL_ELECTRIC_3;
+ALLEGRO_COLOR AllegroCustom::COL_ELECTRIC_4;
 
-ALLEGRO_COLOR COL_JADE_0;
-ALLEGRO_COLOR COL_JADE_1;
-ALLEGRO_COLOR COL_JADE_2;
-ALLEGRO_COLOR COL_JADE_3;
-ALLEGRO_COLOR COL_JADE_4;
+ALLEGRO_COLOR AllegroCustom::COL_JADE_0;
+ALLEGRO_COLOR AllegroCustom::COL_JADE_1;
+ALLEGRO_COLOR AllegroCustom::COL_JADE_2;
+ALLEGRO_COLOR AllegroCustom::COL_JADE_3;
+ALLEGRO_COLOR AllegroCustom::COL_JADE_4;
 
-ALLEGRO_COLOR COL_WIND_0;
-ALLEGRO_COLOR COL_WIND_1;
-ALLEGRO_COLOR COL_WIND_2;
-ALLEGRO_COLOR COL_WIND_3;
-ALLEGRO_COLOR COL_WIND_4;
+ALLEGRO_COLOR AllegroCustom::COL_WIND_0;
+ALLEGRO_COLOR AllegroCustom::COL_WIND_1;
+ALLEGRO_COLOR AllegroCustom::COL_WIND_2;
+ALLEGRO_COLOR AllegroCustom::COL_WIND_3;
+ALLEGRO_COLOR AllegroCustom::COL_WIND_4;
 
-ALLEGRO_COLOR COL_AZURE_0;
-ALLEGRO_COLOR COL_AZURE_1;
-ALLEGRO_COLOR COL_AZURE_2;
-ALLEGRO_COLOR COL_AZURE_3;
-ALLEGRO_COLOR COL_AZURE_4;
+ALLEGRO_COLOR AllegroCustom::COL_AZURE_0;
+ALLEGRO_COLOR AllegroCustom::COL_AZURE_1;
+ALLEGRO_COLOR AllegroCustom::COL_AZURE_2;
+ALLEGRO_COLOR AllegroCustom::COL_AZURE_3;
+ALLEGRO_COLOR AllegroCustom::COL_AZURE_4;
 
-ALLEGRO_COLOR COL_OCEAN_0;
-ALLEGRO_COLOR COL_OCEAN_1;
-ALLEGRO_COLOR COL_OCEAN_2;
-ALLEGRO_COLOR COL_OCEAN_3;
-ALLEGRO_COLOR COL_OCEAN_4;
+ALLEGRO_COLOR AllegroCustom::COL_OCEAN_0;
+ALLEGRO_COLOR AllegroCustom::COL_OCEAN_1;
+ALLEGRO_COLOR AllegroCustom::COL_OCEAN_2;
+ALLEGRO_COLOR AllegroCustom::COL_OCEAN_3;
+ALLEGRO_COLOR AllegroCustom::COL_OCEAN_4;
 
-ALLEGRO_COLOR COL_VIOLET_0;
-ALLEGRO_COLOR COL_VIOLET_1;
-ALLEGRO_COLOR COL_VIOLET_2;
-ALLEGRO_COLOR COL_VIOLET_3;
-ALLEGRO_COLOR COL_VIOLET_4;
+ALLEGRO_COLOR AllegroCustom::COL_VIOLET_0;
+ALLEGRO_COLOR AllegroCustom::COL_VIOLET_1;
+ALLEGRO_COLOR AllegroCustom::COL_VIOLET_2;
+ALLEGRO_COLOR AllegroCustom::COL_VIOLET_3;
+ALLEGRO_COLOR AllegroCustom::COL_VIOLET_4;
 
-ALLEGRO_COLOR COL_GUM_0;
-ALLEGRO_COLOR COL_GUM_1;
-ALLEGRO_COLOR COL_GUM_2;
-ALLEGRO_COLOR COL_GUM_3;
+ALLEGRO_COLOR AllegroCustom::COL_GUM_0;
+ALLEGRO_COLOR AllegroCustom::COL_GUM_1;
+ALLEGRO_COLOR AllegroCustom::COL_GUM_2;
+ALLEGRO_COLOR AllegroCustom::COL_GUM_3;
 
-ALLEGRO_COLOR COL_FLESH_0;
-ALLEGRO_COLOR COL_FLESH_1;
-ALLEGRO_COLOR COL_FLESH_2;
-ALLEGRO_COLOR COL_FLESH_3;
-ALLEGRO_COLOR COL_FLESH_4;
-ALLEGRO_COLOR COL_FLESH_5;
+ALLEGRO_COLOR AllegroCustom::COL_FLESH_0;
+ALLEGRO_COLOR AllegroCustom::COL_FLESH_1;
+ALLEGRO_COLOR AllegroCustom::COL_FLESH_2;
+ALLEGRO_COLOR AllegroCustom::COL_FLESH_3;
+ALLEGRO_COLOR AllegroCustom::COL_FLESH_4;
+ALLEGRO_COLOR AllegroCustom::COL_FLESH_5;
 
-ALLEGRO_COLOR currentClearColor;
+ALLEGRO_COLOR AllegroCustom::currentClearColor;
 
-void AllegroCustomColours()
+void AllegroCustom::SetCustomColours()
 {
 
     COL_EARTHEN_0 =  al_map_rgb( 46,  34,  47);
@@ -176,32 +176,32 @@ void c_al_draw_rotated_centered_bitmap(ALLEGRO_BITMAP *bitmap, float cx, float c
 }
 */
 
-int string_al_get_text_width(const ALLEGRO_FONT *f, std::string str)
+int AllegroCustom::string_al_get_text_width(const ALLEGRO_FONT *f, std::string str)
 {
     const char *c = str.c_str();
     return al_get_text_width(f, c);
 }
 
-void string_al_draw_text(const ALLEGRO_FONT *font, ALLEGRO_COLOR color, float x, float y, int flags, std::string text)
+void AllegroCustom::string_al_draw_text(const ALLEGRO_FONT *font, ALLEGRO_COLOR color, float x, float y, int flags, std::string text)
 {
     const char *c = text.c_str();
     al_draw_text(font, color, x, y, flags, c);
 }
 
-void string_al_draw_multiline_text(const ALLEGRO_FONT *font, ALLEGRO_COLOR color, float x, float y, float max_width, float line_height, int flags, std::string text)
+void AllegroCustom::string_al_draw_multiline_text(const ALLEGRO_FONT *font, ALLEGRO_COLOR color, float x, float y, float max_width, float line_height, int flags, std::string text)
 {
     const char *c = text.c_str();
     al_draw_multiline_text(font, color, x, y, max_width, line_height, flags, c);
 }
 
 /// Mark Oates' do_multiline_text functions
-bool multiline_text_draw_callback(int line_num, const char* line, int size, void* user_data)
+bool AllegroCustom::multiline_text_draw_callback(int line_num, const char* line, int size, void* user_data)
 {
    *((int*)user_data) = line_num;
    return true;
 }
 
-int count_num_lines_will_render(ALLEGRO_FONT* font, float max_width, std::string text)
+int AllegroCustom::count_num_lines_will_render(ALLEGRO_FONT* font, float max_width, std::string text)
 {
    if (text.empty()) return 0;
 

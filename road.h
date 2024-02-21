@@ -1,12 +1,15 @@
 #ifndef ROAD_H_INCLUDED
 #define ROAD_H_INCLUDED
 
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
+
 #include <iostream>
 #include <map>
 
 #include "colorindex.h"
 
-#include "overworld.h"
+#include "camera.h"
 #include "roadindex.h"
 #include "placeindex.h"
 

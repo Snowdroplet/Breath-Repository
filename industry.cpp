@@ -107,7 +107,7 @@ void Industry::UpdateProgressBar()
     if(jobState == JOB_STATE_INSUFFICIENT_INPUTS)
     {
         float pauseProgressBarFillAtFull = (jobPauseTicks+1)/jobPauseThreshold;
-        float pauseFillRate = 1/jobPauseThreshold/FRAMES_PER_HOUR;
+        float pauseFillRate = 1/jobPauseThreshold/Calendar::FRAMES_PER_HOUR;
         if(pauseProgressBarNeedsRollover)
         {
             pauseProgressBarFill += pauseFillRate;
@@ -138,7 +138,7 @@ void Industry::UpdateProgressBar()
     {
         //float progressFillPercentage = productionContributed/productionToComplete; // Original
         float productionProgressBarFillAtFull = (productionContributed+productionPerTick)/productionToComplete; // Updated: Progress bar "visual" is one production tick ahead of "actual"
-        float progressFillRate = productionPerTick/productionToComplete/FRAMES_PER_HOUR;
+        float progressFillRate = productionPerTick/productionToComplete/Calendar::FRAMES_PER_HOUR;
         if(productionProgressBarNeedsRollover)
         {
             productionProgressBarFill += progressFillRate;
@@ -161,8 +161,8 @@ void Industry::UpdateProgressBar()
             productionProgressBarFill = 0.0;
 
         int remainingTime = (productionToComplete-productionContributed)/productionPerTick;
-        int remainingTimeDays = remainingTime/HOURS_PER_DAY;
-        int remainingTimeHours = remainingTime%HOURS_PER_DAY;
+        int remainingTimeDays = remainingTime/Calendar::HOURS_PER_DAY;
+        int remainingTimeHours = remainingTime%Calendar::HOURS_PER_DAY;
 
         if(remainingTimeDays > 0)
             remainingTimeText = std::to_string(remainingTimeDays) + "d " + std::to_string(remainingTimeHours) + "h";

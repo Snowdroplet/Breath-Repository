@@ -1,5 +1,5 @@
-#ifndef ENCYCLOPEDIA_H_INCLUDED
-#define ENCYCLOPEDIA_H_INCLUDED
+#ifndef ENCYCLOPEDIAINDEX_H_INCLUDED
+#define ENCYCLOPEDIAINDEX_H_INCLUDED
 
 #include <map>
 #include <string>
@@ -9,20 +9,12 @@
 #include "placeindex.h"
 #include "inventoryindex.h"
 
-enum enumEncyclopediaCategories
-{
-    EN_CAT_LEYKIN = 0,
-    EN_CAT_FACTIONS = 1,
-    EN_CAT_PLACES = 2,
-    EN_CAT_CARGO = 3
-};
-
 const std::map<int, std::string>encyclopediaLeykinLore =
 {
     {ANCESTRY_GENERAL, "Leykin are creatures capable of traversing the leylines that thread the Bottled World's domains together. Their ancestors emerged from veins of sacred earth to inherit the ruins of cities too grand even for all their number. Yet, the day will come that the Leykin outgrow this Bottled World, returning to clay to be sculpted anew once more."},
 
     {ANCESTRY_VERIT, "Individualists who prize their personal philosophies above law or tradition. Although the well-travelled among them quickly adapt to the customs of foreign lands, Verit are often seen as self-righteous and disruptive by other Leykin."},
-    {ANCESTRY_YETI, "Stout-hearted adherents to a creed of fraternity built on self-sacrifice. Every year, Yeti congregate in the holy city of Verse to reaffirm this creed."},
+    {ANCESTRY_YETI, "Stout-hearted adherents to a creed of fraternity built on self-sacrifice. Every year, Yeti congregate in the holy city of Verse to reaffirm its tenents."},
     {ANCESTRY_MAKHI, "Descendents and worshippers of the technological civilization Makhia. They enjoy sleeping in the sun while hirelings toil, and spare no expense or cunning to attract capable candidates to their service."},
     {ANCESTRY_BEYU, "Beyu society is regimented to a fault, but still makes ample time for leisure. Their streamlined bodies propel them gracefully through and against the currents of the Thousand Isles."},
     {ANCESTRY_MESERA, "A long-lived people who emerge from Hathsera in great numbers every twelve years to spread its seeds. All the world's forests are in fact Hathsera's descendents."},
@@ -81,47 +73,33 @@ const std::map<int, std::string>encyclopediaPlaceLore =
     {PL_ETRURI, "<Etruri>"}
 };
 
-const std::map<int, std::string>encyclopediaCargoLore =
+struct EncyclopediaIndex
 {
-    {IT_CORPUS, "Flesh shed by beasts, whose essences inhabit bodies only in passing.\n\nWhereas the Leykin are confined to their flesh, beasts exist between corpus and spiritus."},
-    {IT_PLASM, "Luminescent mold that grows on creatures who consort with spirits.\n\nLeykin who prefer the company of ghosts develop something like a soul, but this nascent affinity is expelled as plasm."},
-    {IT_OCULUS, "Uncanny stone that forms within the brains of creatures in long seclusion.\n\nSaid to be eyes of otherworldly beings, though there is no evidence that occuli can perceive anything."},
-    {IT_DORMANT_EGG, "Transmigratory vessel to which all beasts eventually return."}, // Eggs eventually hatch into creatures suited to their domain, but the process is stunted by travel.
+    enum enumEncyclopediaCategories
+    {
+        EN_CAT_LEYKIN = 0,
+        EN_CAT_FACTIONS = 1,
+        EN_CAT_PLACES = 2,
+        EN_CAT_CARGO = 3
+    };
 
-    {IT_BERRIES, "Lacking seeds or flowers, the propagation of these fruits remain a mystery."}, // The leylines are said to be their vines and roots, but from what source do leys convey nourishment?
-    {IT_HERBS, "Tea brewed from these bitter leaves fortify the constitution."}, // Temporary wakefulness . Some develop a dependency on herbs, feeling
-    {IT_MUSHROOMS, "Secretes a long-burning, aromatic oil when heated."}, // Careful storage is necessary
-    {IT_SPICE, "Fiery seasoning that opens the airways and lends life-affirming fullness to every breath."}, // Potent even in small amounts, but some make a show of consuming spices in excess. Curiously, that which makes one feel most alive is often the most harrowing.
+    static std::map<int,std::map<int, std::string>>encyclopedia;
 
-    {IT_CLAY, "Sacred earth left over from creation, still abundant to this day."}, // All life has its origins in clay, but
-    {IT_COPPER, "Machinists know the techniques for imparting memories unto these reddish metal plates.\n\nDetailed craft information placeholder.\n\nSupplied by cities placeholder.\n\nDemanded by cities placeholder."},
-    {IT_IRON, "Anima-dampening metal essential for safely handling soulmasses."},
-    {IT_LEYSTONE, "Fragments from the same crystal resonate with each other other across vast distances."},
+    static void LoadConfigurations()
+    {
+        encyclopedia =
+        {
+            {EncyclopediaIndex::EN_CAT_LEYKIN, encyclopediaLeykinLore},
+            {EncyclopediaIndex::EN_CAT_FACTIONS, encyclopediaFactionLore},
+            {EncyclopediaIndex::EN_CAT_PLACES, encyclopediaPlaceLore},
+        };
 
-    {IT_BRANDY, "Mellow fruit beverage distilled by leykin since time immemorial."},
-    {IT_MEDICINE, "Salve that soothes aches, prevents infections and promotes healing."},
-    {IT_ETHER, "Induces a long dream that effaces pain and trauma."},
-    {IT_COUNTERAGENT, "Sublime distillate with the power to suspend fate."}, // There is no question that
-
-    {IT_EFFIGY, "Resilient golem intended for manual labour."}, // They draw their strength from
-    {IT_CONTRACT, "Accords drawn up in fadeless pigment."}, // Sorcerers are ever capricious,
-    {IT_VESSEL, "Artificial egg created to carry immaterial things."},
-    {IT_GRIMOIRE, "Tome devised to transcribe the true intents behind one's words."}, // Perfect fidelity averts misunderstandings, but what is discernment without room for interpretation?
-
-    {IT_FUEL, "Substance refined from mushroom oil to power automata."},
-    {IT_CLOCKWORK, "Highly reconfigurable but delicate machine parts."},
-    {IT_TOOLS, "Poor artificers blame their tools; prosperous artificers improve them."},
-    {IT_AUTOMATON, "Handheld mechanical effigy that excels at calculations."}
+        for(unsigned i = InventoryIndex::IT_MARKER_FIRST; i <= InventoryIndex::IT_MARKER_LAST; i++)
+        {
+            std::string section = "cargo " + std::to_string(i);
+            encyclopedia[EN_CAT_CARGO][i] = Configuration::ReturnString(Configuration::cargoCfg, section.c_str(), "lore");
+        }
+    }
 };
 
-const std::map<int,std::map<int, std::string>>encyclopedia =
-{
-    {EN_CAT_LEYKIN, encyclopediaLeykinLore},
-    {EN_CAT_FACTIONS, encyclopediaFactionLore},
-    {EN_CAT_PLACES, encyclopediaPlaceLore},
-    {EN_CAT_CARGO, encyclopediaCargoLore}
-};
-
-
-
-#endif // ENCYCLOPEDIA_H_INCLUDED
+#endif // ENCYCLOPEDIAINDEX_H_INCLUDED

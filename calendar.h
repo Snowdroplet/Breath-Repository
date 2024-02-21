@@ -15,30 +15,46 @@
 
 #include "colorindex.h"
 
-extern bool hourChangeTick;
-extern bool dayChangeTick;
+struct Calendar
+{
+    static bool hourChangeTick;
+static bool dayChangeTick;
 
-const int FRAMES_PER_HOUR = Timer::FPS*1; // *smaller value = faster
-extern int hourFrame;
+static constexpr int FRAMES_PER_HOUR = Timer::FPS*1; // *smaller value = faster
+static int hourFrame;
 
-const int HOURS_PER_DAY = 24;
-extern int hourOfTheDay;
+static constexpr int HOURS_PER_DAY = 24;
+static int hourOfTheDay;
 
-const int FIRST_DAY_OF_WEEK = 1;
-const int LAST_DAY_OF_WEEK = 7;
-extern int dayOfTheWeek;
+static constexpr int FIRST_DAY_OF_WEEK = 1;
+static constexpr int LAST_DAY_OF_WEEK = 7;
+static int dayOfTheWeek;
 
-const int FIRST_DAY_OF_MONTH = 1;
-const int LAST_DAY_OF_MONTH = 30;
-extern int dayOfTheMonth;
+static constexpr int FIRST_DAY_OF_MONTH = 1;
+static constexpr int LAST_DAY_OF_MONTH = 30;
+static int dayOfTheMonth;
 
-const int FIRST_MONTH_OF_YEAR = 1;
-const int LAST_MONTH_OF_YEAR = 12;
-extern int monthOfTheYear;
+static constexpr int FIRST_MONTH_OF_YEAR = 1;
+static constexpr int LAST_MONTH_OF_YEAR = 12;
+static int monthOfTheYear;
 
-extern int year;
+static int year;
 
-extern std::string calendarText;
+static std::string calendarText;
+
+static constexpr int CALENDAR_TEXT_DRAW_X = Display::WIDTH; // Right aligned
+static constexpr int CALENDAR_TEXT_DRAW_Y = Display::HEIGHT - 8;
+
+static void Initialize(int startHour, int startDayOfMonth, int startMonthOfYear, int startYear);
+static void AdvanceHourFrame();
+static void AdvanceHour();
+static void AdvanceDay();
+static void AdvanceMonth();
+static void AdvanceYear();
+static void UpdateCalendarText();
+
+static void DrawCalendar();
+};
 
 const std::map<int, std::string>dayNames =
 {
@@ -66,18 +82,5 @@ const std::map<int, std::string>monthNames =
     {11, "November"},
     {12, "December"}
 };
-
-const int CALENDAR_TEXT_DRAW_X = Display::WIDTH; // Right aligned
-const int CALENDAR_TEXT_DRAW_Y = Display::HEIGHT - 8;
-
-void InitCalendar(int startHour, int startDayOfMonth, int startMonthOfYear, int startYear);
-void AdvanceHourFrame();
-void AdvanceHour();
-void AdvanceDay();
-void AdvanceMonth();
-void AdvanceYear();
-void UpdateCalendarText();
-
-void DrawCalendar();
 
 #endif // CALENDAR_H_INCLUDED

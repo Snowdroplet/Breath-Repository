@@ -17,13 +17,37 @@ struct Resource
     static constexpr float TEXT_HEIGHT_16 = 16;
 
     static ALLEGRO_FONT *builtin8;
-    //extern ALLEGRO_BITMAP *builtin16Tga;
-    //extern ALLEGRO_FONT *builtin16;
-    //extern ALLEGRO_FONT *spaceMono16;
+    //static ALLEGRO_BITMAP *builtin16Tga;
+    //static ALLEGRO_FONT *builtin16;
+    //static ALLEGRO_FONT *spaceMono16;
 
     static ALLEGRO_BITMAP *overworldPlacePng;
 
+    static const unsigned resourceBeingNumWalkFrames = 2;
+    static ALLEGRO_BITMAP *beingsPng;
+    static ALLEGRO_BITMAP *beingPng[NUM_ANCESTRIES];
 
+    static ALLEGRO_BITMAP *expertiseIconPng;
+
+    static ALLEGRO_BITMAP *miniCargoPng;
+    static ALLEGRO_BITMAP *cargoPng;
+
+    static ALLEGRO_BITMAP *redArrowPng;
+    static ALLEGRO_BITMAP *redTransparentXPng;
+
+    /*
+    enum enumBackgroundTracks
+    {
+        TRACK_MACLEOD_COTTAGES = 0,
+        TRACK_MACLEOD_MANOR    = 1
+    };
+    */
+
+    static ALLEGRO_SAMPLE *cottagesMacLeodMp3;
+    static ALLEGRO_SAMPLE *manorMacLeodMp3;
+
+    static ALLEGRO_SAMPLE_INSTANCE *cottagesSampleInstance;
+    static ALLEGRO_SAMPLE_INSTANCE *manorSampleInstance;
 
     static void LoadFontResources();
     static void LoadImageResources();
@@ -46,32 +70,5 @@ const std::map<unsigned,unsigned>resourceBeingNumSpriteVariants
     {ANCESTRY_ORDON, 2},
     {ANCESTRY_HAPHAE, 2}
 };
-const unsigned resourceBeingNumWalkFrames = 2;
-extern ALLEGRO_BITMAP *beingsPng;
-extern ALLEGRO_BITMAP *beingPng[NUM_ANCESTRIES];
-
-extern ALLEGRO_BITMAP *expertiseIconPng;
-
-extern ALLEGRO_BITMAP *miniCargoPng;
-extern ALLEGRO_BITMAP *cargoPng;
-
-extern ALLEGRO_BITMAP *redArrowPng;
-extern ALLEGRO_BITMAP *redTransparentXPng;
-
-/*
-enum enumBackgroundTracks
-{
-    TRACK_MACLEOD_COTTAGES = 0,
-    TRACK_MACLEOD_MANOR    = 1
-};
-*/
-
-extern ALLEGRO_SAMPLE *cottagesMacLeodMp3;
-extern ALLEGRO_SAMPLE *manorMacLeodMp3;
-
-extern ALLEGRO_SAMPLE_INSTANCE *cottagesSampleInstance;
-extern ALLEGRO_SAMPLE_INSTANCE *manorSampleInstance;
-
-//extern std::map<int, *ALLEGRO_SAMPLE_INSTANCE>allegroSampleInstances;
 
 #endif // RESOURCE_H_INCLUDED

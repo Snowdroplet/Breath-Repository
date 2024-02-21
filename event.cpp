@@ -20,8 +20,6 @@ bool Event::keyInput[] =
     false, false, false,                        //VWX
     false, false,                               //YZ
 
-    false,                                      //Enter
-    false,                                      //Space
     false, false, false,                        //numpad123
     false, false, false,                        //numpad456
     false, false, false,                        //numpad789
@@ -29,9 +27,11 @@ bool Event::keyInput[] =
     false, false, false, false, false,          //01234
     false, false, false, false, false,          //56789
     false, false, false, false,                 //ULDR
+    false,                                      //Enter
+    false,                                      //Space
     false, false,                               //LSHIFT RSHIFT
 
-    false                                      //Esc
+    false                                       //Esc
 
 };
 
@@ -58,7 +58,7 @@ int Event::keyHoldTicks[] =
     0,                              //Space
     0,0,                            //LSHIFT RSHIFT
 
-    0,                              //Esc
+    0                               //Esc
 };
 
 bool Event::mouseInput[] =
@@ -464,7 +464,7 @@ void Event::InputKeyup()
 
     case ALLEGRO_KEY_ESCAPE:
         keyInput[KEY_ESC] = false;
-        keyInput[KEY_ESC] = 0;
+        keyHoldTicks[KEY_ESC] = 0;
         break;
     }
 }

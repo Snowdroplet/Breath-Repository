@@ -52,54 +52,54 @@ const std::map<int, std::map<int,float>>baseJobInputs =
     {IND_MINE_IRON,        { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
     {IND_MINE_LEYSTONE,    { /*{ IT_X, 0.0 }*/        /*,{ IT_X, 0.0 }*/ } },
 
-    {IND_ALCHEMY_BRANDY,      { { IT_BERRIES,   2.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_ALCHEMY_MEDICINE,     { { IT_HERBS,     2.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_ALCHEMY_ETHER,       { { IT_OCULUS,    2.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_ALCHEMY_COUNTERAGENT, { { IT_ETHER,    4.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_ALCHEMY_BRANDY,      { { InventoryIndex::IT_BERRIES,   2.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_ALCHEMY_MEDICINE,     { { InventoryIndex::IT_HERBS,     2.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_ALCHEMY_ETHER,       { { InventoryIndex::IT_OCULUS,    2.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_ALCHEMY_COUNTERAGENT, { { InventoryIndex::IT_ETHER,    4.0 } /*,{ IT_X, 0.0 }*/ } },
 
-    {IND_SORCERY_EFFIGY,       { { IT_CORPUS,    2.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_SORCERY_CONTRACT,     { { IT_PLASM,     2.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_SORCERY_VESSEL,       { { IT_CLAY,      2.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_SORCERY_GRIMOIRE,     { { IT_CONTRACT,  4.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_SORCERY_EFFIGY,       { { InventoryIndex::IT_CORPUS,    2.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_SORCERY_CONTRACT,     { { InventoryIndex::IT_PLASM,     2.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_SORCERY_VESSEL,       { { InventoryIndex::IT_CLAY,      2.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_SORCERY_GRIMOIRE,     { { InventoryIndex::IT_CONTRACT,  4.0 } /*,{ IT_X, 0.0 }*/ } },
 
-    {IND_MACHINE_FUEL,         { { IT_MUSHROOMS, 2.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_MACHINE_CLOCKWORK,    { { IT_COPPER,    2.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_MACHINE_TOOLS,        { { IT_IRON,      2.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_MACHINE_AUTOMATON,    { { IT_CLOCKWORK, 4.0 } /*,{ IT_X, 0.0 }*/ } }
+    {IND_MACHINE_FUEL,         { { InventoryIndex::IT_MUSHROOMS, 2.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_MACHINE_CLOCKWORK,    { { InventoryIndex::IT_COPPER,    2.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_MACHINE_TOOLS,        { { InventoryIndex::IT_IRON,      2.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_MACHINE_AUTOMATON,    { { InventoryIndex::IT_CLOCKWORK, 4.0 } /*,{ IT_X, 0.0 }*/ } }
 };
 
 
 const std::map<int, std::map<int,float>>baseJobOutputs =
 {
-    {IND_HUNT_CORPUS,      { { IT_CORPUS,      1.0} /*,{ IT_X, 0.0 }*/ } },
-    {IND_HUNT_PLASM,       { { IT_PLASM,       1.0} /*,{ IT_X, 0.0 }*/ } },
-    {IND_HUNT_OCULUS,      { { IT_OCULUS,      1.0} /*,{ IT_X, 0.0 }*/ } },
-    {IND_HUNT_DORMANT_EGG, { { IT_DORMANT_EGG, 1.0} /*,{ IT_X, 0.0 }*/ } },
+    {IND_HUNT_CORPUS,      { { InventoryIndex::IT_CORPUS,      1.0} /*,{ IT_X, 0.0 }*/ } },
+    {IND_HUNT_PLASM,       { { InventoryIndex::IT_PLASM,       1.0} /*,{ IT_X, 0.0 }*/ } },
+    {IND_HUNT_OCULUS,      { { InventoryIndex::IT_OCULUS,      1.0} /*,{ IT_X, 0.0 }*/ } },
+    {IND_HUNT_DORMANT_EGG, { { InventoryIndex::IT_DORMANT_EGG, 1.0} /*,{ IT_X, 0.0 }*/ } },
 
-    {IND_FARM_BERRIES,     { { IT_BERRIES,     1.0} /*,{ IT_X, 0.0 }*/ } },
-    {IND_FARM_HERBS,       { { IT_HERBS,       1.0} /*,{ IT_X, 0.0 }*/ } },
-    {IND_FARM_MUSHROOMS,   { { IT_MUSHROOMS,   1.0} /*,{ IT_X, 0.0 }*/ } },
-    {IND_FARM_SPICE,       { { IT_SPICE,       1.0} /*,{ IT_X, 0.0 }*/ } },
+    {IND_FARM_BERRIES,     { { InventoryIndex::IT_BERRIES,     1.0} /*,{ IT_X, 0.0 }*/ } },
+    {IND_FARM_HERBS,       { { InventoryIndex::IT_HERBS,       1.0} /*,{ IT_X, 0.0 }*/ } },
+    {IND_FARM_MUSHROOMS,   { { InventoryIndex::IT_MUSHROOMS,   1.0} /*,{ IT_X, 0.0 }*/ } },
+    {IND_FARM_SPICE,       { { InventoryIndex::IT_SPICE,       1.0} /*,{ IT_X, 0.0 }*/ } },
 
-    {IND_MINE_CLAY,        { { IT_CLAY,        1.0} /*,{ IT_X, 0.0 }*/ } },
-    {IND_MINE_COPPER,      { { IT_COPPER,      1.0} /*,{ IT_X, 0.0 }*/ } },
-    {IND_MINE_IRON,        { { IT_IRON,        1.0} /*,{ IT_X, 0.0 }*/ } },
-    {IND_MINE_LEYSTONE,    { { IT_LEYSTONE,    1.0} /*,{ IT_X, 0.0 }*/ } },
+    {IND_MINE_CLAY,        { { InventoryIndex::IT_CLAY,        1.0} /*,{ IT_X, 0.0 }*/ } },
+    {IND_MINE_COPPER,      { { InventoryIndex::IT_COPPER,      1.0} /*,{ IT_X, 0.0 }*/ } },
+    {IND_MINE_IRON,        { { InventoryIndex::IT_IRON,        1.0} /*,{ IT_X, 0.0 }*/ } },
+    {IND_MINE_LEYSTONE,    { { InventoryIndex::IT_LEYSTONE,    1.0} /*,{ IT_X, 0.0 }*/ } },
 
-    {IND_ALCHEMY_BRANDY,       { { IT_BRANDY,      1.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_ALCHEMY_MEDICINE,     { { IT_MEDICINE,     1.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_ALCHEMY_ETHER,       { { IT_ETHER,       1.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_ALCHEMY_COUNTERAGENT, { { IT_COUNTERAGENT, 1.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_ALCHEMY_BRANDY,       { { InventoryIndex::IT_BRANDY,      1.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_ALCHEMY_MEDICINE,     { { InventoryIndex::IT_MEDICINE,     1.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_ALCHEMY_ETHER,       { { InventoryIndex::IT_ETHER,       1.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_ALCHEMY_COUNTERAGENT, { { InventoryIndex::IT_COUNTERAGENT, 1.0 } /*,{ IT_X, 0.0 }*/ } },
 
-    {IND_SORCERY_EFFIGY,       { { IT_EFFIGY,       1.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_SORCERY_CONTRACT,     { { IT_CONTRACT,     1.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_SORCERY_VESSEL,       { { IT_VESSEL,       1.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_SORCERY_GRIMOIRE,     { { IT_GRIMOIRE,    1.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_SORCERY_EFFIGY,       { { InventoryIndex::IT_EFFIGY,       1.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_SORCERY_CONTRACT,     { { InventoryIndex::IT_CONTRACT,     1.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_SORCERY_VESSEL,       { { InventoryIndex::IT_VESSEL,       1.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_SORCERY_GRIMOIRE,     { { InventoryIndex::IT_GRIMOIRE,    1.0 } /*,{ IT_X, 0.0 }*/ } },
 
-    {IND_MACHINE_FUEL,         { { IT_FUEL,         1.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_MACHINE_CLOCKWORK,    { { IT_CLOCKWORK,    1.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_MACHINE_TOOLS,        { { IT_TOOLS,        1.0 } /*,{ IT_X, 0.0 }*/ } },
-    {IND_MACHINE_AUTOMATON,    { { IT_AUTOMATON,    1.0 } /*,{ IT_X, 0.0 }*/ } }
+    {IND_MACHINE_FUEL,         { { InventoryIndex::IT_FUEL,         1.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_MACHINE_CLOCKWORK,    { { InventoryIndex::IT_CLOCKWORK,    1.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_MACHINE_TOOLS,        { { InventoryIndex::IT_TOOLS,        1.0 } /*,{ IT_X, 0.0 }*/ } },
+    {IND_MACHINE_AUTOMATON,    { { InventoryIndex::IT_AUTOMATON,    1.0 } /*,{ IT_X, 0.0 }*/ } }
 
 };
 

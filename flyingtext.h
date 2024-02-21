@@ -5,7 +5,9 @@
 #include <string>
 #include <vector>
 
-#include "overworld.h"
+//#include "overworld.h"
+#include "colorindex.h"
+#include "resource.h"
 #include "camera.h"
 
 class FlyingText
