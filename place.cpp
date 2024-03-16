@@ -6,7 +6,7 @@ Place::Place(int id)
 {
     placeIdentity = id;
 
-    name = placeNames.at(placeIdentity);
+    name = PlaceIndex::placeNames.at(placeIdentity);
 
     sovereignty = placeSovereignties.at(placeIdentity);
 

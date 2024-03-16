@@ -31,6 +31,7 @@ const std::map<int, std::string>encyclopediaFactionLore =
     {SOV_THOUSAND_ISLES,"The Convocation of The Thousand Isles was originally an economic alliance between the Beyu island states of Reach, Karune and Yulmer, before the advent of tethercraft made "}
 };
 
+/*
 const std::map<int, std::string>encyclopediaPlaceLore =
 {
     {PL_ERICENNES, "The City of Gates, capital of The Republic of Verus.\n\nEricennes has been the seat of several once-great civilizations, owing to its uniquely well-connected position on the leyways. Many of its ancient monuments still endure, warning against the follies that brought their builders to ruin."},
@@ -44,7 +45,7 @@ const std::map<int, std::string>encyclopediaPlaceLore =
     {PL_ROSELLA, "A Verit tribe of little renown makes their home on this isolated plateau overlooking the desert. Though quiet and unmaterialistic, they warmly welcome any visitors bearing news and gifts from the world below."},
     {PL_OBSERVIA, "The University and its township was purposefully founded at a distance from the capital and its concerns. Ironically, the so-called 'secret police' have a headquarters here for the same reason, but the two groups have a policy of non-interference in each other's affairs."},
     {PL_COLDLAKE, "This mining town is blanketed by chill mist from the nearby lake. Its citizens have amassed substantial wealth through honest toil, but most understandably prefer to seek their entertainments elsewhere."},
-    {PL_UMBERDELL, "Inviolate accords struck with the Republic in its formative years prevents any visitor who stays three nights in the other's territory from returning home. Through this compromise, the self-sufficient Umberdell became part of Verus if only in name, preserving the autonomy of the former and allowing the latter to finally proclaim the unification of all Verit domains."},
+    {PL_UMBERDELL, "Inviolate accords struck with the Republic in its formative years prevents any visitor who stays three nights in the other's territory from returning home. Through this compromise, the self-sufficient Umberdell became part of the if only in name, preserving the autonomy of the former and allowing the latter to finally proclaim the unification of all Verit domains."},
     {PL_RAMSHORN, "Ramshorn borders both Lethemere and the Grazeland, stomping grounds of truly imposing beasts and the mighty hunters who dare to challenge them."},
     {PL_HOLLYHEAD, "Many visit Hollyhead for its geothermal baths reputed to confer all manner of benefit to body and mind. Not least among them are caravaneers coming to and from the icy territories of Sharumnir Assembly."},
     {PL_JASPER, "Influential despite their isolation, Jasper is a commune of artisian-mechanics who profess the highest aesthetic realization in building machines that do nothing, but elegantly. Their works are revered in distant Xenia, where travellers have made fortunes as toy peddlers."},
@@ -72,6 +73,7 @@ const std::map<int, std::string>encyclopediaPlaceLore =
     {PL_ASTEROS, "<Asteros>"},
     {PL_ETRURI, "<Etruri>"}
 };
+*/
 
 struct EncyclopediaIndex
 {
@@ -90,14 +92,20 @@ struct EncyclopediaIndex
         encyclopedia =
         {
             {EncyclopediaIndex::EN_CAT_LEYKIN, encyclopediaLeykinLore},
-            {EncyclopediaIndex::EN_CAT_FACTIONS, encyclopediaFactionLore},
-            {EncyclopediaIndex::EN_CAT_PLACES, encyclopediaPlaceLore},
+            {EncyclopediaIndex::EN_CAT_FACTIONS, encyclopediaFactionLore}
+            //{EncyclopediaIndex::EN_CAT_PLACES, encyclopediaPlaceLore},
         };
 
         for(unsigned i = InventoryIndex::IT_MARKER_FIRST; i <= InventoryIndex::IT_MARKER_LAST; i++)
         {
             std::string section = "cargo " + std::to_string(i);
             encyclopedia[EN_CAT_CARGO][i] = Configuration::ReturnString(Configuration::cargoCfg, section.c_str(), "lore");
+        }
+
+        for(unsigned i = PlaceIndex::PL_MARKER_FIRST; i <= PlaceIndex::PL_MARKER_LAST; i++)
+        {
+            std::string section = "place " + std::to_string(i);
+            encyclopedia[EN_CAT_PLACES][i] = Configuration::ReturnString(Configuration::placeCfg, section.c_str(), "lore");
         }
     }
 };

@@ -112,7 +112,7 @@ void BubbleView::DrawBeingStatusBubble(Being *b)
 
     AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT, beingStatusBubbleDrawX,
                         beingStatusBubbleDrawY+beingStatusBubbleBiographyPartitionHeight + Resource::TEXT_HEIGHT_12,
-                        ALLEGRO_ALIGN_LEFT, "Home: " + placeNames.at(b->hometown));
+                        ALLEGRO_ALIGN_LEFT, "Home: " + PlaceIndex::placeNames.at(b->hometown));
 
 // Stats: Vitality
     al_draw_filled_rectangle(beingStatusBubbleDrawX,
@@ -368,7 +368,7 @@ void BubbleView::DrawCaravanTradeRecordsBubble(Caravan *c)
                                 caravanTradeRecordsBubbleDrawX + caravanTradeRecordsBubblePlaceNameWidth,
                                 caravanTradeRecordsBubbleDrawY + row*(Tile::HEIGHT + caravanTradeRecordsBubbleRowSpacing),
                                 ALLEGRO_ALIGN_RIGHT,
-                                placeNames.at((*rit)->location)); //+ " (" + std::to_string((*rit)->numRows) + ")");
+                                PlaceIndex::placeNames.at((*rit)->location)); //+ " (" + std::to_string((*rit)->numRows) + ")");
 
 
             if((*rit)->tradeQuantities.size() > 0)
@@ -458,7 +458,7 @@ void BubbleView::DrawCaravanPathfindingBubble(Caravan *c)
             AllegroCustom::string_al_draw_text(Resource::builtin8, COLKEY_TEXT,
                                 drawX + Tile::WIDTH, drawY + 2*Tile::HEIGHT,
                                 ALLEGRO_ALIGN_CENTER,
-                                placeNames.at(c->worldGraph.path[i]));
+                                PlaceIndex::placeNames.at(c->worldGraph.path[i]));
 
             if(i < c->worldGraph.path.size()-1)
             {
@@ -979,7 +979,7 @@ void BubbleView::OpenEncyclopediaBubble(float x, float y, int category, int inde
         encyclopediaBubbleEntryName = sovereigntyNames.at(encyclopediaCurrentIndex);
         break;
     case EncyclopediaIndex::EN_CAT_PLACES:
-        encyclopediaBubbleEntryName = placeNames.at(encyclopediaCurrentIndex);
+        encyclopediaBubbleEntryName = PlaceIndex::placeNames.at(encyclopediaCurrentIndex);
         break;
     case EncyclopediaIndex::EN_CAT_CARGO:
         encyclopediaBubbleEntryName = InventoryIndex::itemNames.at(encyclopediaCurrentIndex);

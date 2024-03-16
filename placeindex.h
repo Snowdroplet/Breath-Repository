@@ -29,9 +29,28 @@ enum enumPlaces
     PL_MAKHIA = 30, PL_HAPHADEE = 31, PL_ASTEROS = 32,
     PL_ETRURI = 33
 };
-const unsigned PL_MARKER_FIRST = PL_ERICENNES;
-const unsigned PL_MARKER_LAST = PL_YULMER;
 
+struct PlaceIndex
+{
+    static const unsigned PL_MARKER_FIRST = PL_ERICENNES;
+    static const unsigned PL_MARKER_LAST = PL_YULMER;
+
+    static std::map<int,std::string>placeNames;
+
+    static void LoadConfigurations()
+    {
+        for(unsigned i = PL_MARKER_FIRST; i <= PL_MARKER_LAST; i++)
+        {
+            std::string section = "place " + std::to_string(i);
+            std::cout << section << ": " << std::endl;
+            placeNames[i] = Configuration::ReturnString(Configuration::placeCfg, section.c_str(), "name");
+            std::cout << placeNames[i] << std::endl;
+        }
+    }
+
+};
+
+/*
 const std::map<int, std::string>placeNames =
 {
     {PL_ERICENNES,"Ericennes"}, {PL_CHORAS,"Choras"}, {PL_KETH_KETHER,"Keth Kether"},
@@ -46,53 +65,54 @@ const std::map<int, std::string>placeNames =
     {PL_MAKHIA, "Makhia"}, {PL_HAPHADEE, "Haphadee"}, {PL_ASTEROS, "Asteros"},
     {PL_ETRURI, "Etruri"}
 };
+*/
 
 const std::map<int, std::array<float,2>>placeOverworldXYCells =
 {
-    {PL_ERICENNES,    { 20 ,  20 } },
-    {PL_CHORAS,       { 24 ,  12 } },
-    {PL_KETH_KETHER,  { 12 ,  24 } },
+    {PL_ERICENNES,    { 20,  20 } },
+    {PL_CHORAS,       { 24,  12 } },
+    {PL_KETH_KETHER,  { 12,  24 } },
 
-    {PL_KETH_ENTWEIR, { 9  ,  17 } },
-    {PL_VIELLEICHT,   { 1  ,  28 } },
-    {PL_QUELLUDE,     { 6  ,  32 } },
-    {PL_AMBLEFORTH,   { 4  ,  14 } },
+    {PL_KETH_ENTWEIR, { 9,  17 } },
+    {PL_VIELLEICHT,   { 1,  28 } },
+    {PL_QUELLUDE,     { 6,  32 } },
+    {PL_AMBLEFORTH,   { 4,  14 } },
 
-    {PL_ROSKANEL,     { 26 ,  24 } },
-    {PL_ROSELLA,      { 28 ,  30 } },
+    {PL_ROSKANEL,     { 26,  24 } },
+    {PL_ROSELLA,      { 28,  30 } },
 
-    {PL_OBSERVIA,     { 11 ,   5 } },
-    {PL_COLDLAKE,     { 16 ,  10 } },
-    {PL_UMBERDELL,    { 17 ,   3 } },
+    {PL_OBSERVIA,     { 11,   5 } },
+    {PL_COLDLAKE,     { 16,  10 } },
+    {PL_UMBERDELL,    { 17,   3 } },
 
-    {PL_RAMSHORN,     { 31 ,   9 } },
-    {PL_HOLLYHEAD,    { 25 ,   5 } },
-    {PL_JASPER,       { 36 ,   2 } },
+    {PL_RAMSHORN,     { 31,   9 } },
+    {PL_HOLLYHEAD,    { 25,   5 } },
+    {PL_JASPER,       { 36,   2 } },
 
-    {PL_RUMNIR,       { 21 ,  -6 } },
-    {PL_HEWNHEIM,     {  9 ,  -9 } },
-    {PL_ARTAS_ROCK,   { 19 , -16 } },
-    {PL_VERSE,        { 13 , -22 } },
+    {PL_RUMNIR,       { 21,  -6 } },
+    {PL_HEWNHEIM,     {  9,  -9 } },
+    {PL_ARTAS_ROCK,   { 19, -16 } },
+    {PL_VERSE,        { 13, -22 } },
 
-    {PL_YHANE,        { 20 ,  30 } },
-    {PL_VEINS,        { 16 ,  33 } },
-    {PL_QALAIZ,       { 24 ,  41 } },
+    {PL_YHANE,        { 20,  30 } },
+    {PL_VEINS,        { 16,  33 } },
+    {PL_QALAIZ,       { 24,  41 } },
 
-    {PL_TOBANDJAN,    { 22 ,  48 } },
-    {PL_QUMANTH,      { 15 ,  45 } },
-    {PL_XENIA,        { 30 ,  47 } },
+    {PL_TOBANDJAN,    { 22,  48 } },
+    {PL_QUMANTH,      { 15,  45 } },
+    {PL_XENIA,        { 30,  47 } },
 
-    {PL_REACH,        {-12 ,  30 } },
-    {PL_KARUNE,       {-10 ,  11 } },
-    {PL_HATHSERA,     { -5 ,  42 } },
-    {PL_VORDOZAAL,    { -8 ,  48 } },
-    {PL_YULMER,       { -4 ,  -6 } },
+    {PL_REACH,        {-12,  30 } },
+    {PL_KARUNE,       {-10,  11 } },
+    {PL_HATHSERA,     { -5,  42 } },
+    {PL_VORDOZAAL,    { -8,  48 } },
+    {PL_YULMER,       { -4,  -6 } },
 
-    {PL_MAKHIA,       {0 , 0 } },
-    {PL_HAPHADEE,     {0 , 0 } },
-    {PL_ASTEROS,      {-5 , 21 } },
+    {PL_MAKHIA,       {0, 0 } },
+    {PL_HAPHADEE,     {0, 0 } },
+    {PL_ASTEROS,      {-5, 21 } },
 
-    {PL_ETRURI,       {0 ,0 } }
+    {PL_ETRURI,       {0,0 } }
 };
 
 

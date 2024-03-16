@@ -55,7 +55,7 @@ void Caravan::SetHometown(int id)
 
 int Caravan::SelectRandomTradeDestination()
 {
-    int result = rand()%(PL_MARKER_LAST-PL_MARKER_FIRST +1) + PL_MARKER_FIRST;
+    int result = rand()%(PlaceIndex::PL_MARKER_LAST-PlaceIndex::PL_MARKER_FIRST +1) + PlaceIndex::PL_MARKER_FIRST;
     return result;
 }
 

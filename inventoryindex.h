@@ -21,8 +21,8 @@ struct InventoryIndex
         IT_EFFIGY  = 16, IT_CONTRACT  = 17, IT_VESSEL = 18, IT_GRIMOIRE     = 19,
         IT_FUEL    = 20, IT_CLOCKWORK = 21, IT_TOOLS  = 22, IT_AUTOMATON    = 23
     };
-    static constexpr unsigned IT_MARKER_FIRST = IT_CORPUS;
-    static constexpr unsigned IT_MARKER_LAST = IT_AUTOMATON;
+    static const unsigned IT_MARKER_FIRST = IT_CORPUS;
+    static const unsigned IT_MARKER_LAST = IT_AUTOMATON;
 
     static std::map<int,std::string>itemNames;
 

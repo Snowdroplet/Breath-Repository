@@ -142,6 +142,7 @@ int main(int argc, char *argv[])
     al_set_standard_file_interface();
     Configuration::LoadConfigurations();
     InventoryIndex::LoadConfigurations();
+    PlaceIndex::LoadConfigurations();
     EncyclopediaIndex::LoadConfigurations();
 
     Configuration::UnloadConfigurations();
@@ -253,7 +254,7 @@ void Initialize()
     BubbleView::Initialize();
     Calendar::Initialize(12,17,2,2024);
 
-    for(unsigned i = PL_MARKER_FIRST; i <= PL_MARKER_LAST; i++)
+    for(unsigned i = PlaceIndex::PL_MARKER_FIRST; i <= PlaceIndex::PL_MARKER_LAST; i++)
         Place::places[i] = new Place(i);
 
     for(unsigned i = ROAD_MARKER_FIRST; i <= ROAD_MARKER_LAST; i++)
@@ -391,7 +392,7 @@ void InterpretInput()
 
     if(Event::keyHoldTicks[Event::KEY_ESC] == 1)
     {
-        // Priority: 1) Close enyclopedia. 2) Close being status bubble. 2) Close caravan/place bubbles. 3) Unlock camera.
+        // Priority: 1) Close enyclopedia. 2) Close being status bubble. 3) Close caravan/place bubbles + unlock camera.
 
         if(BubbleView::encyclopediaBubbleOpen)
         {
@@ -413,11 +414,9 @@ void InterpretInput()
                     BubbleView::currentPlace = nullptr;
                     std::cout << "Closing caravan/place bubbles" << std::endl;
                 }
-                else // no bubbles are open
-                {
-                    OverworldUnlockCamera();
-                    std::cout << "unlocking camera" << std::endl;
-                }
+
+                OverworldUnlockCamera();
+                std::cout << "unlocking camera" << std::endl;
             }
         }
         //Event::keyInput[Event::KEY_ESC] = false;
