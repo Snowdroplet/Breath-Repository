@@ -56,7 +56,7 @@ struct Camera
         zoomTranslateX = 0; // At 1.0 scale
         zoomTranslateY = 0;
 
-        SetCell(0,0);
+        SetCell(50,50);
     }
 
     static void SetPosition(float x, float y){atDestination = true; xDestination = xPosition = x; yDestination = yPosition = y;}

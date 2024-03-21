@@ -38,17 +38,4 @@ struct InventoryIndex
     }
 };
 
-/*
-const std::map<int,std::string>itemNames =
-{
-    {IT_CORPUS, "Corpus"}, {IT_PLASM, "Plasm"}, {IT_OCULUS, "Oculus"}, {IT_DORMANT_EGG, "Dormant Egg"},
-    {IT_BERRIES, "Berries"}, {IT_HERBS, "Herbs"}, {IT_MUSHROOMS, "Mushrooms"}, {IT_SPICE, "Spice"},
-    {IT_CLAY, "Clay"}, {IT_COPPER, "Copper"}, {IT_IRON, "Iron"}, {IT_LEYSTONE, "Leystone"},
-
-    {IT_BRANDY, "Brandy"}, {IT_MEDICINE, "Medicine"}, {IT_ETHER, "Poison"}, {IT_COUNTERAGENT, "Counteragent"},
-    {IT_EFFIGY, "Effigy"}, {IT_CONTRACT, "Contract"}, {IT_VESSEL, "Vessel"}, {IT_GRIMOIRE, "Spellbook"},
-    {IT_FUEL, "Fuel"}, {IT_CLOCKWORK, "Clockwork"}, {IT_TOOLS, "Tools"}, {IT_AUTOMATON, "Automaton"}
-};
-*/
-
 #endif // INVENTORYINDEX_H_INCLUDED

@@ -877,6 +877,10 @@ void AttemptCameraLockOn()
 
             Camera::xPosition = x - Display::WIDTH/2;
             Camera::yPosition = y - Display::HEIGHT/2;
+
+            BubbleView::OpenEncyclopediaBubble(Display::WIDTH/2 - BubbleView::encyclopediaBubbleWidth/2,
+                                                       Display::HEIGHT/2 + 2*Tile::HEIGHT,
+                                                       EncyclopediaIndex::EN_CAT_PLACES, (*it).first);
             break;
         }
     }

@@ -42,33 +42,17 @@ struct PlaceIndex
         for(unsigned i = PL_MARKER_FIRST; i <= PL_MARKER_LAST; i++)
         {
             std::string section = "place " + std::to_string(i);
-            std::cout << section << ": " << std::endl;
+            //std::cout << section << ": " << std::endl;
             placeNames[i] = Configuration::ReturnString(Configuration::placeCfg, section.c_str(), "name");
-            std::cout << placeNames[i] << std::endl;
+            //std::cout << placeNames[i] << std::endl;
         }
     }
 
 };
 
-/*
-const std::map<int, std::string>placeNames =
-{
-    {PL_ERICENNES,"Ericennes"}, {PL_CHORAS,"Choras"}, {PL_KETH_KETHER,"Keth Kether"},
-    {PL_KETH_ENTWEIR,"Keth Entweir"}, {PL_VIELLEICHT,"Vielleicht"}, {PL_QUELLUDE,"Quellude"}, {PL_AMBLEFORTH,"Ambleforth"},
-    {PL_ROSKANEL,"Roskanel"}, {PL_ROSELLA,"Rosella"},
-    {PL_OBSERVIA,"Observia"}, {PL_COLDLAKE,"Coldlake"}, {PL_UMBERDELL,"Umberdell"},
-    {PL_RAMSHORN,"Ramshorn"}, {PL_HOLLYHEAD,"Hollyhead"}, {PL_JASPER,"Jasper"},
-    {PL_RUMNIR, "Rumnir"}, {PL_HEWNHEIM,"Hewnheim"}, {PL_ARTAS_ROCK, "Arta's Rock"}, {PL_VERSE, "Verse"},
-    {PL_YHANE, "Yhane"}, {PL_VEINS, "Veins"}, {PL_QALAIZ, "Qalaiz"},
-    {PL_TOBANDJAN, "Tobandjan"}, {PL_QUMANTH, "Qumanth"}, {PL_XENIA, "Xenia"},
-    {PL_REACH, "Reach"}, {PL_KARUNE, "Karune"}, {PL_HATHSERA, "Hathsera"}, {PL_VORDOZAAL, "V'ordozaal"}, {PL_YULMER, "Yulmer"},
-    {PL_MAKHIA, "Makhia"}, {PL_HAPHADEE, "Haphadee"}, {PL_ASTEROS, "Asteros"},
-    {PL_ETRURI, "Etruri"}
-};
-*/
-
 const std::map<int, std::array<float,2>>placeOverworldXYCells =
 {
+    /*
     {PL_ERICENNES,    { 20,  20 } },
     {PL_CHORAS,       { 24,  12 } },
     {PL_KETH_KETHER,  { 12,  24 } },
@@ -112,7 +96,52 @@ const std::map<int, std::array<float,2>>placeOverworldXYCells =
     {PL_HAPHADEE,     {0, 0 } },
     {PL_ASTEROS,      {-5, 21 } },
 
-    {PL_ETRURI,       {0,0 } }
+    {PL_ETRURI,       {0,0 } }*/
+
+    {PL_ERICENNES,    { 70,  70 } },
+    {PL_CHORAS,       { 74,  62 } },
+    {PL_KETH_KETHER,  { 62,  74 } },
+
+    {PL_KETH_ENTWEIR, { 59,  67 } },
+    {PL_VIELLEICHT,   { 51,  78 } },
+    {PL_QUELLUDE,     { 56,  82 } },
+    {PL_AMBLEFORTH,   { 54,  64 } },
+
+    {PL_ROSKANEL,     { 76,  74 } },
+    {PL_ROSELLA,      { 78,  80 } },
+
+    {PL_OBSERVIA,     { 61,  55 } },
+    {PL_COLDLAKE,     { 66,  60 } },
+    {PL_UMBERDELL,    { 67,  53 } },
+
+    {PL_RAMSHORN,     { 81,  59 } },
+    {PL_HOLLYHEAD,    { 75,  55 } },
+    {PL_JASPER,       { 86,  52 } },
+
+    {PL_RUMNIR,       { 71,  44 } },
+    {PL_HEWNHEIM,     { 59,  41 } },
+    {PL_ARTAS_ROCK,   { 69,  34 } },
+    {PL_VERSE,        { 63,  28 } },
+
+    {PL_YHANE,        { 70,  80 } },
+    {PL_VEINS,        { 66,  83 } },
+    {PL_QALAIZ,       { 74,  91 } },
+
+    {PL_TOBANDJAN,    { 72,  98 } },
+    {PL_QUMANTH,      { 65,  95 } },
+    {PL_XENIA,        { 80,  97 } },
+
+    {PL_REACH,        { 38,  80 } },
+    {PL_KARUNE,       { 40,  61 } },
+    {PL_HATHSERA,     { 45,  92 } },
+    {PL_VORDOZAAL,    { 42,  98 } },
+    {PL_YULMER,       { 46,  44 } },
+
+    {PL_MAKHIA,       {50, 50 } },
+    {PL_HAPHADEE,     {50, 50 } },
+    {PL_ASTEROS,      {45, 71 } },
+
+    {PL_ETRURI,       {50,50 } }
 };
 
 

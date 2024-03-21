@@ -17,309 +17,309 @@ Road::Road(int id)
     case ROAD_ERICENNES_CHORAS:
         endpointA = PL_ERICENNES;
         endpointB = PL_CHORAS;
-        SetWaypoint(0, Tile::WIDTH*21 + Tile::WIDTH/2, Tile::HEIGHT*19 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*24, Tile::HEIGHT*18);
-        SetWaypoint(2, Tile::WIDTH*24, Tile::HEIGHT*13 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*71 + Tile::WIDTH/2, Tile::HEIGHT*69 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*74,                 Tile::HEIGHT*68);
+        SetWaypoint(2, Tile::WIDTH*74,                 Tile::HEIGHT*63 + Tile::HEIGHT/2);
         break;
 
     case ROAD_ERICENNES_KETH_KETHER:
         endpointA = PL_ERICENNES;
         endpointB = PL_KETH_KETHER;
-        SetWaypoint(0, Tile::WIDTH*18 + Tile::WIDTH/2, Tile::HEIGHT*20 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*13 + Tile::WIDTH/2, Tile::HEIGHT*20 + Tile::HEIGHT/2);
-        SetWaypoint(2, Tile::WIDTH*13 + Tile::WIDTH/2, Tile::HEIGHT*24);
+        SetWaypoint(0, Tile::WIDTH*68 + Tile::WIDTH/2, Tile::HEIGHT*70 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*63 + Tile::WIDTH/2, Tile::HEIGHT*70 + Tile::HEIGHT/2);
+        SetWaypoint(2, Tile::WIDTH*63 + Tile::WIDTH/2, Tile::HEIGHT*74);
         break;
 
     case ROAD_ERICENNES_KETH_ENTWEIR:
         endpointA = PL_ERICENNES;
         endpointB = PL_KETH_ENTWEIR;
-        SetWaypoint(0, Tile::WIDTH*18 + Tile::WIDTH/2, Tile::HEIGHT*19 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*16, Tile::HEIGHT*17);
-        SetWaypoint(2, Tile::WIDTH*10 + Tile::WIDTH/2, Tile::HEIGHT*17);
+        SetWaypoint(0, Tile::WIDTH*68 + Tile::WIDTH/2, Tile::HEIGHT*69 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*66,                 Tile::HEIGHT*67);
+        SetWaypoint(2, Tile::WIDTH*60 + Tile::WIDTH/2, Tile::HEIGHT*67);
         break;
 
     case ROAD_ERICENNES_ROSKANEL:
         endpointA = PL_ERICENNES;
         endpointB = PL_ROSKANEL;
-        SetWaypoint(0, Tile::WIDTH*21 + Tile::WIDTH/2, Tile::HEIGHT*20 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*23 + Tile::WIDTH/2, Tile::HEIGHT*22 + Tile::HEIGHT/2);
-        SetWaypoint(2, Tile::WIDTH*26, Tile::HEIGHT*22 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*71 + Tile::WIDTH/2, Tile::HEIGHT*70 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*73 + Tile::WIDTH/2, Tile::HEIGHT*72 + Tile::HEIGHT/2);
+        SetWaypoint(2, Tile::WIDTH*76,                 Tile::HEIGHT*72 + Tile::HEIGHT/2);
         break;
 
     case ROAD_WATERWAY_ERICENNES_COLDLAKE:
         endpointA = PL_ERICENNES;
         endpointB = PL_COLDLAKE;
-        SetWaypoint(0, Tile::WIDTH*20, Tile::HEIGHT*18 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*20, Tile::HEIGHT*17           );
-        SetWaypoint(2, Tile::WIDTH*16, Tile::HEIGHT*13           );
-        SetWaypoint(3, Tile::WIDTH*16, Tile::HEIGHT*11 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*70, Tile::HEIGHT*68 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*70, Tile::HEIGHT*67           );
+        SetWaypoint(2, Tile::WIDTH*66, Tile::HEIGHT*63           );
+        SetWaypoint(3, Tile::WIDTH*66, Tile::HEIGHT*61 + Tile::HEIGHT/2);
         break;
 
     case ROAD_WATERWAY_ERICENNES_VEINS:
         endpointA = PL_ERICENNES;
         endpointB = PL_VEINS;
-        SetWaypoint(0, Tile::WIDTH*20, Tile::HEIGHT*21 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*20, Tile::HEIGHT*23           );
-        SetWaypoint(2, Tile::WIDTH*16, Tile::HEIGHT*27           );
-        SetWaypoint(3, Tile::WIDTH*16, Tile::HEIGHT*31 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*70, Tile::HEIGHT*71 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*70, Tile::HEIGHT*73           );
+        SetWaypoint(2, Tile::WIDTH*66, Tile::HEIGHT*77           );
+        SetWaypoint(3, Tile::WIDTH*66, Tile::HEIGHT*81 + Tile::HEIGHT/2);
         break;
 
     case ROAD_CHORAS_COLDLAKE:
         endpointA = PL_CHORAS;
         endpointB = PL_COLDLAKE;
-        SetWaypoint(0, Tile::WIDTH*22 + Tile::WIDTH/2, Tile::HEIGHT*11 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*20 + Tile::WIDTH/2, Tile::HEIGHT*10);
-        SetWaypoint(2, Tile::WIDTH*17 + Tile::WIDTH/2, Tile::HEIGHT*10);
+        SetWaypoint(0, Tile::WIDTH*72 + Tile::WIDTH/2, Tile::HEIGHT*61 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*70 + Tile::WIDTH/2, Tile::HEIGHT*60);
+        SetWaypoint(2, Tile::WIDTH*67 + Tile::WIDTH/2, Tile::HEIGHT*60);
         break;
 
     case ROAD_CHORAS_RAMSHORN:
         endpointA = PL_CHORAS;
         endpointB = PL_RAMSHORN;
-        SetWaypoint(0, Tile::WIDTH*25 + Tile::WIDTH/2, Tile::HEIGHT*12);
-        SetWaypoint(1, Tile::WIDTH*29 + Tile::WIDTH/2, Tile::HEIGHT*12);
-        SetWaypoint(2, Tile::WIDTH*31, Tile::HEIGHT*10 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*75 + Tile::WIDTH/2, Tile::HEIGHT*62);
+        SetWaypoint(1, Tile::WIDTH*79 + Tile::WIDTH/2, Tile::HEIGHT*62);
+        SetWaypoint(2, Tile::WIDTH*81,                 Tile::HEIGHT*60 + Tile::HEIGHT/2);
         break;
 
     case ROAD_CHORAS_HOLLYHEAD:
         endpointA = PL_CHORAS;
         endpointB = PL_HOLLYHEAD;
-        SetWaypoint(0, Tile::WIDTH*24, Tile::HEIGHT*10 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*24, Tile::HEIGHT*9);
-        SetWaypoint(2, Tile::WIDTH*25, Tile::HEIGHT*8);
-        SetWaypoint(3, Tile::WIDTH*25, Tile::HEIGHT*6 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*74, Tile::HEIGHT*60 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*74, Tile::HEIGHT*59);
+        SetWaypoint(2, Tile::WIDTH*75, Tile::HEIGHT*58);
+        SetWaypoint(3, Tile::WIDTH*75, Tile::HEIGHT*56 + Tile::HEIGHT/2);
         break;
 
     case ROAD_KETH_KETHER_KETH_ENTWEIR:
         endpointA = PL_KETH_KETHER;
         endpointB = PL_KETH_ENTWEIR;
-        SetWaypoint(0, Tile::WIDTH*12, Tile::HEIGHT*22 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*9, Tile::HEIGHT*22 + Tile::HEIGHT/2);
-        SetWaypoint(2, Tile::WIDTH*9, Tile::HEIGHT*18 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*62, Tile::HEIGHT*72 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*59, Tile::HEIGHT*72 + Tile::HEIGHT/2);
+        SetWaypoint(2, Tile::WIDTH*59, Tile::HEIGHT*68 + Tile::HEIGHT/2);
         break;
 
     case ROAD_KETH_KETHER_VIELLEICHT:
         endpointA = PL_KETH_KETHER;
         endpointB = PL_VIELLEICHT;
-        SetWaypoint(0, Tile::WIDTH*10 + Tile::WIDTH/2, Tile::HEIGHT*24);
-        SetWaypoint(1, Tile::WIDTH*6, Tile::HEIGHT*24);
-        SetWaypoint(2, Tile::WIDTH*2 + Tile::WIDTH/2, Tile::HEIGHT*27 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*60 + Tile::WIDTH/2, Tile::HEIGHT*74);
+        SetWaypoint(1, Tile::WIDTH*56,                 Tile::HEIGHT*74);
+        SetWaypoint(2, Tile::WIDTH*52 + Tile::WIDTH/2, Tile::HEIGHT*77 + Tile::HEIGHT/2);
         break;
 
     case ROAD_KETH_KETHER_QUELLUDE:
         endpointA = PL_KETH_KETHER;
         endpointB = PL_QUELLUDE;
-        SetWaypoint(0, Tile::WIDTH*12, Tile::HEIGHT*25 + Tile::WIDTH/2);
-        SetWaypoint(1, Tile::WIDTH*12, Tile::HEIGHT*28);
-        SetWaypoint(2, Tile::WIDTH*7 + Tile::WIDTH/2, Tile::HEIGHT*32);
+        SetWaypoint(0, Tile::WIDTH*62,                 Tile::HEIGHT*75 + Tile::WIDTH/2);
+        SetWaypoint(1, Tile::WIDTH*62,                 Tile::HEIGHT*78);
+        SetWaypoint(2, Tile::WIDTH*57 + Tile::WIDTH/2, Tile::HEIGHT*82);
         break;
 
     case ROAD_KETH_ENTWEIR_AMBLEFORTH:
         endpointA = PL_KETH_ENTWEIR;
         endpointB = PL_AMBLEFORTH;
-        SetWaypoint(0, Tile::WIDTH*7 + Tile::WIDTH/2, Tile::HEIGHT*17);
-        SetWaypoint(1, Tile::WIDTH*5, Tile::HEIGHT*17);
-        SetWaypoint(2, Tile::WIDTH*4, Tile::HEIGHT*15 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*57 + Tile::WIDTH/2, Tile::HEIGHT*67);
+        SetWaypoint(1, Tile::WIDTH*55,                 Tile::HEIGHT*67);
+        SetWaypoint(2, Tile::WIDTH*54,                 Tile::HEIGHT*65 + Tile::HEIGHT/2);
         break;
 
     case ROAD_VIELLEICHT_QUELLUDE:
         endpointA = PL_VIELLEICHT;
         endpointB = PL_QUELLUDE;
-        SetWaypoint(0, Tile::WIDTH*2 + Tile::WIDTH/2, Tile::HEIGHT*28 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*2 + Tile::WIDTH/2, Tile::HEIGHT*32);
-        SetWaypoint(2, Tile::WIDTH*4 + Tile::WIDTH/2, Tile::HEIGHT*32);
+        SetWaypoint(0, Tile::WIDTH*52 + Tile::WIDTH/2, Tile::HEIGHT*78 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*52 + Tile::WIDTH/2, Tile::HEIGHT*82);
+        SetWaypoint(2, Tile::WIDTH*54 + Tile::WIDTH/2, Tile::HEIGHT*82);
         break;
 
     case ROAD_WATERWAY_VIELLEICHT_REACH:
         endpointA = PL_VIELLEICHT;
         endpointB = PL_REACH;
-        SetWaypoint(0, Tile::WIDTH*(-1)  + Tile::WIDTH/2, Tile::HEIGHT*28 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*(-11) + Tile::WIDTH/2, Tile::HEIGHT*29 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*49 + Tile::WIDTH/2, Tile::HEIGHT*78 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*39 + Tile::WIDTH/2, Tile::HEIGHT*79 + Tile::HEIGHT/2);
         break;
 
     case ROAD_AMBLEFORTH_OBSERVIA:
         endpointA = PL_AMBLEFORTH;
         endpointB = PL_OBSERVIA;
-        SetWaypoint(0, Tile::WIDTH*4,            Tile::HEIGHT*12 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*9 + Tile::WIDTH/2, Tile::HEIGHT*12 + Tile::HEIGHT/2);
-        SetWaypoint(2, Tile::WIDTH*9 + Tile::WIDTH/2, Tile::HEIGHT*6  + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*54,                 Tile::HEIGHT*62 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*59 + Tile::WIDTH/2, Tile::HEIGHT*62 + Tile::HEIGHT/2);
+        SetWaypoint(2, Tile::WIDTH*59 + Tile::WIDTH/2, Tile::HEIGHT*56 + Tile::HEIGHT/2);
         break;
 
     case ROAD_ROSKANEL_ROSELLA:
         endpointA = PL_ROSKANEL;
         endpointB = PL_ROSELLA;
-        SetWaypoint(0, Tile::WIDTH*26, Tile::HEIGHT*25 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*26, Tile::HEIGHT*28 + Tile::HEIGHT/2);
-        SetWaypoint(2, Tile::WIDTH*27 + Tile::WIDTH/2, Tile::HEIGHT*28 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*76,                 Tile::HEIGHT*75 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*76,                 Tile::HEIGHT*78 + Tile::HEIGHT/2);
+        SetWaypoint(2, Tile::WIDTH*77 + Tile::WIDTH/2, Tile::HEIGHT*78 + Tile::HEIGHT/2);
         break;
 
     case ROAD_ROSKANEL_YHANE:
         endpointA = PL_ROSKANEL;
         endpointB = PL_YHANE;
-        SetWaypoint(0, Tile::WIDTH*24 + Tile::WIDTH/2, Tile::HEIGHT*24);
-        SetWaypoint(1, Tile::WIDTH*24 + Tile::WIDTH/2, Tile::HEIGHT*27 + Tile::HEIGHT/2);
-        SetWaypoint(2, Tile::WIDTH*22 + Tile::WIDTH/2, Tile::HEIGHT*29 + Tile::HEIGHT/2);
-        SetWaypoint(3, Tile::WIDTH*21 + Tile::WIDTH/2, Tile::HEIGHT*29 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*74 + Tile::WIDTH/2, Tile::HEIGHT*74);
+        SetWaypoint(1, Tile::WIDTH*74 + Tile::WIDTH/2, Tile::HEIGHT*77 + Tile::HEIGHT/2);
+        SetWaypoint(2, Tile::WIDTH*72 + Tile::WIDTH/2, Tile::HEIGHT*79 + Tile::HEIGHT/2);
+        SetWaypoint(3, Tile::WIDTH*71 + Tile::WIDTH/2, Tile::HEIGHT*79 + Tile::HEIGHT/2);
         break;
 
     case ROAD_OBSERVIA_COLDLAKE:
         endpointA = PL_OBSERVIA;
         endpointB = PL_COLDLAKE;
-        SetWaypoint(0, Tile::WIDTH*11, Tile::HEIGHT*6 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*11, Tile::HEIGHT*10);
-        SetWaypoint(2, Tile::WIDTH*14 + Tile::WIDTH/2, Tile::HEIGHT*10);
+        SetWaypoint(0, Tile::WIDTH*61,                 Tile::HEIGHT*56 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*61,                 Tile::HEIGHT*60);
+        SetWaypoint(2, Tile::WIDTH*64 + Tile::WIDTH/2, Tile::HEIGHT*60);
         break;
 
     case ROAD_OBSERVIA_UMBERDELL:
         endpointA = PL_OBSERVIA;
         endpointB = PL_UMBERDELL;
-        SetWaypoint(0, Tile::WIDTH*9 + Tile::WIDTH/2, Tile::HEIGHT*5);
-        SetWaypoint(1, Tile::WIDTH*7, Tile::HEIGHT*5);
-        SetWaypoint(2, Tile::WIDTH*7, Tile::HEIGHT*3);
-        SetWaypoint(3, Tile::WIDTH*15 + Tile::WIDTH/2, Tile::HEIGHT*3);
+        SetWaypoint(0, Tile::WIDTH*59 + Tile::WIDTH/2, Tile::HEIGHT*55);
+        SetWaypoint(1, Tile::WIDTH*57,                 Tile::HEIGHT*55);
+        SetWaypoint(2, Tile::WIDTH*57,                 Tile::HEIGHT*53);
+        SetWaypoint(3, Tile::WIDTH*65 + Tile::WIDTH/2, Tile::HEIGHT*53);
         break;
 
     case ROAD_RAMSHORN_JASPER:
         endpointA = PL_RAMSHORN;
         endpointB = PL_JASPER;
-        SetWaypoint(0, Tile::WIDTH*31, Tile::HEIGHT*7 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*31, Tile::HEIGHT*4);
-        SetWaypoint(2, Tile::WIDTH*33, Tile::HEIGHT*2);
-        SetWaypoint(3, Tile::WIDTH*34 + Tile::WIDTH/2, Tile::HEIGHT*2);
+        SetWaypoint(0, Tile::WIDTH*81,                 Tile::HEIGHT*57 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*81,                 Tile::HEIGHT*54);
+        SetWaypoint(2, Tile::WIDTH*83,                 Tile::HEIGHT*52);
+        SetWaypoint(3, Tile::WIDTH*84 + Tile::WIDTH/2, Tile::HEIGHT*52);
         break;
 
     case ROAD_HOLLYHEAD_RUMNIR:
         endpointA = PL_HOLLYHEAD;
         endpointB = PL_RUMNIR;
-        SetWaypoint(0, Tile::WIDTH*25, Tile::HEIGHT*3 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*25, Tile::HEIGHT*1);
-        SetWaypoint(2, Tile::WIDTH*21, Tile::HEIGHT*(-1) - Tile::HEIGHT/2);
-        SetWaypoint(3, Tile::WIDTH*21, Tile::HEIGHT*(-4) - Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*75, Tile::HEIGHT*53 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*75, Tile::HEIGHT*51);
+        SetWaypoint(2, Tile::WIDTH*71, Tile::HEIGHT*49 - Tile::HEIGHT/2);
+        SetWaypoint(3, Tile::WIDTH*71, Tile::HEIGHT*46 - Tile::HEIGHT/2);
         break;
 
     case ROAD_RUMNIR_HEWNHEIM:
         endpointA = PL_RUMNIR;
         endpointB = PL_HEWNHEIM;
-        SetWaypoint(0, Tile::WIDTH*19 + Tile::WIDTH/2, Tile::HEIGHT*(-7) + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*17 + Tile::WIDTH/2, Tile::HEIGHT*(-9) + Tile::HEIGHT/2);
-        SetWaypoint(2, Tile::WIDTH*10 + Tile::WIDTH/2, Tile::HEIGHT*(-9) + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*69 + Tile::WIDTH/2, Tile::HEIGHT*43 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*67 + Tile::WIDTH/2, Tile::HEIGHT*41 + Tile::HEIGHT/2);
+        SetWaypoint(2, Tile::WIDTH*60 + Tile::WIDTH/2, Tile::HEIGHT*41 + Tile::HEIGHT/2);
         break;
 
     case ROAD_RUMNIR_ARTAS_ROCK:
         endpointA = PL_RUMNIR;
         endpointB = PL_ARTAS_ROCK;
-        SetWaypoint(0, Tile::WIDTH*20 + Tile::WIDTH/2, Tile::HEIGHT*(-8) + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*19, Tile::HEIGHT*(-9));
-        SetWaypoint(2, Tile::WIDTH*19, Tile::HEIGHT*(-15) + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*70 + Tile::WIDTH/2, Tile::HEIGHT*42 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*69,                 Tile::HEIGHT*41);
+        SetWaypoint(2, Tile::WIDTH*69,                 Tile::HEIGHT*35 + Tile::HEIGHT/2);
         break;
 
     case ROAD_HEWNHEIM_VERSE:
         endpointA = PL_HEWNHEIM;
         endpointB = PL_VERSE;
-        SetWaypoint(0, Tile::WIDTH*8  + Tile::WIDTH/2, Tile::HEIGHT*(-11) + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*8  + Tile::HEIGHT/2, Tile::HEIGHT*(-13)           );
-        SetWaypoint(2, Tile::WIDTH*12 + Tile::WIDTH/2, Tile::HEIGHT*(-18) + Tile::HEIGHT/2);
-        SetWaypoint(3, Tile::WIDTH*12 + Tile::WIDTH/2, Tile::HEIGHT*(-21) + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*58 + Tile::WIDTH/2, Tile::HEIGHT*39 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*58 + Tile::WIDTH/2, Tile::HEIGHT*37);
+        SetWaypoint(2, Tile::WIDTH*62 + Tile::WIDTH/2, Tile::HEIGHT*32 + Tile::HEIGHT/2);
+        SetWaypoint(3, Tile::WIDTH*62 + Tile::WIDTH/2, Tile::HEIGHT*29 + Tile::HEIGHT/2);
         break;
 
     case ROAD_WATERWAY_HEWNHEIM_YULMER:
         endpointA = PL_HEWNHEIM;
         endpointB = PL_YULMER;
-        SetWaypoint(0, Tile::WIDTH*( 7) + Tile::WIDTH/2, Tile::HEIGHT*(-9) + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*(-3) + Tile::WIDTH/2, Tile::HEIGHT*(-7)+ Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*57 + Tile::WIDTH/2, Tile::HEIGHT*41 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*47 + Tile::WIDTH/2, Tile::HEIGHT*43 + Tile::HEIGHT/2);
         break;
 
     case ROAD_ARTAS_ROCK_VERSE:
         endpointA = PL_ARTAS_ROCK;
         endpointB = PL_VERSE;
-        SetWaypoint(0, Tile::WIDTH*19,            Tile::HEIGHT*(-18) + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*13 + Tile::WIDTH/2, Tile::HEIGHT*(-18) + Tile::HEIGHT/2);
-        SetWaypoint(2, Tile::WIDTH*13 + Tile::WIDTH/2, Tile::HEIGHT*(-21) + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*69,                 Tile::HEIGHT*32 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*63 + Tile::WIDTH/2, Tile::HEIGHT*32 + Tile::HEIGHT/2);
+        SetWaypoint(2, Tile::WIDTH*63 + Tile::WIDTH/2, Tile::HEIGHT*29 + Tile::HEIGHT/2);
         break;
 
     case ROAD_YHANE_VEINS:
         endpointA = PL_YHANE;
         endpointB = PL_VEINS;
-        SetWaypoint(0, Tile::WIDTH*19 + Tile::WIDTH/2, Tile::HEIGHT*31 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*19 + Tile::WIDTH/2, Tile::HEIGHT*33 + Tile::HEIGHT/2);
-        SetWaypoint(2, Tile::WIDTH*17 + Tile::WIDTH/2, Tile::HEIGHT*33 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*69 + Tile::WIDTH/2, Tile::HEIGHT*81 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*69 + Tile::WIDTH/2, Tile::HEIGHT*83 + Tile::HEIGHT/2);
+        SetWaypoint(2, Tile::WIDTH*67 + Tile::WIDTH/2, Tile::HEIGHT*83 + Tile::HEIGHT/2);
         break;
 
     case ROAD_YHANE_QALAIZ:
         endpointA = PL_YHANE;
         endpointB = PL_QALAIZ;
-        SetWaypoint(0, Tile::WIDTH*20 + Tile::WIDTH/2, Tile::HEIGHT*31 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*20 + Tile::WIDTH/2, Tile::HEIGHT*36 + Tile::HEIGHT/2);
-        SetWaypoint(2, Tile::WIDTH*22 + Tile::WIDTH/2, Tile::HEIGHT*39 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*70 + Tile::WIDTH/2, Tile::HEIGHT*81 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*70 + Tile::WIDTH/2, Tile::HEIGHT*86 + Tile::HEIGHT/2);
+        SetWaypoint(2, Tile::WIDTH*72 + Tile::WIDTH/2, Tile::HEIGHT*89 + Tile::HEIGHT/2);
         break;
 
     case ROAD_WATERWAY_VEINS_QUMANTH:
         endpointA = PL_VEINS;
         endpointB = PL_QUMANTH;
-        SetWaypoint(0, Tile::WIDTH*16           , Tile::HEIGHT*34 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*16           , Tile::HEIGHT*37           );
-        SetWaypoint(2, Tile::WIDTH*15           , Tile::HEIGHT*38           );
-        SetWaypoint(3, Tile::WIDTH*15           , Tile::HEIGHT*43 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*66           , Tile::HEIGHT*84 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*66           , Tile::HEIGHT*87           );
+        SetWaypoint(2, Tile::WIDTH*65           , Tile::HEIGHT*88           );
+        SetWaypoint(3, Tile::WIDTH*65           , Tile::HEIGHT*93 + Tile::HEIGHT/2);
         break;
 
     case ROAD_QALAIZ_TOBANDJAN:
         endpointA = PL_QALAIZ;
         endpointB = PL_TOBANDJAN;
-        SetWaypoint(0, Tile::WIDTH*25 + Tile::WIDTH/2, Tile::HEIGHT*40 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*25 + Tile::WIDTH/2, Tile::HEIGHT*45 + Tile::HEIGHT/2);
-        SetWaypoint(2, Tile::WIDTH*23 + Tile::WIDTH/2, Tile::HEIGHT*47 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*75 + Tile::WIDTH/2, Tile::HEIGHT*90 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*75 + Tile::WIDTH/2, Tile::HEIGHT*95 + Tile::HEIGHT/2);
+        SetWaypoint(2, Tile::WIDTH*73 + Tile::WIDTH/2, Tile::HEIGHT*97 + Tile::HEIGHT/2);
         break;
 
     case ROAD_QALAIZ_QUMANTH:
         endpointA = PL_QALAIZ;
         endpointB = PL_QUMANTH;
-        SetWaypoint(0, Tile::WIDTH*24 + Tile::WIDTH/2, Tile::HEIGHT*42 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*24 + Tile::WIDTH/2, Tile::HEIGHT*44 + Tile::HEIGHT/2);
-        SetWaypoint(2, Tile::WIDTH*23 + Tile::WIDTH/2, Tile::HEIGHT*45 + Tile::HEIGHT/2);
-        SetWaypoint(3, Tile::WIDTH*16 + Tile::WIDTH/2, Tile::HEIGHT*45 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*74 + Tile::WIDTH/2, Tile::HEIGHT*92 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*74 + Tile::WIDTH/2, Tile::HEIGHT*94 + Tile::HEIGHT/2);
+        SetWaypoint(2, Tile::WIDTH*73 + Tile::WIDTH/2, Tile::HEIGHT*95 + Tile::HEIGHT/2);
+        SetWaypoint(3, Tile::WIDTH*66 + Tile::WIDTH/2, Tile::HEIGHT*95 + Tile::HEIGHT/2);
         break;
 
     case ROAD_QALAIZ_XENIA:
         endpointA = PL_QALAIZ;
         endpointB = PL_XENIA;
-        SetWaypoint(0, Tile::WIDTH*24 + Tile::WIDTH/2, Tile::HEIGHT*39 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*28 + Tile::WIDTH/2, Tile::HEIGHT*39 + Tile::HEIGHT/2);
-        SetWaypoint(2, Tile::WIDTH*30 + Tile::WIDTH/2, Tile::HEIGHT*41 + Tile::HEIGHT/2);
-        SetWaypoint(3, Tile::WIDTH*30 + Tile::WIDTH/2, Tile::HEIGHT*45 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*74 + Tile::WIDTH/2, Tile::HEIGHT*89 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*78 + Tile::WIDTH/2, Tile::HEIGHT*89 + Tile::HEIGHT/2);
+        SetWaypoint(2, Tile::WIDTH*80 + Tile::WIDTH/2, Tile::HEIGHT*91 + Tile::HEIGHT/2);
+        SetWaypoint(3, Tile::WIDTH*80 + Tile::WIDTH/2, Tile::HEIGHT*95 + Tile::HEIGHT/2);
         break;
 
     case ROAD_WATERWAY_QUMANTH_HATHSERA:
         endpointA = PL_QUMANTH;
         endpointB = PL_HATHSERA;
-        SetWaypoint(0, Tile::WIDTH*(13) + Tile::WIDTH/2, Tile::HEIGHT*45 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*(-4) + Tile::WIDTH/2, Tile::HEIGHT*42 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*63 + Tile::WIDTH/2, Tile::HEIGHT*95 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*46 + Tile::WIDTH/2, Tile::HEIGHT*92 + Tile::HEIGHT/2);
         break;
 
     case ROAD_WATERWAY_REACH_KARUNE:
         endpointA = PL_REACH;
         endpointB = PL_KARUNE;
-        SetWaypoint(0, Tile::WIDTH*(-13) + Tile::WIDTH/2, Tile::HEIGHT*28 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*(-11) + Tile::WIDTH/2, Tile::HEIGHT*12 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*37 + Tile::WIDTH/2, Tile::HEIGHT*78 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*39 + Tile::WIDTH/2, Tile::HEIGHT*62 + Tile::HEIGHT/2);
         break;
 
     case ROAD_WATERWAY_REACH_HATHSERA:
         endpointA = PL_REACH;
         endpointB = PL_HATHSERA;
-        SetWaypoint(0, Tile::WIDTH*(-13) + Tile::WIDTH/2, Tile::HEIGHT*31 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*( -7) + Tile::WIDTH/2, Tile::HEIGHT*41  + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*37 + Tile::WIDTH/2, Tile::HEIGHT*81 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*43 + Tile::WIDTH/2, Tile::HEIGHT*91  + Tile::HEIGHT/2);
         break;
 
     case ROAD_WATERWAY_KARUNE_YULMER:
         endpointA = PL_KARUNE;
         endpointB = PL_YULMER;
-        SetWaypoint(0, Tile::WIDTH*(-10) + Tile::WIDTH/2, Tile::HEIGHT*  9  + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*( -5) + Tile::WIDTH/2, Tile::HEIGHT*(-5) + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*40 + Tile::WIDTH/2, Tile::HEIGHT*59 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*45 + Tile::WIDTH/2, Tile::HEIGHT*45 + Tile::HEIGHT/2);
         break;
 
     case ROAD_WATERWAY_HATHSERA_VORDOZAAL:
         endpointA = PL_HATHSERA;
         endpointB = PL_VORDOZAAL;
-        SetWaypoint(0, Tile::WIDTH*(-6) + Tile::WIDTH/2, Tile::HEIGHT*43 + Tile::HEIGHT/2);
-        SetWaypoint(1, Tile::WIDTH*(-8) + Tile::WIDTH/2, Tile::HEIGHT*46 + Tile::HEIGHT/2);
+        SetWaypoint(0, Tile::WIDTH*44 + Tile::WIDTH/2, Tile::HEIGHT*93 + Tile::HEIGHT/2);
+        SetWaypoint(1, Tile::WIDTH*42 + Tile::WIDTH/2, Tile::HEIGHT*96 + Tile::HEIGHT/2);
         break;
 
     }
